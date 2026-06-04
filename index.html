@@ -589,8 +589,8 @@
                                                             const isSelected = formData.selectedCompanies.includes(c.name);
                                                             setFormData(p => ({ ...p, time: '', selectedCompanies: isSelected ? p.selectedCompanies.filter(x => x !== c.name) : [...p.selectedCompanies, c.name] }));
                                                         }} className={`group rounded-3xl border-2 text-left transition-all relative overflow-hidden flex flex-col ${formData.selectedCompanies.includes(c.name) ? 'border-indigo-600 bg-indigo-600 text-white shadow-lg' : 'bg-white border-slate-100 text-slate-600 hover:border-indigo-200'}`}>
-                                                            <div className="h-32 md:h-44 overflow-hidden bg-slate-100 relative">
-                                                                <img src={c.image} alt={c.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+                                                            <div className="overflow-hidden bg-slate-100 relative">
+                                                                <img src={c.image} alt={c.name} className="w-full h-auto block group-hover:scale-110 transition-transform duration-700" />
                                                                 <div className={`absolute inset-0 bg-indigo-900/20 transition-opacity ${formData.selectedCompanies.includes(c.name) ? 'opacity-100' : 'opacity-0'}`}></div>
                                                             </div>
                                                             <div className="p-4 md:p-6 flex justify-between items-center font-black">
