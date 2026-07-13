@@ -571,6 +571,15 @@
                 };
                 const info = KIND_INFO[kind] || KIND_INFO.new;
 
+                // 新規予約時は notes に変更・キャンセル案内を追加
+                let notesText = data.notes || "特になし";
+                if (kind === 'new') {
+                    notesText = (notesText === "特になし" ? "" : notesText + "\n") +
+                        "【ご予約の変更・キャンセルについて】\n" +
+                        "以下のリンクからいつでも変更・キャンセルが可能です。\n" +
+                        "https://sumiheishiire.github.io/yes-shinshu-yoyaku/";
+                }
+
                 const templateParams = {
                     user_name: data.name,
                     user_furigana: data.furigana,
@@ -580,7 +589,7 @@
                     reservation_time: data.time,
                     companies: (data.selectedCompanies || []).join('、'),
                     visitor_count: data.visitorCount,
-                    notes: data.notes || "特になし",
+                    notes: notesText,
                     staff_name: data.staffName || "一般予約",
                     entry_type: info.entry,
                     status_message: info.msg,
