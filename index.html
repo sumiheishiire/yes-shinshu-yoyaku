@@ -564,10 +564,10 @@
                 const createdTime = data.createdAt ? new Date(data.createdAt.seconds * 1000).toLocaleString() : new Date().toLocaleString();
 
                 const KIND_INFO = {
-                    new:    { entry: "【新規予約受付】", msg: "以下の内容でご予約を承りました。" },
+                    new:    { entry: "【新規予約受付】", msg: "以下の内容でご予約を承りました。\n\n【ご予約の変更・キャンセルについて】\nご予約の日時変更やキャンセルは、以下のリンクからいつでも可能です。ご予約時のメールアドレスとお電話番号を入力して、「確認・変更・取消」からお手続きください。\nhttps://sumiheishiire.github.io/yes-shinshu-yoyaku/\n※当日のご変更・キャンセルはお電話（070-9459-4650）にてお願いいたします。" },
                     cancel: { entry: "【キャンセル通知】", msg: "以下のご予約が取り消されました。" },
                     change: { entry: "【予約日時の変更】",
-                              msg: `ご予約の日時が変更されました。　（変更前）${formatNiceDate(data.oldDate)} ${data.oldTime}　→　（変更後）${formatNiceDate(data.date)} ${data.time}` }
+                              msg: `ご予約の日時が変更されました。　（変更前）${formatNiceDate(data.oldDate)} ${data.oldTime}　→　（変更後）${formatNiceDate(data.date)} ${data.time}\n\n今後のご変更・キャンセルはこちらから：https://sumiheishiire.github.io/yes-shinshu-yoyaku/` }
                 };
                 const info = KIND_INFO[kind] || KIND_INFO.new;
 
