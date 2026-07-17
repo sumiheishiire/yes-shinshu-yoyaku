@@ -23,7 +23,36 @@
     --absent:#9aa7a0;
   }
   *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
   html,body{margin:0;padding:0}
+
+  /* ===== 右上メニュー ===== */
+  .nav{position:fixed;top:14px;right:14px;z-index:90}
+  .nav-btn{
+    cursor:pointer;font-family:inherit;font-weight:900;font-size:13px;letter-spacing:.06em;
+    background:rgba(255,255,255,.94);color:var(--pitch-dark);border:1px solid rgba(255,255,255,.7);
+    padding:11px 16px;border-radius:12px;box-shadow:0 6px 20px rgba(8,61,34,.22);
+    backdrop-filter:blur(8px);display:flex;align-items:center;gap:7px;
+  }
+  .nav-btn .bars{display:inline-block;line-height:1}
+  .nav-list{
+    position:absolute;right:0;top:calc(100% + 8px);min-width:196px;
+    background:#fff;border:1px solid #e6efe6;border-radius:14px;padding:6px;
+    box-shadow:0 16px 40px rgba(8,61,34,.24);
+    opacity:0;pointer-events:none;transform:translateY(-8px) scale(.97);transform-origin:top right;
+    transition:opacity .18s ease, transform .18s ease;
+  }
+  .nav:hover .nav-list, .nav.open .nav-list{opacity:1;pointer-events:auto;transform:none}
+  .nav-list a{
+    display:block;padding:10px 12px;border-radius:9px;text-decoration:none;
+    color:var(--ink);font-weight:700;font-size:13.5px;white-space:nowrap;transition:background .13s,color .13s;
+  }
+  .nav-list a:hover{background:#eef7ee;color:var(--pitch)}
+  .nav-list a.cta{background:var(--gold);color:#4a3400;font-weight:900;margin-bottom:4px}
+  .nav-list a.cta:hover{background:#ffd25a;color:#4a3400}
+  /* メニューのジャンプ先が見出しに被らないように */
+  section.blk, .cta-row{scroll-margin-top:74px}
+  @media(max-width:520px){ .nav{top:10px;right:10px} .nav-btn{padding:9px 13px;font-size:12px} }
   body{
     font-family:"Noto Sans JP",system-ui,sans-serif;
     color:var(--ink); background:#eef3ec;
@@ -284,6 +313,19 @@
 </head>
 <body>
 
+<nav class="nav" id="nav">
+  <button class="nav-btn" id="navBtn" aria-label="メニュー"><span class="bars">☰</span> MENU</button>
+  <div class="nav-list">
+    <a href="#regist" class="cta">⚽️ 出欠を登録する</a>
+    <a href="#members">🔥 参加メンバー</a>
+    <a href="#schedule">⏱ 当日のながれ</a>
+    <a href="#about">🏟 大会について</a>
+    <a href="#facility">🚿 設備・持ち物</a>
+    <a href="#faq">❓ よくある質問</a>
+    <a href="#qa">💬 質問コーナー</a>
+  </div>
+</nav>
+
 <header class="hero">
   <span class="kicker"><span class="dot"></span>NAGANO YOSHIDA × NAGANO — OB MATCH 2026</span>
   <h1 class="title">長野吉田高校サッカー班<br><span class="x">×</span>長野高校 合同OB戦</h1>
@@ -326,11 +368,11 @@
     <div class="sched">
       <div class="si"><span class="ic">🌅</span><div><b>AM OB戦</b><span>9:30〜／長野吉田高校グラウンド</span></div></div>
       <div class="si"><span class="ic">🏆</span><div><b>合同OB戦</b><span>12:20集合／長野Uスタジアム</span></div></div>
-      <div class="si"><span class="ic">💰</span><div><b>参加費</b><span>おひとり 3,000円（予定）／当日現金で回収</span></div></div>
+      <div class="si"><span class="ic">💰</span><div><b>参加費 <span style="font-size:10px;color:#fff;background:#c9932a;border-radius:5px;padding:1px 6px;vertical-align:1px;font-weight:800">予定</span></b><span>おひとり 3,000円／当日現金で回収<br><span style="font-size:11px">※金額は変更になる場合があります</span></span></div></div>
     </div>
   </div>
 
-  <div class="cta-row">
+  <div class="cta-row" id="regist">
     <button class="btn btn-primary" id="openNew">⚽️ 出欠を登録する</button>
     <button class="btn btn-ghost" id="openMine" style="display:none">✏️ 自分の登録を編集</button>
   </div>
@@ -338,7 +380,7 @@
   <div id="setupBanner"></div>
 
   <!-- 参加者 -->
-  <section class="blk">
+  <section class="blk" id="members">
     <div class="blk-head"><h2>🔥 参加メンバー</h2><span class="count" id="cntAttend">0</span></div>
     <div class="grid" id="attendGrid"></div>
     <div class="empty" id="attendEmpty">まだ誰もいません。最初の一人になろう！</div>
@@ -355,7 +397,7 @@
   </section>
 
   <!-- 当日のながれ -->
-  <section class="blk">
+  <section class="blk" id="schedule">
     <div class="blk-head"><h2>⏱ 当日のながれ</h2></div>
     <div class="panel">
       <div class="tl">
@@ -407,7 +449,7 @@
   </section>
 
   <!-- 大会について -->
-  <section class="blk">
+  <section class="blk" id="about">
     <div class="blk-head"><h2>🏟 大会について</h2></div>
     <div class="panel">
       <div class="info-grid">
@@ -419,7 +461,7 @@
         </div>
         <div>
           <dl class="info-row"><dt>会場</dt><dd>南長野運動公園 長野Uスタジアム<br><span style="color:var(--muted);font-size:12px">AC長野パルセイロのホームスタジアム</span></dd></dl>
-          <dl class="info-row"><dt>参加</dt><dd>長野高校（現役・OB）<br>長野吉田高校（現役・OB）</dd></dl>
+          <dl class="info-row"><dt>参加</dt><dd>長野高校（現役・OB）<br>長野吉田高校（OB）</dd></dl>
           <dl class="info-row"><dt>ピッチ</dt><dd>105m × 68m／公認5号球</dd></dl>
           <dl class="info-row"><dt>審判</dt><dd>有資格者 4名程度</dd></dl>
         </div>
@@ -432,7 +474,7 @@
   </section>
 
   <!-- 会場・設備 -->
-  <section class="blk">
+  <section class="blk" id="facility">
     <div class="blk-head"><h2>🚿 会場の設備・持ち物</h2></div>
     <div class="panel">
       <div class="info-grid">
@@ -445,8 +487,8 @@
         </div>
         <div>
           <dl class="info-row"><dt>ウェア</dt><dd><b>当日ビブスを配布します</b><br><span style="color:var(--muted);font-size:12px">動きやすい服装でお越しください</span></dd></dl>
-          <dl class="info-row"><dt>持ち物</dt><dd>スパイク／飲み物／着替え・タオル<br>参加費 3,000円（現金）</dd></dl>
-          <dl class="info-row"><dt>飲み物</dt><dd>一定量は用意しますが<b>各自持参</b>を</dd></dl>
+          <dl class="info-row"><dt>持ち物</dt><dd>スパイク／<b>飲み物</b>／着替え・タオル<br>参加費 3,000円（予定・現金）</dd></dl>
+          <dl class="info-row"><dt>飲み物</dt><dd><b>基本的に各自でご準備ください</b><br><span style="color:var(--muted);font-size:12px">一定量は用意しますが、足りない可能性があります。真夏なので多めに</span></dd></dl>
           <dl class="info-row"><dt>保険</dt><dd>スポーツ保険に加入予定</dd></dl>
         </div>
       </div>
@@ -458,7 +500,7 @@
   </section>
 
   <!-- FAQ -->
-  <section class="blk">
+  <section class="blk" id="faq">
     <div class="blk-head"><h2>❓ よくある質問</h2></div>
 
     <details class="faq"><summary><span class="q">Q</span>何を着ていけばいい？ユニフォームは必要？<span class="arw">›</span></summary>
@@ -486,10 +528,10 @@
       <div class="a">観覧は<b>メインスタンドのみ</b>ご利用いただけます（他エリアは閉鎖）。キッチンカーも出るので、ご家族で楽しんでいただけます。</div></details>
 
     <details class="faq"><summary><span class="q">Q</span>飲み物や食事は？<span class="arw">›</span></summary>
-      <div class="a">飲み物は一定量を用意しますが、<b>各自でのご持参をお願いします</b>。当日は<b>キッチンカーが複数店舗出店予定</b>で、試合後はそのまま交流会も楽しめます。</div></details>
+      <div class="a"><b>飲み物は基本的に各自でご準備ください。</b>こちらでも一定量は用意しますが、足りなくなる可能性があります。真夏の開催ですので、<b>多めにお持ちいただくことを強くおすすめします</b>。<br>当日は<b>キッチンカーが複数店舗出店予定</b>で、試合後はそのまま交流会も楽しめます。</div></details>
 
     <details class="faq"><summary><span class="q">Q</span>参加費は？当日払える？<span class="arw">›</span></summary>
-      <div class="a"><b>おひとり 3,000円（予定）・当日現金で回収</b>します。お釣りのないようご用意いただけると助かります。</div></details>
+      <div class="a"><b>おひとり 3,000円・当日現金で回収</b>します。お釣りのないようご用意いただけると助かります。<br><b>※金額はあくまで「予定」です。</b>今後の調整により変更になる場合がありますので、確定しましたらこのページでお知らせします。</div></details>
 
     <details class="faq"><summary><span class="q">Q</span>雨が降ったらどうなる？<span class="arw">›</span></summary>
       <div class="a"><b>雨天決行</b>です。ただし雷が発生した時点でゲームは中断し、再開は本部の指示に従います。再開の見込みが立たない場合は中止となります。</div></details>
@@ -505,7 +547,7 @@
   </section>
 
   <!-- 質問コーナー -->
-  <section class="blk">
+  <section class="blk" id="qa">
     <div class="blk-head"><h2>💬 質問コーナー</h2><span class="count" id="cntQ">0</span></div>
     <div class="panel">
       <p style="margin:0 0 12px;font-size:13px;color:var(--muted);font-weight:600">
@@ -541,7 +583,8 @@
 
 <footer>
   🌅 AM 9:30〜 長野吉田高校グラウンド ／ 🏆 PM 12:20集合 長野Uスタジアム（第一駐車場）<br>
-  💰 参加費 おひとり 3,000円（予定）・当日現金で回収します<br>
+  💰 参加費 おひとり 3,000円・当日現金で回収します（<b>予定</b>／変更になる場合があります）<br>
+  🥤 飲み物は<b>基本的に各自でご準備ください</b>（真夏の開催です。多めにどうぞ）<br>
   📱 携帯番号は当日連絡用に幹事だけが確認します（一覧には表示されません）。<br>
   内容の追加・変更はいつでもできます。VAMOS! 一戦必勝、8/14に集まりましょう！ ⚽️🔥
 </footer>
@@ -582,7 +625,7 @@
         <input type="tel" id="fPhone" placeholder="090-1234-5678" autocomplete="off" required>
         <div class="hint">当日の連絡用。一覧には出ません（幹事のみ確認）。</div>
       </div>
-      <div class="hint" style="text-align:center;margin-bottom:6px">💰 参加費：おひとり <b>3,000円</b>（予定）・当日現金で回収<br>🏆 午後は長野Uスタジアムに <b>12:20集合</b>（吉田高校から車で約30分）</div>
+      <div class="hint" style="text-align:center;margin-bottom:6px">💰 参加費：おひとり <b>3,000円</b>・当日現金で回収（<b>予定</b>／変更の可能性あり）<br>🥤 飲み物は基本的に各自でご準備を<br>🏆 午後は長野Uスタジアムに <b>12:20集合</b>（吉田高校から車で約30分）</div>
       <div class="row">
         <button type="submit" class="btn btn-primary btn-block" id="submitBtn">登録する</button>
       </div>
@@ -996,6 +1039,14 @@ function celebrate(){
     else ctx.clearRect(0,0,cv.width,cv.height);
   })();
 }
+
+/* ---------- 右上メニュー（PCはホバー、スマホはタップ） ---------- */
+const nav = $("#nav");
+$("#navBtn").onclick = e => { e.stopPropagation(); nav.classList.toggle("open"); };
+nav.querySelectorAll(".nav-list a").forEach(a=>a.onclick=()=>nav.classList.remove("open"));
+// 「出欠を登録する」はスクロールではなく直接フォームを開く
+nav.querySelector(".nav-list a.cta").onclick = e => { e.preventDefault(); nav.classList.remove("open"); openNew(); };
+document.addEventListener("click", e => { if(!nav.contains(e.target)) nav.classList.remove("open"); });
 
 /* ---------- 接続エラー表示 ---------- */
 function showFatal(err){
