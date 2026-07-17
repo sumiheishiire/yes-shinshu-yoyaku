@@ -183,6 +183,57 @@
 
   .empty{color:var(--muted);text-align:center;padding:26px;background:#fff;border:1px dashed #d4ded4;border-radius:14px;font-weight:600}
 
+  /* ===== 当日のながれ（タイムライン） ===== */
+  .tl{position:relative;padding-left:8px}
+  .tl-item{display:flex;gap:14px;position:relative;padding-bottom:16px}
+  .tl-item:last-child{padding-bottom:0}
+  .tl-item::before{content:"";position:absolute;left:7px;top:22px;bottom:-4px;width:2px;background:#dce7dd}
+  .tl-item:last-child::before{display:none}
+  .tl-dot{width:16px;height:16px;border-radius:50%;background:#fff;border:3px solid var(--pitch);flex-shrink:0;margin-top:4px;z-index:1}
+  .tl-item.key .tl-dot{border-color:var(--gold);background:var(--gold);box-shadow:0 0 0 4px rgba(244,197,66,.25)}
+  .tl-time{font-family:"Bebas Neue",sans-serif;font-size:19px;color:var(--pitch-dark);min-width:104px;letter-spacing:.03em;padding-top:2px}
+  .tl-body b{display:block;font-size:15px;line-height:1.4}
+  .tl-body span{font-size:13px;color:var(--muted);font-weight:600}
+  .tl-body .place{display:inline-block;font-size:11px;font-weight:800;background:#eef8f1;color:var(--pitch-dark);border:1px solid #cfe7d7;border-radius:6px;padding:2px 7px;margin-top:4px}
+  .tl-body .place.stadium{background:#fff7e3;color:#8a6410;border-color:#f1dca0}
+  .tl-note{font-size:12px;color:var(--muted);font-weight:600;background:#f7faf6;border:1px dashed #d9e4da;border-radius:10px;padding:10px 12px;margin-top:14px;line-height:1.7}
+
+  /* ===== 情報リスト ===== */
+  .info-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:0 24px}
+  .info-row{display:flex;gap:12px;padding:9px 0;border-bottom:1px solid #eef3ee;font-size:13.5px}
+  .info-row dt{font-weight:800;color:var(--muted);min-width:82px;flex-shrink:0;font-size:12.5px}
+  .info-row dd{margin:0;font-weight:600;line-height:1.6}
+
+  /* ===== FAQ ===== */
+  .faq{background:#fff;border:1px solid #e6efe6;border-radius:14px;margin-bottom:8px;overflow:hidden}
+  .faq summary{
+    cursor:pointer;padding:15px 16px;font-weight:800;font-size:14.5px;list-style:none;
+    display:flex;align-items:center;gap:10px;transition:background .15s;
+  }
+  .faq summary::-webkit-details-marker{display:none}
+  .faq summary:hover{background:#f6faf5}
+  .faq summary .q{background:var(--pitch);color:#fff;width:22px;height:22px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0;font-family:"Bebas Neue",sans-serif}
+  .faq summary .arw{margin-left:auto;color:#b9c4bb;transition:transform .2s;flex-shrink:0}
+  .faq[open] summary .arw{transform:rotate(90deg)}
+  .faq[open] summary{background:#f4f9f3;border-bottom:1px solid #eef3ee}
+  .faq .a{padding:14px 16px 16px 48px;font-size:13.5px;line-height:1.85;color:#33473a;font-weight:500}
+  .faq .a b{color:var(--pitch-dark)}
+
+  /* ===== 質問コーナー ===== */
+  .qbox{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
+  .qbox input{flex:1;min-width:180px;padding:12px 14px;border:2px solid #e0e8e0;border-radius:11px;font-size:15px;font-family:inherit}
+  .qbox input:focus{outline:none;border-color:var(--pitch)}
+  .qbox input.nm{max-width:130px;flex:0 0 auto}
+  .qitem{background:#fff;border:1px solid #e6efe6;border-radius:14px;padding:14px 16px;margin-bottom:8px}
+  .qitem .qq{display:flex;gap:9px;font-weight:800;font-size:14px;line-height:1.5}
+  .qitem .qq .mk{color:var(--pitch);font-family:"Bebas Neue",sans-serif;font-size:17px;flex-shrink:0}
+  .qitem .who{font-size:11px;color:#b9c4bb;font-weight:700;margin-left:auto;flex-shrink:0;white-space:nowrap}
+  .qitem .aa{display:flex;gap:9px;margin-top:10px;padding-top:10px;border-top:1px dashed #e6efe6;font-size:13.5px;line-height:1.75;font-weight:500;color:#33473a}
+  .qitem .aa .mk{color:var(--gold);font-family:"Bebas Neue",sans-serif;font-size:17px;flex-shrink:0}
+  .qitem .pending{margin-top:8px;font-size:12px;color:var(--muted);font-weight:700}
+  .qitem textarea{width:100%;margin-top:8px;padding:10px;border:2px solid #e0e8e0;border-radius:9px;font-family:inherit;font-size:13px;resize:vertical;min-height:60px}
+  .qitem textarea:focus{outline:none;border-color:var(--pitch)}
+
   /* 幹事メニューの表 */
   .atbl{border-collapse:collapse;width:100%;font-size:13px;white-space:nowrap}
   .atbl th{background:#f2f8f2;text-align:left;font-size:11px;color:var(--muted);padding:8px 10px;border-bottom:2px solid #e3ede2}
@@ -236,7 +287,7 @@
 <header class="hero">
   <span class="kicker"><span class="dot"></span>NAGANO YOSHIDA × NAGANO — OB MATCH 2026</span>
   <h1 class="title">長野吉田高校サッカー班<br><span class="x">×</span>長野高校 合同OB戦</h1>
-  <p class="subtitle">あの頃のピッチに、もう一度集合。ユニフォーム引っ張り出して行こう ⚽️🔥</p>
+  <p class="subtitle">J3・AC長野パルセイロが戦う本物のピッチに、僕らが立つ。<br>ほとんどのメンバーが初めての舞台です。当日を楽しみ切るために、今日から少しずつ体を動かしておきましょう ⚽️🔥</p>
   <div class="vamos">
     <span class="issen">一 戦 必 勝</span>
     <div class="row2">
@@ -303,6 +354,167 @@
     </p>
   </section>
 
+  <!-- 当日のながれ -->
+  <section class="blk">
+    <div class="blk-head"><h2>⏱ 当日のながれ</h2></div>
+    <div class="panel">
+      <div class="tl">
+        <div class="tl-item">
+          <span class="tl-dot"></span>
+          <span class="tl-time">9:30〜</span>
+          <div class="tl-body"><b>AM OB戦（吉田OBのみ）</b>
+            <span>まずは母校のグラウンドで足慣らし</span><br>
+            <span class="place">📍 長野吉田高校グラウンド</span></div>
+        </div>
+        <div class="tl-item">
+          <span class="tl-dot"></span>
+          <span class="tl-time">移動</span>
+          <div class="tl-body"><b>長野Uスタジアムへ</b>
+            <span>南長野運動公園へ移動します</span></div>
+        </div>
+        <div class="tl-item key">
+          <span class="tl-dot"></span>
+          <span class="tl-time">12:05〜12:20</span>
+          <div class="tl-body"><b>吉田高校OB 打ち合わせ</b>
+            <span>カテゴリ分け・進行の確認</span><br>
+            <span class="place stadium">🏟 長野Uスタジアム</span></div>
+        </div>
+        <div class="tl-item key">
+          <span class="tl-dot"></span>
+          <span class="tl-time">12:20〜12:35</span>
+          <div class="tl-body"><b>📸 全体写真撮影</b>
+            <span>全員で記念の一枚。ここは外せません</span></div>
+        </div>
+        <div class="tl-item key">
+          <span class="tl-dot"></span>
+          <span class="tl-time">12:35〜15:25</span>
+          <div class="tl-body"><b>🏆 交流戦 ①〜⑥（長野OB vs 吉田OB）</b>
+            <span>over45 / U35 / U45 のカテゴリ別に、20分ゲームを6本</span></div>
+        </div>
+        <div class="tl-item">
+          <span class="tl-dot"></span>
+          <span class="tl-time">15:25〜15:35</span>
+          <div class="tl-body"><b>閉会式</b></div>
+        </div>
+      </div>
+      <div class="tl-note">
+        ※ 交流戦の組み合わせ・時間は<b>参加申込状況によって変更</b>になります（大会要項より）。<br>
+        ※ 大会全体は 10:30 開会式スタート。午前中は長野高校の現役戦が行われ、<b>吉田OBは午後から合流</b>する流れです。
+      </div>
+    </div>
+  </section>
+
+  <!-- 大会について -->
+  <section class="blk">
+    <div class="blk-head"><h2>🏟 大会について</h2></div>
+    <div class="panel">
+      <div class="info-grid">
+        <div>
+          <dl class="info-row"><dt>大会名</dt><dd>第1回 長野市生涯サッカー大会</dd></dl>
+          <dl class="info-row"><dt>主催</dt><dd>長野市生涯サッカー大会実行委員会</dd></dl>
+          <dl class="info-row"><dt>体制</dt><dd>会長：鷲澤幸一／副会長：堀江三定<br>運営事務局：森山祐樹、玉木充</dd></dl>
+          <dl class="info-row"><dt>後援</dt><dd>長野市</dd></dl>
+        </div>
+        <div>
+          <dl class="info-row"><dt>会場</dt><dd>南長野運動公園 長野Uスタジアム<br><span style="color:var(--muted);font-size:12px">AC長野パルセイロのホームスタジアム</span></dd></dl>
+          <dl class="info-row"><dt>参加</dt><dd>長野高校（現役・OB）<br>長野吉田高校（現役・OB）</dd></dl>
+          <dl class="info-row"><dt>ピッチ</dt><dd>105m × 68m／公認5号球</dd></dl>
+          <dl class="info-row"><dt>審判</dt><dd>有資格者 4名程度</dd></dl>
+        </div>
+      </div>
+      <div class="tl-note" style="margin-top:16px">
+        🎯 <b>大会の目的</b>：地域での生涯スポーツの推進と世代間交流、そしてホームスタジアムへの理解促進。
+        記念すべき「第1回」の舞台に、僕らが立ちます。
+      </div>
+    </div>
+  </section>
+
+  <!-- 会場・設備 -->
+  <section class="blk">
+    <div class="blk-head"><h2>🚿 会場の設備・持ち物</h2></div>
+    <div class="panel">
+      <div class="info-grid">
+        <div>
+          <dl class="info-row"><dt>更衣室</dt><dd>使用可（<b>シャワー・洗面つき</b>）</dd></dl>
+          <dl class="info-row"><dt>ウォームアップ</dt><dd>専用エリアが使えます</dd></dl>
+          <dl class="info-row"><dt>キッチンカー</dt><dd>出店予定（複数店舗）<br><span style="color:var(--muted);font-size:12px">駐車場エリア／試合後の交流会も</span></dd></dl>
+          <dl class="info-row"><dt>観覧</dt><dd>メインスタンドのみ<br><span style="color:var(--muted);font-size:12px">ご家族・ご友人の応援もぜひ</span></dd></dl>
+        </div>
+        <div>
+          <dl class="info-row"><dt>ウェア</dt><dd><b>当日ビブスを配布します</b><br><span style="color:var(--muted);font-size:12px">動きやすい服装でお越しください</span></dd></dl>
+          <dl class="info-row"><dt>持ち物</dt><dd>スパイク／飲み物／着替え・タオル<br>参加費 3,000円（現金）</dd></dl>
+          <dl class="info-row"><dt>飲み物</dt><dd>一定量は用意しますが<b>各自持参</b>を</dd></dl>
+          <dl class="info-row"><dt>保険</dt><dd>スポーツ保険に加入予定</dd></dl>
+        </div>
+      </div>
+      <div class="tl-note" style="margin-top:16px">
+        💦 試合前にはピッチへ<b>散水</b>も入ります。パルセイロが戦うそのままのコンディションで。<br>
+        ⚠️ けが・熱中症の予防は、十分な自己管理をお願いします。真夏の開催です。
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="blk">
+    <div class="blk-head"><h2>❓ よくある質問</h2></div>
+
+    <details class="faq"><summary><span class="q">Q</span>何を着ていけばいい？ユニフォームは必要？<span class="arw">›</span></summary>
+      <div class="a"><b>ユニフォームは不要です。当日ビブスを配布します。</b>動きやすいウェアとスパイクだけご用意ください。久しぶりの方も、手ぶら感覚で大丈夫です。</div></details>
+
+    <details class="faq"><summary><span class="q">Q</span>何時にどこへ行けばいい？<span class="arw">›</span></summary>
+      <div class="a">午前は <b>9:30〜 長野吉田高校グラウンド</b>でOB戦。午後は <b>長野Uスタジアム</b>へ移動し、<b>12:05からの打ち合わせ</b>に間に合うようお越しください。12:20からは全体写真撮影です。</div></details>
+
+    <details class="faq"><summary><span class="q">Q</span>午後だけ／午前だけの参加でもいい？<span class="arw">›</span></summary>
+      <div class="a">もちろんOKです。申込フォームで「AMのOB戦にも参加するか」を選べます。<b>メインは午後の合同OB戦</b>なので、午後からの合流でも全く問題ありません。</div></details>
+
+    <details class="faq"><summary><span class="q">Q</span>どのカテゴリで試合に出るの？<span class="arw">›</span></summary>
+      <div class="a">交流戦は <b>over45 / U35 / U45</b> のカテゴリに分かれて行います。申込時の年齢をもとに、当日の打ち合わせで振り分けます。希望があれば下の質問コーナーからどうぞ。</div></details>
+
+    <details class="faq"><summary><span class="q">Q</span>体力に自信がない…久しぶりでも大丈夫？<span class="arw">›</span></summary>
+      <div class="a"><b>大丈夫です。交代は自由交代制</b>（交代用紙も不要）なので、無理のない範囲でピッチに立てます。1本20分のゲームです。とはいえ真夏なので、<b>今日から少しずつ体を動かして</b>当日を迎えましょう 💪</div></details>
+
+    <details class="faq"><summary><span class="q">Q</span>着替える場所やシャワーはある？<span class="arw">›</span></summary>
+      <div class="a">あります。<b>チーム更衣室（シャワー・洗面つき）</b>が使えます。ウォームアップ用のエリアも確保済みです。</div></details>
+
+    <details class="faq"><summary><span class="q">Q</span>家族や友人は見に行ける？<span class="arw">›</span></summary>
+      <div class="a">観覧は<b>メインスタンドのみ</b>ご利用いただけます（他エリアは閉鎖）。キッチンカーも出るので、ご家族で楽しんでいただけます。</div></details>
+
+    <details class="faq"><summary><span class="q">Q</span>飲み物や食事は？<span class="arw">›</span></summary>
+      <div class="a">飲み物は一定量を用意しますが、<b>各自でのご持参をお願いします</b>。当日は<b>キッチンカーが複数店舗出店予定</b>で、試合後はそのまま交流会も楽しめます。</div></details>
+
+    <details class="faq"><summary><span class="q">Q</span>参加費は？当日払える？<span class="arw">›</span></summary>
+      <div class="a"><b>おひとり 3,000円（予定）・当日現金で回収</b>します。お釣りのないようご用意いただけると助かります。</div></details>
+
+    <details class="faq"><summary><span class="q">Q</span>雨が降ったらどうなる？<span class="arw">›</span></summary>
+      <div class="a"><b>雨天決行</b>です。ただし雷が発生した時点でゲームは中断し、再開は本部の指示に従います。再開の見込みが立たない場合は中止となります。</div></details>
+
+    <details class="faq"><summary><span class="q">Q</span>けがや熱中症が心配<span class="arw">›</span></summary>
+      <div class="a">OB会としてお申込みいただいた方は<b>スポーツ保険に加入予定</b>です。大会は JFA「熱中症対策ガイドライン」に沿って実施します。とはいえ真夏の開催ですので、<b>予防・対応は十分な自己管理</b>をお願いします。</div></details>
+
+    <details class="faq"><summary><span class="q">Q</span>駐車場はどこ？<span class="arw">›</span></summary>
+      <div class="a"><span style="background:#fff2d1;color:#a9791b;padding:2px 8px;border-radius:6px;font-weight:800;font-size:12px">確認中</span> スタジアムへの入場方法とあわせて、決まり次第このページでご案内します。</div></details>
+
+    <details class="faq"><summary><span class="q">Q</span>申込内容を後から変えられる？<span class="arw">›</span></summary>
+      <div class="a">いつでも変更できます。このページの自分のカードから「✏️ 変更」で修正できますし、<b>一度「欠席」で出しても、後から「やっぱり参加！」に変更OK</b>です。まずは気軽に登録してください 🙌</div></details>
+  </section>
+
+  <!-- 質問コーナー -->
+  <section class="blk">
+    <div class="blk-head"><h2>💬 質問コーナー</h2><span class="count" id="cntQ">0</span></div>
+    <div class="panel">
+      <p style="margin:0 0 12px;font-size:13px;color:var(--muted);font-weight:600">
+        上にない疑問はこちらへ。事務局が回答して、みんなに見えるようにします。
+      </p>
+      <div class="qbox">
+        <input type="text" id="qName" class="nm" placeholder="お名前（任意）" autocomplete="off">
+        <input type="text" id="qText" placeholder="例）スパイクは固定式でも大丈夫ですか？" autocomplete="off">
+        <button class="btn btn-primary btn-sm" id="qSend" style="padding:12px 20px">質問する</button>
+      </div>
+      <div id="qList"></div>
+      <div class="empty" id="qEmpty">まだ質問はありません。どんなことでもお気軽に 💬</div>
+    </div>
+  </section>
+
   <!-- 幹事専用（URLに ?admin を付けたときだけ表示） -->
   <section class="blk" id="adminBlk" style="display:none">
     <div class="blk-head"><h2>🔑 幹事メニュー</h2><span class="count gray" id="cntAll">0</span></div>
@@ -364,7 +576,7 @@
         <input type="tel" id="fPhone" placeholder="090-1234-5678" autocomplete="off" required>
         <div class="hint">当日の連絡用。一覧には出ません（幹事のみ確認）。</div>
       </div>
-      <div class="hint" style="text-align:center;margin-bottom:6px">💰 参加費：おひとり <b>3,000円</b>（予定）・当日現金で回収／🏆 12:30〜15:00頃・長野Uスタジアム</div>
+      <div class="hint" style="text-align:center;margin-bottom:6px">💰 参加費：おひとり <b>3,000円</b>（予定）・当日現金で回収<br>🏆 午後は長野Uスタジアム（12:05 打ち合わせ／12:35〜 交流戦）</div>
       <div class="row">
         <button type="submit" class="btn btn-primary btn-block" id="submitBtn">登録する</button>
       </div>
@@ -404,12 +616,13 @@ const GOAL = 40;
    ・既存の artifacts/{appId}/public/** ルールがそのまま効くため、
      Firebaseコンソールでの追加設定は不要です。
    ============================================================ */
-const PATH = ["artifacts", "ob-soccer-2026", "public", "data", "entries"];
+const PATH   = ["artifacts", "ob-soccer-2026", "public", "data", "entries"];
+const PATH_Q = ["artifacts", "ob-soccer-2026", "public", "data", "questions"];
 const SCHEMA = 1;   // 項目を増やしたら数字を上げる。既存データは消さず、無い項目は既定値で表示。
 
 /* ---------- ストレージ抽象化（Firestore or ローカル） ---------- */
 const configured = !!firebaseConfig.apiKey && firebaseConfig.apiKey.length > 10;
-let store;
+let store, qstore;
 
 if (configured) {
   const { initializeApp } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js");
@@ -434,6 +647,14 @@ if (configured) {
     async update(id,patch){ await fs.updateDoc(fs.doc(db,...PATH,id),{...patch,updatedAt:Date.now()}); },
     async remove(id){ await fs.deleteDoc(fs.doc(db,...PATH,id)); }
   };
+
+  const colQ = fs.collection(db, ...PATH_Q);
+  qstore = {
+    subscribe(cb){ fs.onSnapshot(colQ, snap => cb(snap.docs.map(d=>({id:d.id,...d.data()}))), err=>console.error(err)); },
+    async add(data){ await fs.addDoc(colQ,{...data,createdAt:Date.now()}); },
+    async update(id,patch){ await fs.updateDoc(fs.doc(db,...PATH_Q,id),{...patch,answeredAt:Date.now()}); },
+    async remove(id){ await fs.deleteDoc(fs.doc(db,...PATH_Q,id)); }
+  };
 } else {
   const KEY = "ob2026_local";
   const read = ()=>{ try{return JSON.parse(localStorage.getItem(KEY)||"[]")}catch{return[]} };
@@ -449,6 +670,19 @@ if (configured) {
     async update(id,patch){ const a=read(); const i=a.findIndex(x=>x.id===id);
       if(i>=0){a[i]={...a[i],...patch,updatedAt:Date.now()}; write(a); emit();} },
     async remove(id){ write(read().filter(x=>x.id!==id)); emit(); }
+  };
+
+  // 質問コーナー（デモモード用）
+  const KQ = "ob2026_local_q";
+  const readQ = ()=>{ try{return JSON.parse(localStorage.getItem(KQ)||"[]")}catch{return[]} };
+  const writeQ = a=>localStorage.setItem(KQ,JSON.stringify(a));
+  let lq=[]; const emitQ = ()=>{ const a=readQ(); lq.forEach(cb=>cb(a)); };
+  qstore = {
+    subscribe(cb){ lq.push(cb); cb(readQ()); },
+    async add(data){ const a=readQ(); a.push({id:"q"+Date.now(),...data,createdAt:Date.now()}); writeQ(a); emitQ(); },
+    async update(id,patch){ const a=readQ(); const i=a.findIndex(x=>x.id===id);
+      if(i>=0){a[i]={...a[i],...patch,answeredAt:Date.now()}; writeQ(a); emitQ();} },
+    async remove(id){ writeQ(readQ().filter(x=>x.id!==id)); emitQ(); }
   };
 }
 
@@ -532,6 +766,54 @@ function render(){
 
   if(isAdmin) renderAdmin();
 }
+
+/* ---------- 質問コーナー ---------- */
+let allQ = [];
+function renderQ(){
+  const rows = [...allQ].sort((a,b)=>(a.createdAt||0)-(b.createdAt||0));
+  $("#cntQ").textContent = rows.length;
+  $("#qEmpty").style.display = rows.length? "none":"block";
+  $("#qList").innerHTML = rows.map(q=>`
+    <div class="qitem">
+      <div class="qq"><span class="mk">Q</span><span>${esc(q.text)}</span>
+        <span class="who">${q.by? esc(q.by)+" さん":"匿名"}</span></div>
+      ${q.answer
+        ? `<div class="aa"><span class="mk">A</span><span>${esc(q.answer).replace(/\n/g,"<br>")}</span></div>`
+        : `<div class="pending">⏳ 事務局が回答予定です</div>`}
+      ${isAdmin? `
+        <textarea data-ans="${q.id}" placeholder="回答を入力…">${esc(q.answer||"")}</textarea>
+        <div style="display:flex;gap:6px;margin-top:6px">
+          <button class="mini" data-save="${q.id}">💾 回答を保存</button>
+          <button class="mini" data-delq="${q.id}" style="color:#b04a4a">削除</button>
+        </div>`:""}
+    </div>`).join("");
+
+  if(isAdmin){
+    $("#qList").querySelectorAll("[data-save]").forEach(b=>b.onclick=async()=>{
+      const id=b.dataset.save;
+      const val=$(`textarea[data-ans="${id}"]`).value.trim();
+      await qstore.update(id,{answer:val});
+      showToast("回答を保存しました ✅");
+    });
+    $("#qList").querySelectorAll("[data-delq]").forEach(b=>b.onclick=async()=>{
+      if(!confirm("この質問を削除しますか？")) return;
+      await qstore.remove(b.dataset.delq);
+      showToast("削除しました");
+    });
+  }
+}
+$("#qSend").onclick=async()=>{
+  const text=$("#qText").value.trim();
+  if(!text){ $("#qText").focus(); return; }
+  $("#qSend").disabled=true;
+  try{
+    await qstore.add({ text, by:$("#qName").value.trim(), answer:"" });
+    $("#qText").value="";
+    showToast("質問を受け付けました 💬 回答をお待ちください");
+  }catch(e){ alert("送信に失敗しました: "+e.message); }
+  finally{ $("#qSend").disabled=false; }
+};
+$("#qText").addEventListener("keydown",e=>{ if(e.key==="Enter") $("#qSend").click(); });
 
 /* ---------- 幹事メニュー ---------- */
 const fmtDate = t => t? new Date(t).toLocaleString("ja-JP",{month:"numeric",day:"numeric",hour:"2-digit",minute:"2-digit"}) : "";
@@ -734,6 +1016,7 @@ if(!configured){
 
 /* ---------- 購読開始（すべての定義の後に実行する） ---------- */
 store.subscribe(list=>{ all=list; render(); });
+qstore.subscribe(list=>{ allQ=list; renderQ(); });
 </script>
 
 <!--
