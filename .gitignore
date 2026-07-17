@@ -1,0 +1,12 @@
+# このリポジトリ(yes-shinshu-yoyaku)はデスクトップ直下に置かれている。
+# デスクトップの中身が丸ごと `git add -A` で巻き込まれるのを防ぐため、
+# 予約サイトの実体ファイル以外はすべて無視する。
+#
+# 公開先: https://sumiheishiire.github.io/yes-shinshu-yoyaku/
+# 新しくサイトのファイルを追加するときだけ、ここに `!ファイル名` を足すこと。
+
+/*
+!.gitignore
+!index.html
+!yoyaku.html
+!ob2026.html
