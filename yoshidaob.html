@@ -780,10 +780,10 @@ const NAGANO_OB = null;
      EmailJSで「OB戦用テンプレート」を1つ作り、そのIDをここに入れると有効化。
    ============================================================ */
 const OB_MAIL = {
-  publicKey : "y4J5H5bPwVvndW-5o",   // 予約サイトと同じEmailJSアカウント
-  serviceId : "service_5btx6ge",     // 同上
-  templateId: "",                    // ← ここにOB戦用テンプレートIDを入れると有効化
-  to        : "sumiheishiire@gmail.com",  // 通知先（幹事）。複数は "a@x.com, b@y.com"
+  publicKey : "Bw4aGe4Gy1wAmQKpA",   // OB戦専用の新規EmailJSアカウント（予約サイトとは別・枠を分離）
+  serviceId : "service_ofpxbs6",     // 同アカウント内のGmail連携
+  templateId: "template_itw97r9",    // OB戦用テンプレート（有効化済み）
+  to        : "tmkmtr112233@gmail.com",  // 通知先（幹事）。複数は "a@x.com, b@y.com"
   sendOnEdit: false                  // 変更・削除も通知するなら true（無料枠：月200通に注意）
 };
 if (window.emailjs && OB_MAIL.publicKey) { try { emailjs.init(OB_MAIL.publicKey); } catch(_){} }
