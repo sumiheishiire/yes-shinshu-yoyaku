@@ -118,7 +118,8 @@
   .vamos .word{font-family:"Bebas Neue",sans-serif;font-size:clamp(30px,8vw,48px);letter-spacing:.05em;color:#fff;text-shadow:0 3px 10px rgba(0,0,0,.35);line-height:1}
   .vamos .crest{width:48px;height:48px;border-radius:50%;background:rgba(255,255,255,.14);border:2px solid rgba(255,255,255,.7);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:26px;color:#fff;flex-shrink:0}
 
-  .countdown{display:flex;justify-content:center;gap:10px;margin-top:26px;flex-wrap:wrap}
+  .cd-cap{margin-top:24px;font-size:12.5px;font-weight:800;letter-spacing:.04em;opacity:.9}
+  .countdown{display:flex;justify-content:center;gap:10px;margin-top:10px;flex-wrap:wrap}
   .cd{min-width:74px;background:rgba(0,0,0,.20);border:1px solid var(--line);border-radius:14px;padding:12px 6px}
   .cd b{display:block;font-family:"Bebas Neue",sans-serif;font-size:38px;line-height:1;letter-spacing:.02em;color:#fff}
   .cd span{display:block;font-size:11px;letter-spacing:.12em;opacity:.8;margin-top:6px}
@@ -367,6 +368,7 @@
     <span class="chip">📅 2026年8月14日（金）</span>
     <span class="chip">📍 長野Uスタジアム（PM）</span>
   </div>
+  <div class="cd-cap">⚽️ AM OB戦キックオフ（9:30〜 長野吉田高校グラウンド）まで</div>
   <div class="countdown" id="countdown">
     <div class="cd"><b id="cd-d">--</b><span>DAYS</span></div>
     <div class="cd"><b id="cd-h">--</b><span>HOURS</span></div>
@@ -378,7 +380,7 @@
 <div class="wrap board">
   <div class="panel">
     <div class="goalhead">
-      <div class="big"><span id="attendCount">0</span><small>/ 目標 40名</small></div>
+      <div class="big"><span id="attendCount">0</span><small>/ 合同OB戦 目標40名</small></div>
       <div class="msg" id="goalMsg">仲間を集めよう！</div>
     </div>
     <div class="bar"><i id="barFill"></i><span class="goalmark"></span></div>
@@ -690,7 +692,7 @@ const firebaseConfig = {
   messagingSenderId: "664348645067",
   appId: "1:664348645067:web:5cd634d0736da0f7dd6d4e"
 };
-const EVENT_DATE = new Date("2026-08-14T09:00:00+09:00");
+const EVENT_DATE = new Date("2026-08-14T09:30:00+09:00");   // AM OB戦キックオフ（カウントダウンの目標）
 const GOAL = 40;
 
 /* ============================================================
@@ -808,24 +810,25 @@ function render(){
   const absent = all.filter(p=>!isJoining(p)).sort(byCreated);
   const pmPlay = attend.filter(p=>norm(p).pm==="play").length;
   const pmWatch= attend.filter(p=>norm(p).pm==="watch").length;
+  const pmCount= pmPlay+pmWatch;   // 目標40名の対象＝PM合同OB戦の出席者
   const amN    = attend.filter(p=>norm(p).am==="yes").length;
 
-  // カウンター
-  animateNum($("#attendCount"), attend.length);
-  $("#msPm").textContent=pmPlay+pmWatch;
+  // カウンター（大きな数字＝PM合同OB戦の出席者で目標40名）
+  animateNum($("#attendCount"), pmCount);
+  $("#msPm").textContent=pmCount;
   $("#msPmBrk").textContent=`プレー${pmPlay}・見学${pmWatch}`;
   $("#msAm").textContent=amN;
   $("#msPend").textContent=absent.length;
   $("#cntAttend").textContent=attend.length;
   $("#cntPend").textContent=absent.length;
 
-  // プログレスバー（参加メンバー総数 / 目標40名）
-  const pct=Math.min(100, attend.length/GOAL*100);
+  // プログレスバー（PM合同OB戦の出席者 / 目標40名）
+  const pct=Math.min(100, pmCount/GOAL*100);
   $("#barFill").style.width=pct+"%";
-  const remain=GOAL-attend.length;
+  const remain=GOAL-pmCount;
   $("#goalMsg").innerHTML = remain>0
-    ? `40名まで <span class="hl">あと${remain}</span>名！`
-    : `🎉 <span class="hl">${attend.length}</span>名 目標達成！`;
+    ? `合同OB戦 40名まで <span class="hl">あと${remain}</span>名！`
+    : `🎉 合同OB戦 <span class="hl">${pmCount}</span>名 目標達成！`;
 
   // 参加グリッド
   const g=$("#attendGrid");
@@ -1085,7 +1088,7 @@ $("#delBtn").onclick=async()=>{
 /* ---------- カウントダウン ---------- */
 function tick(){
   const now=new Date(), diff=EVENT_DATE-now;
-  if(diff<=0){ $("#countdown").innerHTML='<div class="cd" style="min-width:auto;padding:12px 20px"><b style="font-size:24px">⚽️ 当日！</b></div>'; return; }
+  if(diff<=0){ const cap=$(".cd-cap"); if(cap) cap.textContent="⚽️ いよいよキックオフ！"; $("#countdown").innerHTML='<div class="cd" style="min-width:auto;padding:12px 20px"><b style="font-size:24px">⚽️ 当日！</b></div>'; return; }
   const d=Math.floor(diff/864e5), h=Math.floor(diff/36e5)%24, m=Math.floor(diff/6e4)%60, s=Math.floor(diff/1e3)%60;
   $("#cd-d").textContent=d; $("#cd-h").textContent=String(h).padStart(2,"0");
   $("#cd-m").textContent=String(m).padStart(2,"0"); $("#cd-s").textContent=String(s).padStart(2,"0");
