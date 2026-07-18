@@ -328,6 +328,31 @@
   .setup b{color:#5f4408}
   .setup code{background:#fff;border:1px solid #eadfbf;padding:1px 6px;border-radius:6px;font-size:12px}
 
+  /* 過去の実績グラフ */
+  .hist-lead{background:linear-gradient(135deg,#0f7a41,#0a5b30);color:#fff;border-radius:16px;padding:18px 20px;margin-bottom:14px}
+  .hist-lead .big{font-family:"Bebas Neue",sans-serif;font-size:clamp(30px,8vw,46px);line-height:1;color:var(--gold-soft)}
+  .hist-lead .big small{font-family:"Noto Sans JP";font-size:15px;font-weight:800;color:#fff;margin-left:4px}
+  .hist-lead p{margin:8px 0 0;font-size:13px;font-weight:600;opacity:.95;line-height:1.7}
+  .chart-wrap{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  @media(max-width:640px){.chart-wrap{grid-template-columns:1fr}}
+  .chart{background:#fff;border:1px solid #e6efe6;border-radius:16px;padding:16px 18px;box-shadow:0 4px 14px rgba(8,61,34,.06)}
+  .chart h3{margin:0 0 2px;font-size:15px;font-weight:900}
+  .chart .sub{font-size:11.5px;color:var(--muted);font-weight:600;margin-bottom:16px}
+  .vbars{display:flex;align-items:flex-end;gap:10px;height:150px}
+  .vbar{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%}
+  .vbar .col{width:100%;max-width:44px;background:linear-gradient(180deg,#2fb567,var(--pitch));border-radius:8px 8px 0 0;position:relative;min-height:3px}
+  .vbar .col .v{position:absolute;top:-19px;left:50%;transform:translateX(-50%);font-family:"Bebas Neue",sans-serif;font-size:18px;color:var(--pitch-dark);white-space:nowrap}
+  .vbar .col.now{background:linear-gradient(180deg,var(--gold),#e0a92c)}
+  .vbar .col.now .v{color:#a9791b}
+  .vbar .lb{margin-top:8px;font-size:11.5px;font-weight:800;color:var(--muted);text-align:center;line-height:1.3}
+  .hbars{display:flex;flex-direction:column;gap:9px}
+  .hbar{display:grid;grid-template-columns:56px 1fr;align-items:center;gap:10px}
+  .hbar>.lb{font-size:12px;font-weight:800;text-align:right;color:var(--ink)}
+  .hbar .track{background:#eef3ee;border-radius:999px;height:22px;overflow:hidden}
+  .hbar .fill{height:100%;border-radius:999px;background:linear-gradient(90deg,var(--pitch),#2fb567);display:flex;align-items:center;justify-content:flex-end;padding-right:8px;color:#fff;font-size:11px;font-weight:800;min-width:26px}
+  .hbar .fill.y{background:linear-gradient(90deg,#c9932a,var(--gold));color:#4a3400}
+  .hist-note{margin-top:12px;font-size:12px;color:var(--muted);font-weight:600;line-height:1.7;text-align:center}
+
   footer{text-align:center;color:var(--muted);font-size:12px;padding:40px 18px 30px;line-height:1.8}
 
   #confetti{position:fixed;inset:0;pointer-events:none;z-index:200}
@@ -346,6 +371,7 @@
     <a href="#members">🔥 参加メンバー</a>
     <a href="#schedule">⏱ 当日のながれ</a>
     <a href="#about">🏟 大会について</a>
+    <a href="#history">📊 これまでのOB戦</a>
     <a href="#facility">🚿 設備・持ち物</a>
     <a href="#faq">❓ よくある質問</a>
     <a href="#qa">💬 質問コーナー</a>
@@ -498,6 +524,40 @@
         記念すべき「第1回」の舞台に、僕らが立ちます。
       </div>
     </div>
+  </section>
+
+  <!-- これまでのOB戦 -->
+  <section class="blk" id="history">
+    <div class="blk-head"><h2>📊 これまでのOB戦</h2></div>
+    <div class="hist-lead">
+      <div class="big">100<small>名超</small></div>
+      <p>AMの吉田OB戦は、<b>現役生を含めて毎年100名超</b>が母校グラウンドに集まる恒例のビッグイベント。OBの参加も年々増えています。今年もAMは<b>100名超</b>、PM合同OB戦は初開催で<b>40名</b>を目標に。<b>AMもPMも、ぜひ一緒に！</b></p>
+    </div>
+    <div class="chart-wrap">
+      <div class="chart">
+        <h3>OB参加者の推移</h3>
+        <div class="sub">過去の申込フォーム登録者数（OB分・現役生は別）</div>
+        <div class="vbars">
+          <div class="vbar"><div class="col" style="height:67%"><span class="v">33</span></div><div class="lb">2022</div></div>
+          <div class="vbar"><div class="col" style="height:96%"><span class="v">47</span></div><div class="lb">2023</div></div>
+          <div class="vbar"><div class="col" style="height:100%"><span class="v">49</span></div><div class="lb">2024</div></div>
+          <div class="vbar"><div class="col" style="height:100%"><span class="v">49</span></div><div class="lb">2025</div></div>
+          <div class="vbar"><div class="col now" style="height:100%"><span class="v">?</span></div><div class="lb">2026<br>あなたも</div></div>
+        </div>
+      </div>
+      <div class="chart">
+        <h3>参加者の世代</h3>
+        <div class="sub">過去4年の延べ参加者・年代別（2026年時点の目安）</div>
+        <div class="hbars">
+          <div class="hbar"><span class="lb">〜20代</span><div class="track"><div class="fill y" style="width:100%">91</div></div></div>
+          <div class="hbar"><span class="lb">30代</span><div class="track"><div class="fill" style="width:43%">39</div></div></div>
+          <div class="hbar"><span class="lb">40代</span><div class="track"><div class="fill" style="width:44%">40</div></div></div>
+          <div class="hbar"><span class="lb">50代〜</span><div class="track"><div class="fill" style="width:12%">8</div></div></div>
+        </div>
+        <div class="hist-note">若手が中心。でも30〜50代も現役でプレー中 💪<br>あなたの世代の仲間が、必ずいます。</div>
+      </div>
+    </div>
+    <div class="hist-note" style="margin-top:14px">卒業年 <b>1976〜2025年</b> の幅広い世代が参加してきました（過去申込データより）。</div>
   </section>
 
   <!-- 会場・設備 -->
