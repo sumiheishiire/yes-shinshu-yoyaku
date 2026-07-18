@@ -328,6 +328,12 @@
   .setup b{color:#5f4408}
   .setup code{background:#fff;border:1px solid #eadfbf;padding:1px 6px;border-radius:6px;font-size:12px}
 
+  /* 対戦相手・長野高校OB（PM）表示 */
+  .nagano-box{margin-top:12px;background:linear-gradient(135deg,#eaf1fb,#dceafa);border:1px solid #c9ddf3;border-radius:14px;padding:12px 16px;display:flex;align-items:center;gap:12px}
+  .nagano-box .n{font-family:"Bebas Neue",sans-serif;font-size:32px;color:#2b5f9e;line-height:1}
+  .nagano-box .t{font-size:13px;font-weight:800;color:#25507f;line-height:1.5}
+  .nagano-box .t small{display:block;font-weight:600;color:#5c7aa3;font-size:11px}
+
   /* 過去の実績グラフ */
   .hist-lead{background:linear-gradient(135deg,#0f7a41,#0a5b30);color:#fff;border-radius:16px;padding:18px 20px;margin-bottom:14px}
   .hist-lead .big{font-family:"Bebas Neue",sans-serif;font-size:clamp(30px,8vw,46px);line-height:1;color:var(--gold-soft)}
@@ -370,7 +376,6 @@
     <a href="#regist" class="cta">⚽️ 出欠を登録する</a>
     <a href="#members">🔥 参加メンバー</a>
     <a href="#schedule">⏱ 当日のながれ</a>
-    <a href="#about">🏟 大会について</a>
     <a href="#history">📊 これまでのOB戦</a>
     <a href="#facility">🚿 設備・持ち物</a>
     <a href="#faq">❓ よくある質問</a>
@@ -415,6 +420,7 @@
       <div class="ms"><b id="msPm">0</b><span>🏆 PM合同OB戦 出席<br><span id="msPmBrk" style="font-weight:600;color:#8a948d">プレー0・見学0</span></span></div>
       <div class="ms"><b id="msPend">0</b><span>🙇 欠席</span></div>
     </div>
+    <div id="naganoObBox" class="nagano-box" style="display:none"></div>
   </div>
 
   <div class="panel" style="margin-top:12px">
@@ -497,31 +503,6 @@
         ただし、<b>スタート時に全員が揃っている必要はありません</b>。参加メンバーが固まり次第、試合スケジュールは見直します。写真撮影の時間も調整する予定です。到着が多少遅れても大丈夫ですので、安心してお申し込みください。<br><br>
         ※ 試合の組み合わせ・時間は<b>参加申込状況によって変更</b>になります。<br>
         ※ 大会全体は 10:30 開会式スタート。午前中は長野Uスタジアムで長野高校の現役戦が行われ、<b>吉田OBは午後から合流</b>する流れです。
-      </div>
-    </div>
-  </section>
-
-  <!-- 大会について -->
-  <section class="blk" id="about">
-    <div class="blk-head"><h2>🏟 大会について</h2></div>
-    <div class="panel">
-      <div class="info-grid">
-        <div>
-          <dl class="info-row"><dt>大会名</dt><dd>第1回 長野市生涯サッカー大会</dd></dl>
-          <dl class="info-row"><dt>主催</dt><dd>長野市生涯サッカー大会実行委員会</dd></dl>
-          <dl class="info-row"><dt>体制</dt><dd>会長：鷲澤幸一／副会長：堀江三定<br>運営事務局：森山祐樹、玉木充</dd></dl>
-          <dl class="info-row"><dt>後援</dt><dd>長野市</dd></dl>
-        </div>
-        <div>
-          <dl class="info-row"><dt>会場</dt><dd>南長野運動公園 長野Uスタジアム<br><span style="color:var(--muted);font-size:12px">AC長野パルセイロのホームスタジアム</span></dd></dl>
-          <dl class="info-row"><dt>参加</dt><dd>長野高校（現役・OB）<br>長野吉田高校（OB）</dd></dl>
-          <dl class="info-row"><dt>ピッチ</dt><dd>105m × 68m／公認5号球</dd></dl>
-          <dl class="info-row"><dt>審判</dt><dd>有資格者 4名程度</dd></dl>
-        </div>
-      </div>
-      <div class="tl-note" style="margin-top:16px">
-        🎯 <b>大会の目的</b>：地域での生涯スポーツの推進と世代間交流、そしてホームスタジアムへの理解促進。
-        記念すべき「第1回」の舞台に、僕らが立ちます。
       </div>
     </div>
   </section>
@@ -631,6 +612,17 @@
 
     <details class="faq"><summary><span class="q">Q</span>申込内容を後から変えられる？<span class="arw">›</span></summary>
       <div class="a">いつでも変更できます。このページの自分のカードから「✏️ 変更」で修正できますし、<b>一度「欠席」で出しても、後から「やっぱり参加！」に変更OK</b>です。まずは気軽に登録してください 🙌</div></details>
+
+    <details class="faq"><summary><span class="q">Q</span>この大会について（主催・会場・ルールなど）<span class="arw">›</span></summary>
+      <div class="a">
+        <dl class="info-row"><dt>大会名</dt><dd>第1回 長野市生涯サッカー大会</dd></dl>
+        <dl class="info-row"><dt>主催</dt><dd>長野市生涯サッカー大会実行委員会／後援：長野市</dd></dl>
+        <dl class="info-row"><dt>PM会場</dt><dd>南長野運動公園 長野Uスタジアム<br><span style="color:var(--muted);font-size:12px">AC長野パルセイロのホームスタジアム</span></dd></dl>
+        <dl class="info-row"><dt>参加</dt><dd>長野高校（現役・OB）／長野吉田高校（OB）</dd></dl>
+        <dl class="info-row"><dt>ピッチ</dt><dd>105m × 68m／公認5号球</dd></dl>
+        <dl class="info-row"><dt>審判</dt><dd>有資格者 4名程度</dd></dl>
+        <div style="margin-top:10px">🎯 <b>目的</b>：地域での生涯スポーツの推進と世代間交流、ホームスタジアムへの理解促進。記念すべき「第1回」の舞台に、僕らが立ちます。</div>
+      </div></details>
   </section>
 
   <!-- 質問コーナー -->
@@ -754,6 +746,11 @@ const firebaseConfig = {
 };
 const EVENT_DATE = new Date("2026-08-14T09:30:00+09:00");   // AM OB戦キックオフ（カウントダウンの目標）
 const GOAL = 40;
+
+/* 【あとで設定】対戦相手・長野高校OBのPM参加人数。
+   数値を入れると、上部に「長野高校OB（PM）：N名 参戦予定」が表示されます。
+   まだ未定なら null のまま。例）const NAGANO_OB = 25; */
+const NAGANO_OB = null;
 
 /* ============================================================
    ⛔ 変更厳禁 ⛔  PATH は「データの保管場所の住所」です。
@@ -1154,6 +1151,13 @@ function tick(){
   $("#cd-m").textContent=String(m).padStart(2,"0"); $("#cd-s").textContent=String(s).padStart(2,"0");
 }
 tick(); setInterval(tick,1000);
+
+/* ---------- 対戦相手・長野高校OB（PM）の参加状況 ---------- */
+if(NAGANO_OB != null && !isNaN(NAGANO_OB)){
+  const box=$("#naganoObBox");
+  box.style.display="flex";
+  box.innerHTML=`<span class="n">${NAGANO_OB}</span><span class="t">🔵 長野高校OB（PM）が参戦予定<small>合同OB戦のお相手。負けられない一戦です 🔥</small></span>`;
+}
 
 /* ---------- トースト ---------- */
 let toastT;
