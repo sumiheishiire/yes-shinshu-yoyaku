@@ -1064,6 +1064,7 @@ form.addEventListener("submit",async e=>{
     }else{
       const id=await store.add(data);
       myId=id; localStorage.setItem(MYKEY,id);
+      render();   // 自分のカードを即座に「あなた」表示へ（スナップショットとの競合対策）
       if(joining){ celebrate(); showToast("🎉 登録ありがとう！当日会おう！"); }
       else showToast("受付けました。気が変わったらいつでも出席に変更OK 💪");
     }
