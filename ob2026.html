@@ -293,10 +293,35 @@
   .seg input:checked+.box{border-color:var(--pitch);background:#eef8f1;color:var(--pitch-dark);box-shadow:inset 0 0 0 1px var(--pitch)}
   .seg.gold input:checked+.box{border-color:var(--gold);background:#fff7e3;color:#8a6410;box-shadow:inset 0 0 0 1px var(--gold)}
   .seg.absent input:checked+.box{border-color:#b6bfb7;background:#f2f4f2;color:#5f6b62;box-shadow:inset 0 0 0 1px #b6bfb7}
-  #amField{transition:opacity .2s, max-height .3s; overflow:hidden}
   .modal .row{display:flex;gap:10px;margin-top:8px}
   .modal .close{float:right;border:0;background:#f0f3f0;width:34px;height:34px;border-radius:50%;font-size:18px;cursor:pointer;color:#66766b}
   .del{display:block;text-align:center;margin-top:14px;color:#b04a4a;font-size:12px;font-weight:700;cursor:pointer;background:none;border:0;width:100%;font-family:inherit}
+
+  /* 3択セグメント & 料金バッジ */
+  .seg.col3 .box{padding:11px 3px;font-size:13.5px}
+  .seg.col3 .box .em{font-size:19px}
+  .seg .box .fee{display:block;margin-top:6px;font-size:11px;font-weight:800;color:#a9791b;background:#fff2d1;border:1px solid #f1dca0;border-radius:999px;padding:2px 2px;line-height:1.3}
+  .seg .box .fee small{font-size:9px;opacity:.75;font-weight:700}
+  .seg .box .fee.free{color:#1f7a44;background:#e2f3e8;border-color:#c5e6cf}
+  .seg .box .fee.none{color:#8a949b;background:#eef0ef;border-color:#dde2de}
+  .seg label.absent input:checked+.box{border-color:#b6bfb7;background:#f2f4f2;color:#5f6b62;box-shadow:inset 0 0 0 1px #b6bfb7}
+  .seg label.warm input:checked+.box{border-color:var(--gold);background:#fff7e3;color:#8a6410;box-shadow:inset 0 0 0 1px var(--gold)}
+  .seg label.watch input:checked+.box{border-color:#3f7fc4;background:#eaf1fb;color:#2b5f9e;box-shadow:inset 0 0 0 1px #3f7fc4}
+
+  .field textarea{width:100%;padding:12px 14px;border:2px solid #e0e8e0;border-radius:11px;font-size:15px;font-family:inherit;resize:vertical;min-height:58px}
+  .field textarea:focus{outline:none;border-color:var(--pitch)}
+
+  /* 参加費のライブ表示 */
+  .feebox{background:#f4f8f3;border:1px solid #dbe8db;border-radius:12px;padding:12px 14px;margin-bottom:12px;text-align:center;font-weight:800;font-size:14px;color:var(--pitch-dark);line-height:1.5}
+  .feebox .amt{font-family:"Bebas Neue",sans-serif;font-size:27px;color:var(--pitch);vertical-align:-2px;margin:0 2px}
+  .feebox .brk{display:block;font-size:11px;color:var(--muted);font-weight:600;margin-top:4px}
+  .feebox.zero{background:#eef7ee}
+
+  /* カードの追加バッジ・コメント */
+  .bdg.play{background:#e2f3e8;color:#1f7a44;border:1px solid #c5e6cf}
+  .bdg.watch{background:#eaf1fb;color:#2f6bb0;border:1px solid #c9ddf3}
+  .pc-comment{margin-top:9px;font-size:12px;color:#42524a;background:#f4f8f3;border-radius:9px;padding:7px 10px;line-height:1.5;font-weight:500}
+  .abrow .an .cmt{display:block;font-size:11px;color:#8a948d;font-weight:500;margin-top:2px}
 
   .setup{background:#fff8e6;border:1px solid #f1dfa8;color:#7a5a12;border-radius:14px;padding:14px 16px;margin-top:18px;font-size:13px;line-height:1.7}
   .setup b{color:#5f4408}
@@ -358,9 +383,9 @@
     </div>
     <div class="bar"><i id="barFill"></i><span class="goalmark"></span></div>
     <div class="ministats">
-      <div class="ms"><b id="msPm">0</b><span>合同OB戦 参加</span></div>
-      <div class="ms am"><b id="msAm">0</b><span>🌅 AMも参加</span></div>
-      <div class="ms"><b id="msPend">0</b><span>欠席・未定</span></div>
+      <div class="ms"><b id="msPm">0</b><span>🏆 PM合同OB戦 出席<br><span id="msPmBrk" style="font-weight:600;color:#8a948d">プレー0・見学0</span></span></div>
+      <div class="ms am"><b id="msAm">0</b><span>🌅 AM出席<br><span style="font-weight:600;color:#c9a15a">吉田グラウンド</span></span></div>
+      <div class="ms"><b id="msPend">0</b><span>🙇 欠席</span></div>
     </div>
   </div>
 
@@ -368,7 +393,7 @@
     <div class="sched">
       <div class="si"><span class="ic">🌅</span><div><b>AM OB戦</b><span>9:30〜／長野吉田高校グラウンド</span></div></div>
       <div class="si"><span class="ic">🏆</span><div><b>合同OB戦</b><span>12:20集合／長野Uスタジアム</span></div></div>
-      <div class="si"><span class="ic">💰</span><div><b>参加費 <span style="font-size:10px;color:#fff;background:#c9932a;border-radius:5px;padding:1px 6px;vertical-align:1px;font-weight:800">予定</span></b><span>おひとり 3,000円／当日現金で回収<br><span style="font-size:11px">※金額は変更になる場合があります</span></span></div></div>
+      <div class="si"><span class="ic">💰</span><div><b>参加費 <span style="font-size:10px;color:#fff;background:#c9932a;border-radius:5px;padding:1px 6px;vertical-align:1px;font-weight:800">予定</span></b><span>AM出席 500円／PMプレー 3,000円／PM見学 無料<br><span style="font-size:11px">当日現金で回収・金額は変更になる場合があります</span></span></div></div>
     </div>
   </div>
 
@@ -487,7 +512,7 @@
         </div>
         <div>
           <dl class="info-row"><dt>ウェア</dt><dd><b>当日ビブスを配布します</b><br><span style="color:var(--muted);font-size:12px">動きやすい服装でお越しください</span></dd></dl>
-          <dl class="info-row"><dt>持ち物</dt><dd>スパイク／<b>飲み物</b>／着替え・タオル<br>参加費 3,000円（予定・現金）</dd></dl>
+          <dl class="info-row"><dt>持ち物</dt><dd>スパイク／<b>飲み物</b>／着替え・タオル<br>参加費（予定・現金）：AM500円／PMプレー3,000円／見学無料</dd></dl>
           <dl class="info-row"><dt>飲み物</dt><dd><b>基本的に各自でご準備ください</b><br><span style="color:var(--muted);font-size:12px">一定量は用意しますが、足りない可能性があります。真夏なので多めに</span></dd></dl>
           <dl class="info-row"><dt>保険</dt><dd>スポーツ保険に加入予定</dd></dl>
         </div>
@@ -513,7 +538,7 @@
       <div class="a">車で<b>約30分</b>かかります。ここが今回いちばんの調整ポイントですが、<b>スタート時に全員が揃っている必要はありません</b>。参加メンバーが固まり次第、試合スケジュールを見直しますし、写真撮影の時間も調整する予定です。<b>到着が多少遅れても大丈夫</b>ですので、安心してご参加ください。</div></details>
 
     <details class="faq"><summary><span class="q">Q</span>午後だけ／午前だけの参加でもいい？<span class="arw">›</span></summary>
-      <div class="a">もちろんOKです。申込フォームで「AMのOB戦にも参加するか」を選べます。<b>午前だけ・午後だけ、どちらの参加も大歓迎</b>です。ご都合に合わせてお申し込みください。<br>なお午前は、OB同士のゲームに加えて<b>最強の現役世代との一戦</b>もあります。腕に覚えのある方はぜひ午前から 🔥</div></details>
+      <div class="a">もちろんOKです。申込フォームでは<b>AM（吉田グラウンド）とPM（合同OB戦）を別々に</b>出欠を選べます。<b>午前だけ・午後だけ、どちらの参加も大歓迎</b>。PMは<b>プレー／見学</b>も選べます。<br>なお午前は、OB同士のゲームに加えて<b>最強の現役世代との一戦</b>もあります。腕に覚えのある方はぜひ午前から 🔥</div></details>
 
     <details class="faq"><summary><span class="q">Q</span>どのカテゴリで試合に出るの？<span class="arw">›</span></summary>
       <div class="a">ざっくり <b>「〜20代」「30代」「40代〜」</b> くらいの年代に分かれるイメージです。ただし<b>カテゴリはあくまで目安</b>で、当日の参加者の年齢と人数を見ながら組み立てます。申込時の年齢だけ教えていただければ大丈夫です。<br><b>若いOBの参加、大歓迎です</b>！先輩たちが待っています 🔥</div></details>
@@ -531,7 +556,7 @@
       <div class="a"><b>飲み物は基本的に各自でご準備ください。</b>こちらでも一定量は用意しますが、足りなくなる可能性があります。真夏の開催ですので、<b>多めにお持ちいただくことを強くおすすめします</b>。<br>キッチンカーが2〜3台出店する予定ですが、台数が限られるため<b>あてにせず、各自でのご準備をお願いします</b>。</div></details>
 
     <details class="faq"><summary><span class="q">Q</span>参加費は？当日払える？<span class="arw">›</span></summary>
-      <div class="a"><b>おひとり 3,000円・当日現金で回収</b>します。お釣りのないようご用意いただけると助かります。<br><b>※金額はあくまで「予定」です。</b>今後の調整により変更になる場合がありますので、確定しましたらこのページでお知らせします。</div></details>
+      <div class="a">出席する内容ごとに分かれます（<b>当日現金で回収</b>）。<br>・🌅 <b>AM OB戦に出席</b>：500円<br>・⚽ <b>PM 合同OB戦でプレー</b>：3,000円（予定）<br>・👀 <b>PM 見学で出席</b>：無料<br>例）AM＋PMプレーなら 3,500円。申込フォームで選ぶと<b>その場で合計額が表示</b>されます。<br><b>※金額はあくまで「予定」で、変更になる場合があります。</b>お釣りのないようご用意いただけると助かります。</div></details>
 
     <details class="faq"><summary><span class="q">Q</span>雨が降ったらどうなる？<span class="arw">›</span></summary>
       <div class="a"><b>雨天決行</b>です。ただし雷が発生した時点でゲームは中断し、再開は本部の指示に従います。再開の見込みが立たない場合は中止となります。</div></details>
@@ -573,6 +598,7 @@
       <div class="cta-row" style="margin:0 0 16px;justify-content:flex-start">
         <button class="btn btn-ghost btn-sm" id="dlCsv">⬇️ CSVダウンロード</button>
         <button class="btn btn-ghost btn-sm" id="dlJson">⬇️ JSONバックアップ</button>
+        <button class="btn btn-ghost btn-sm" id="dlAuto">🛟 この端末の自動控え</button>
       </div>
       <div style="overflow-x:auto">
         <table class="atbl" id="adminTable"></table>
@@ -597,35 +623,48 @@
     <p class="lead">追加・変更はいつでもOK。まずは気軽に 🙌</p>
     <form id="form">
       <div class="field">
-        <label>参加する？</label>
-        <div class="seg" id="segAttend">
-          <label><input type="radio" name="attend" value="1" checked><span class="box"><span class="em">🙋</span>参加する！</span></label>
-          <label class="absent"><input type="radio" name="attend" value="0"><span class="box"><span class="em">🙇</span>今回は欠席</span></label>
-        </div>
-      </div>
-      <div class="field">
         <label>氏名 <span style="color:#c65">*</span></label>
         <input type="text" id="fName" placeholder="例）山田 太郎" autocomplete="off" required>
       </div>
       <div class="field">
         <label>年齢</label>
         <input type="number" id="fAge" placeholder="例）38" min="10" max="99" inputmode="numeric">
-        <div class="hint">最年長・最年少ネタで盛り上がろう（任意）</div>
+        <div class="hint">年代別カテゴリの目安に使います（任意）</div>
       </div>
-      <div class="field" id="amField">
-        <label>🌅 AMのOB戦にも参加する？</label>
-        <div class="seg gold" id="segAm">
-          <label><input type="radio" name="am" value="1"><span class="box"><span class="em">☀️</span>朝から出る！</span></label>
-          <label><input type="radio" name="am" value="0" checked><span class="box"><span class="em">🏆</span>合同OB戦から</span></label>
+
+      <div class="field">
+        <label>🌅 AM OB戦（長野吉田高校グラウンド・9:30〜）</label>
+        <div class="seg" id="segAm">
+          <label class="warm"><input type="radio" name="am" value="yes"><span class="box"><span class="em">☀️</span>出席<span class="fee">500円</span></span></label>
+          <label class="absent"><input type="radio" name="am" value="no" checked><span class="box"><span class="em">🙇</span>欠席<span class="fee none">—</span></span></label>
         </div>
-        <div class="hint">AMは 9:30〜／長野吉田高校グラウンド。<b>最強の現役世代とのゲームもあります</b> 🔥</div>
+        <div class="hint"><b>現役世代とのゲームもあります</b> 🔥 若手OBは要チェック</div>
       </div>
+
+      <div class="field">
+        <label>🏆 PM 合同OB戦（長野Uスタジアム・12:20集合）</label>
+        <div class="seg col3" id="segPm">
+          <label><input type="radio" name="pm" value="play" checked><span class="box"><span class="em">⚽</span>プレー<span class="fee">3,000円<small> 予定</small></span></span></label>
+          <label class="watch"><input type="radio" name="pm" value="watch"><span class="box"><span class="em">👀</span>見学<span class="fee free">無料</span></span></label>
+          <label class="absent"><input type="radio" name="pm" value="no"><span class="box"><span class="em">🙇</span>欠席<span class="fee none">—</span></span></label>
+        </div>
+        <div class="hint">プレーでも見学でも大歓迎。ご家族の観戦もどうぞ（メインスタンド）</div>
+      </div>
+
       <div class="field">
         <label>携帯番号 <span style="color:#c65">*</span></label>
         <input type="tel" id="fPhone" placeholder="090-1234-5678" autocomplete="off" required>
         <div class="hint">当日の連絡用。一覧には出ません（幹事のみ確認）。</div>
       </div>
-      <div class="hint" style="text-align:center;margin-bottom:6px">💰 参加費：おひとり <b>3,000円</b>・当日現金で回収（<b>予定</b>／変更の可能性あり）<br>🥤 飲み物は基本的に各自でご準備を<br>🏆 午後は長野Uスタジアムに <b>12:20集合</b>（吉田高校から車で約30分）</div>
+
+      <div class="field">
+        <label>💬 ひとことコメント</label>
+        <textarea id="fComment" placeholder="意気込み・近況・「〇〇と一緒に出たい」など（任意・参加メンバー一覧に表示されます）" maxlength="140"></textarea>
+        <div class="hint">みんなのコメントが並ぶと盛り上がります。携帯番号など個人情報は書かないでください</div>
+      </div>
+
+      <div class="feebox" id="feeBox"></div>
+
       <div class="row">
         <button type="submit" class="btn btn-primary btn-block" id="submitBtn">登録する</button>
       </div>
@@ -667,7 +706,7 @@ const GOAL = 40;
    ============================================================ */
 const PATH   = ["artifacts", "ob-soccer-2026", "public", "data", "entries"];
 const PATH_Q = ["artifacts", "ob-soccer-2026", "public", "data", "questions"];
-const SCHEMA = 1;   // 項目を増やしたら数字を上げる。既存データは消さず、無い項目は既定値で表示。
+const SCHEMA = 2;   // v2: AM/PM別出欠・PM3状態(プレー/見学/欠席)・コメントに対応。旧v1データも norm() で表示可。
 
 /* ---------- ストレージ抽象化（Firestore or ローカル） ---------- */
 const configured = !!firebaseConfig.apiKey && firebaseConfig.apiKey.length > 10;
@@ -745,26 +784,42 @@ const isAdmin = new URLSearchParams(location.search).has("admin");
 /* ---------- 要素 ---------- */
 const $ = s=>document.querySelector(s);
 const overlay=$("#overlay"), form=$("#form");
-const fName=$("#fName"), fAge=$("#fAge"), fPhone=$("#fPhone");
-const amField=$("#amField");
+const fName=$("#fName"), fAge=$("#fAge"), fPhone=$("#fPhone"), fComment=$("#fComment");
+
+/* ---------- データ正規化（旧データも壊さず表示するための互換層） ----------
+   旧形式: am(bool), attend(bool)  →  新形式: amStatus("yes"/"no"), pmStatus("play"/"watch"/"no")
+   新フィールドが無い古い登録でも、旧フィールドから安全に解釈する。 */
+function norm(p){
+  let am = p.amStatus, pm = p.pmStatus;
+  if(am===undefined || am==="") am = p.am ? "yes" : "no";
+  if(pm===undefined || pm==="") pm = p.attend ? "play" : "no";
+  return { am, pm };
+}
+const isJoining = p => { const n=norm(p); return n.am==="yes" || n.pm==="play" || n.pm==="watch"; };
+const feeOf = p => { const n=norm(p); return (n.am==="yes"?500:0) + (n.pm==="play"?3000:0); };
+const pmLabel = pm => pm==="play"?"プレー" : pm==="watch"?"見学" : "欠席";
 
 /* ---------- 描画 ---------- */
 function esc(s){ return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
 
 function render(){
-  const attend = all.filter(x=>x.attend).sort((a,b)=>(a.createdAt||0)-(b.createdAt||0));
-  const pend   = all.filter(x=>!x.attend).sort((a,b)=>(a.createdAt||0)-(b.createdAt||0));
-  const amN    = attend.filter(x=>x.am).length;
+  const byCreated=(a,b)=>(a.createdAt||0)-(b.createdAt||0);
+  const attend = all.filter(isJoining).sort(byCreated);
+  const absent = all.filter(p=>!isJoining(p)).sort(byCreated);
+  const pmPlay = attend.filter(p=>norm(p).pm==="play").length;
+  const pmWatch= attend.filter(p=>norm(p).pm==="watch").length;
+  const amN    = attend.filter(p=>norm(p).am==="yes").length;
 
   // カウンター
   animateNum($("#attendCount"), attend.length);
-  $("#msPm").textContent=attend.length;
+  $("#msPm").textContent=pmPlay+pmWatch;
+  $("#msPmBrk").textContent=`プレー${pmPlay}・見学${pmWatch}`;
   $("#msAm").textContent=amN;
-  $("#msPend").textContent=pend.length;
+  $("#msPend").textContent=absent.length;
   $("#cntAttend").textContent=attend.length;
-  $("#cntPend").textContent=pend.length;
+  $("#cntPend").textContent=absent.length;
 
-  // プログレスバー
+  // プログレスバー（参加メンバー総数 / 目標40名）
   const pct=Math.min(100, attend.length/GOAL*100);
   $("#barFill").style.width=pct+"%";
   const remain=GOAL-attend.length;
@@ -776,30 +831,33 @@ function render(){
   const g=$("#attendGrid");
   $("#attendEmpty").style.display = attend.length? "none":"block";
   g.innerHTML = attend.map((p,i)=>{
-    const mine = p.id===myId;
+    const mine = p.id===myId, n=norm(p);
+    const badges=[];
+    if(n.pm==="play")  badges.push('<span class="bdg play">⚽ プレー</span>');
+    else if(n.pm==="watch") badges.push('<span class="bdg watch">👀 見学</span>');
+    if(n.am==="yes")   badges.push('<span class="bdg am">🌅 AM出席</span>');
+    if(mine)           badges.push('<span class="bdg me">あなた</span>');
     return `<div class="pcard ${mine?'mine':''}">
       <div class="pc-top">
         <span class="num">${String(i+1).padStart(2,"0")}</span>
         <span class="pc-name">${esc(p.name)}${p.age?`<span class="age">${esc(p.age)}歳</span>`:""}</span>
       </div>
-      <div class="badges">
-        ${p.am?'<span class="bdg am">🌅 AMも参加</span>':'<span class="bdg pm">🏆 合同OB戦</span>'}
-        ${mine?'<span class="bdg me">あなた</span>':''}
-      </div>
+      <div class="badges">${badges.join("")}</div>
+      ${p.comment?`<div class="pc-comment">💬 ${esc(p.comment)}</div>`:""}
       <div class="pc-actions">
         <button class="mini" data-edit="${p.id}">✏️ 変更</button>
       </div>
     </div>`;
   }).join("");
 
-  // 欠席・未定
+  // 欠席
   const pl=$("#pendList");
-  $("#pendEmpty").style.display = pend.length? "none":"block";
-  pl.innerHTML = pend.map(p=>{
+  $("#pendEmpty").style.display = absent.length? "none":"block";
+  pl.innerHTML = absent.map(p=>{
     const mine=p.id===myId;
     return `<div class="abrow ${mine?'mine':''}">
-      <span class="an">🙇 ${esc(p.name)}${p.age?`<span class="age">${esc(p.age)}歳</span>`:""}${mine?' <span class="bdg me" style="margin-left:6px">あなた</span>':''}</span>
-      <button class="mini push" data-join="${p.id}">💪 やっぱり参加！</button>
+      <span class="an">🙇 ${esc(p.name)}${p.age?`<span class="age">${esc(p.age)}歳</span>`:""}${mine?' <span class="bdg me" style="margin-left:6px">あなた</span>':''}${p.comment?`<span class="cmt">💬 ${esc(p.comment)}</span>`:""}</span>
+      <button class="mini push" data-edit="${p.id}">✏️ 出欠を変更</button>
     </div>`;
   }).join("");
 
@@ -811,7 +869,6 @@ function render(){
   // クリックハンドラ
   g.querySelectorAll("[data-edit]").forEach(b=>b.onclick=()=>openEdit(b.dataset.edit));
   pl.querySelectorAll("[data-edit]").forEach(b=>b.onclick=()=>openEdit(b.dataset.edit));
-  pl.querySelectorAll("[data-join]").forEach(b=>b.onclick=()=>quickJoin(b.dataset.join));
 
   if(isAdmin) renderAdmin();
 }
@@ -873,18 +930,22 @@ function renderAdmin(){
   $("#adminBlk").style.display="block";
   $("#cntAll").textContent=all.length;
   const rows=sorted();
+  const feeSum=rows.reduce((s,p)=>s+feeOf(p),0);
   $("#adminTable").innerHTML=
-    `<thead><tr><th>#</th><th>氏名</th><th>年齢</th><th>参加</th><th>AM</th><th>携帯番号</th><th>登録</th><th>更新</th></tr></thead><tbody>`+
-    rows.map((p,i)=>`<tr>
+    `<thead><tr><th>#</th><th>氏名</th><th>年齢</th><th>AM(吉田)</th><th>PM(合同)</th><th>参加費(予定)</th><th>携帯番号</th><th>コメント</th><th>登録</th><th>更新</th></tr></thead><tbody>`+
+    rows.map((p,i)=>{const n=norm(p); return `<tr>
       <td class="no">${String(i+1).padStart(2,"0")}</td>
       <td><b>${esc(p.name)}</b></td>
       <td>${p.age?esc(p.age):"—"}</td>
-      <td class="${p.attend?'yes':'no-'}">${p.attend?"◯ 参加":"× 欠席"}</td>
-      <td class="${p.am?'yes':'no-'}">${p.am?"◯":"—"}</td>
+      <td class="${n.am==="yes"?'yes':'no-'}">${n.am==="yes"?"出席":"—"}</td>
+      <td class="${n.pm==="no"?'no-':'yes'}">${pmLabel(n.pm)}</td>
+      <td>¥${feeOf(p).toLocaleString()}</td>
       <td>${esc(p.phone)}</td>
+      <td style="white-space:normal;max-width:220px">${esc(p.comment||"")}</td>
       <td>${fmtDate(p.createdAt)}</td>
       <td>${fmtDate(p.updatedAt)}</td>
-    </tr>`).join("")+`</tbody>`;
+    </tr>`}).join("")+
+    `<tr><td colspan="5" style="text-align:right;font-weight:800">参加費 合計（予定）</td><td colspan="5" style="font-weight:800">¥${feeSum.toLocaleString()}</td></tr></tbody>`;
 }
 
 function download(name,text,mime){
@@ -896,14 +957,20 @@ const stamp=()=>new Date().toISOString().slice(0,10);
 
 $("#dlCsv").onclick=()=>{
   const q=v=>`"${String(v??"").replace(/"/g,'""')}"`;
-  const head=["No","氏名","年齢","参加","AM参加","携帯番号","登録日時","更新日時"];
-  const body=sorted().map((p,i)=>[i+1,p.name,p.age||"",p.attend?"参加":"欠席",p.am?"参加":"",p.phone,fmtDate(p.createdAt),fmtDate(p.updatedAt)].map(q).join(","));
+  const head=["No","氏名","年齢","AM(吉田)","PM(合同)","参加費(予定)","携帯番号","コメント","登録日時","更新日時"];
+  const body=sorted().map((p,i)=>{const n=norm(p); return [i+1,p.name,p.age||"",n.am==="yes"?"出席":"欠席",pmLabel(n.pm),feeOf(p),p.phone,p.comment||"",fmtDate(p.createdAt),fmtDate(p.updatedAt)].map(q).join(",");});
   download(`OB戦2026_出欠_${stamp()}.csv`, "﻿"+[head.map(q).join(","),...body].join("\r\n"), "text/csv;charset=utf-8");
   showToast("CSVを保存しました 💾");
 };
 $("#dlJson").onclick=()=>{
   download(`OB戦2026_backup_${stamp()}.json`, JSON.stringify({exportedAt:new Date().toISOString(),schema:SCHEMA,path:PATH.join("/"),count:all.length,data:sorted()},null,2), "application/json");
   showToast("JSONバックアップを保存しました 💾");
+};
+$("#dlAuto").onclick=()=>{
+  const raw=localStorage.getItem("ob2026_autobackup");
+  if(!raw){ showToast("まだ自動控えがありません"); return; }
+  download(`OB戦2026_自動控え_${stamp()}.json`, raw, "application/json");
+  showToast("この端末の自動控えを保存しました 🛟");
 };
 
 let numTimer;
@@ -920,22 +987,38 @@ function closeModal(){ overlay.classList.remove("open"); }
 $("#closeModal").onclick=closeModal;
 overlay.onclick=e=>{ if(e.target===overlay) closeModal(); };
 
-function setAttendUI(attend){
-  form.querySelector(`input[name=attend][value="${attend?1:0}"]`).checked=true;
-  amField.style.maxHeight = attend? "160px":"0";
-  amField.style.opacity = attend? "1":"0";
-  amField.style.marginBottom = attend? "16px":"0";
+const pick = name => form.querySelector(`input[name=${name}]:checked`)?.value;
+const setPick = (name,val) => { const el=form.querySelector(`input[name=${name}][value="${val}"]`); if(el) el.checked=true; };
+
+// 参加費のライブ表示
+function updateFeeBox(){
+  const am=pick("am"), pm=pick("pm"), fee=(am==="yes"?500:0)+(pm==="play"?3000:0);
+  const parts=[];
+  if(am==="yes") parts.push("AM出席 500円");
+  if(pm==="play") parts.push("PMプレー 3,000円");
+  if(pm==="watch") parts.push("PM見学 無料");
+  const box=$("#feeBox");
+  if(am==="no" && pm==="no"){
+    box.classList.add("zero");
+    box.innerHTML=`今回は<b>欠席</b>で受付けます 🙇<span class="brk">気が変わったら、いつでも出席に変更できます</span>`;
+  }else if(fee===0){
+    box.classList.add("zero");
+    box.innerHTML=`当日の参加費：<span class="amt">0</span>円（見学のみ）<span class="brk">${parts.join(" ／ ")}</span>`;
+  }else{
+    box.classList.remove("zero");
+    box.innerHTML=`当日の参加費（予定）：<span class="amt">${fee.toLocaleString()}</span>円<span class="brk">${parts.join(" ／ ")}　※金額は変更になる場合があります・当日現金</span>`;
+  }
 }
-$("#segAttend").addEventListener("change",e=>{
-  setAttendUI(e.target.value==="1");
-});
+$("#segAm").addEventListener("change",updateFeeBox);
+$("#segPm").addEventListener("change",updateFeeBox);
 
 function openNew(){
   editingId=null;
   $("#modalTitle").textContent="出欠を登録";
   form.reset();
-  form.querySelector('input[name=am][value="0"]').checked=true;
-  setAttendUI(true);
+  setPick("am","no"); setPick("pm","play");
+  fComment.value="";
+  updateFeeBox();
   $("#submitBtn").textContent="登録する";
   $("#delBtn").style.display="none";
   openModal(); fName.focus();
@@ -943,10 +1026,11 @@ function openNew(){
 function openEdit(id){
   const p=all.find(x=>x.id===id); if(!p)return;
   editingId=id;
+  const n=norm(p);
   $("#modalTitle").textContent="登録を変更";
-  fName.value=p.name||""; fAge.value=p.age||""; fPhone.value=p.phone||"";
-  setAttendUI(!!p.attend);
-  form.querySelector(`input[name=am][value="${p.am?1:0}"]`).checked=true;
+  fName.value=p.name||""; fAge.value=p.age||""; fPhone.value=p.phone||""; fComment.value=p.comment||"";
+  setPick("am",n.am); setPick("pm",n.pm);
+  updateFeeBox();
   $("#submitBtn").textContent="変更を保存";
   $("#delBtn").style.display = (id===myId)? "block":"none";
   openModal();
@@ -954,22 +1038,19 @@ function openEdit(id){
 $("#openNew").onclick=openNew;
 $("#openMine").onclick=()=>{ if(myId) openEdit(myId); };
 
-async function quickJoin(id){
-  await store.update(id,{attend:true});
-  if(id===myId) celebrate();
-  showToast(id===myId? "🔥 参加に変更！待ってました！" : "参加に変更しました 🙌");
-}
-
 /* ---------- 送信 ---------- */
 form.addEventListener("submit",async e=>{
   e.preventDefault();
-  const attend = form.querySelector("input[name=attend]:checked").value==="1";
-  const am = form.querySelector("input[name=am]:checked").value==="1";
+  const am=pick("am"), pm=pick("pm");
+  const joining = am==="yes" || pm==="play" || pm==="watch";
   const data={
     name:fName.value.trim(),
     age:fAge.value? parseInt(fAge.value):"",
     phone:fPhone.value.trim(),
-    attend, am: attend? am : false
+    comment:fComment.value.trim(),
+    amStatus:am, pmStatus:pm,
+    // 旧フィールドも同期（古いコードやエクスポートとの互換／データの二重保全）
+    am: am==="yes", attend: (pm==="play"||pm==="watch")
   };
   if(!data.name){ fName.focus(); return; }
   if(!data.phone){ fPhone.focus(); return; }
@@ -979,12 +1060,12 @@ form.addEventListener("submit",async e=>{
     if(editingId){
       await store.update(editingId,data);
       showToast("変更を保存しました ✅");
-      if(editingId===myId && attend) celebrate();
+      if(editingId===myId && joining) celebrate();
     }else{
       const id=await store.add(data);
       myId=id; localStorage.setItem(MYKEY,id);
-      if(attend){ celebrate(); showToast("🎉 参加登録ありがとう！当日会おう！"); }
-      else showToast("受付けました。気が変わったらいつでも参加OK 💪");
+      if(joining){ celebrate(); showToast("🎉 登録ありがとう！当日会おう！"); }
+      else showToast("受付けました。気が変わったらいつでも出席に変更OK 💪");
     }
     closeModal();
   }catch(err){
@@ -1071,8 +1152,15 @@ if(!configured){
   </div>`;
 }
 
+/* ---------- 自動バックアップ（データ消失の保険） ----------
+   スナップショットを受け取るたびに、この端末にも最新の全データを控える。
+   万一クラウド側でトラブルがあっても、直近に開いた端末から復元できる。 */
+function autoBackup(list){
+  try{ localStorage.setItem("ob2026_autobackup", JSON.stringify({at:Date.now(), schema:SCHEMA, path:PATH.join("/"), count:list.length, data:list})); }catch(_){}
+}
+
 /* ---------- 購読開始（すべての定義の後に実行する） ---------- */
-store.subscribe(list=>{ all=list; render(); });
+store.subscribe(list=>{ all=list; if(list.length) autoBackup(list); render(); });
 qstore.subscribe(list=>{ allQ=list; renderQ(); });
 </script>
 
