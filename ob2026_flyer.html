@@ -125,9 +125,17 @@
   .card .p{font-size:9.5pt;font-weight:800;margin-top:1.4mm}
   .card .d{font-size:8.4pt;font-weight:600;opacity:.85;margin-top:1.6mm;line-height:1.55}
   .card .d em{font-style:normal;color:var(--gold-soft);font-weight:800}
-  .card .cf{margin-top:2.6mm;font-size:8pt;font-weight:800;border-top:1px solid rgba(255,255,255,.22);padding-top:2mm;letter-spacing:.01em}
+  .card .cf{margin-top:2.4mm;font-size:8pt;font-weight:800;border-top:1px solid rgba(255,255,255,.22);padding-top:1.8mm;letter-spacing:.01em}
   .card .cf b{color:var(--gold-soft);font-size:9pt}
   .card .cf .yen0{color:#bfe6cd}
+  /* 対戦カード（AMとPMが別物であることを明示） */
+  .card .vs{margin-top:1.8mm;font-size:9pt;font-weight:900;line-height:1.35;letter-spacing:.01em}
+  .card .vs i{font-style:normal;color:var(--gold);font-weight:900;margin:0 1.4mm;font-size:8pt}
+  .card .vs small{display:block;font-size:7.2pt;font-weight:700;opacity:.82;margin-top:.8mm;letter-spacing:0}
+  /* 「別イベント」注記バー */
+  .sched-note{margin-top:5mm;text-align:center;font-size:8.8pt;font-weight:800;letter-spacing:.02em}
+  .sched-note b{color:var(--gold-soft)}
+  .sched-note .sep{margin:0 2mm;opacity:.5}
 
   /* ===== 中段メッセージ ===== */
   .call{margin-top:4mm;display:flex;align-items:center;gap:6mm}
@@ -216,19 +224,20 @@
     <span>南長野運動公園／J3・AC長野パルセイロのホームスタジアム</span>
   </div>
 
+  <div class="sched-note">🌅 AMと 🏆 PMは <b>別々の試合</b><span class="sep">｜</span>会場も対戦相手も異なります</div>
   <div class="sched">
     <div class="card am">
-      <span class="tag">🌅 AM</span>
+      <span class="tag">🌅 AM ｜ 吉田OB戦（恒例）</span>
       <div class="t">9:30〜</div>
       <div class="p">長野吉田高校グラウンド</div>
-      <div class="d">OB同士のゲームに加えて<br><em>最強の現役世代との一戦</em>も</div>
+      <div class="vs">吉田 現役 <i>×</i> 吉田 OB<small>母校で続いてきた恒例のOB戦</small></div>
       <div class="cf">参加費 <b>500円</b></div>
     </div>
     <div class="card pm">
-      <span class="tag">🏆 PM</span>
+      <span class="tag">🏆 PM ｜ 合同OB戦（初開催）</span>
       <div class="t">12:20 集合</div>
       <div class="p">長野Uスタジアム</div>
-      <div class="d">長野OB と の 合同OB戦<br><em>年代別カテゴリで6ゲーム</em></div>
+      <div class="vs">長野高校 OB <i>×</i> 吉田高校 OB<small>初めて開催する記念すべき第1回</small></div>
       <div class="cf">プレー <b>3,000円</b> ／ 見学 <span class="yen0">無料</span></div>
     </div>
   </div>
@@ -239,8 +248,8 @@
       <div class="l">名 集まれ</div>
     </div>
     <div class="msg">
-      記念すべき<em>第1回</em>。<br>あの舞台に、僕らが立つ。
-      <span>ほとんどのメンバーが初めて立つピッチです。当日を楽しみ切るために、今日から少しずつ体を動かしておきましょう。</span>
+      あの舞台に、僕らが立つ。
+      <span>初めて立つ人がほとんど。当日を楽しみ切るために、今日から少しずつ体を動かしておきましょう。</span>
     </div>
   </div>
 
