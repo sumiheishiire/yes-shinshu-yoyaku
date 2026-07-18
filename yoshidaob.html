@@ -10,6 +10,8 @@
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
 <title>長野吉田高校 OB戦 2026 — 出欠登録</title>
+<!-- 申込を幹事メールへも通知（Firestoreと独立した二重バックアップ） -->
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Bebas+Neue&display=swap" rel="stylesheet">
@@ -772,6 +774,21 @@ const GOAL = 40;
 const NAGANO_OB = null;
 
 /* ============================================================
+   申込を幹事メールへ通知（Firestoreと独立した二重バックアップ）
+   予約サイトと同じEmailJSアカウントを共用。
+   ★ templateId が空のうちはメール送信されません（Firestoreには通常どおり保存）。
+     EmailJSで「OB戦用テンプレート」を1つ作り、そのIDをここに入れると有効化。
+   ============================================================ */
+const OB_MAIL = {
+  publicKey : "y4J5H5bPwVvndW-5o",   // 予約サイトと同じEmailJSアカウント
+  serviceId : "service_5btx6ge",     // 同上
+  templateId: "",                    // ← ここにOB戦用テンプレートIDを入れると有効化
+  to        : "sumiheishiire@gmail.com",  // 通知先（幹事）。複数は "a@x.com, b@y.com"
+  sendOnEdit: false                  // 変更・削除も通知するなら true（無料枠：月200通に注意）
+};
+if (window.emailjs && OB_MAIL.publicKey) { try { emailjs.init(OB_MAIL.publicKey); } catch(_){} }
+
+/* ============================================================
    ⛔ 変更厳禁 ⛔  PATH は「データの保管場所の住所」です。
    ここを書き換えると、それまでの登録が全部見えなくなります。
    UIをどれだけ更新しても、この2つ（firebaseConfig と PATH）
@@ -1118,6 +1135,35 @@ $("#openNew").onclick=openNew;
 $("#openMine").onclick=()=>{ if(myId) openEdit(myId); };
 
 /* ---------- 送信 ---------- */
+/* 幹事メールへの通知（バックアップ用）。未設定なら静かにスキップ */
+function obMailBody(data, kind){
+  const n=norm(data);
+  return [
+    `種別　： ${kind}`,
+    `氏名　： ${data.name}`,
+    `年齢　： ${data.age||"-"}`,
+    `AM(吉田)： ${n.am==="yes"?"出席":"欠席"}`,
+    `PM(合同)： ${pmLabel(n.pm)}`,
+    `参加費(予定)： ${feeOf(data).toLocaleString()}円`,
+    `携帯　： ${data.phone||"-"}`,
+    `コメント： ${data.comment||"-"}`,
+    `日時　： ${new Date().toLocaleString("ja-JP")}`,
+  ].join("\n");
+}
+async function notifyStaff(data, kind){
+  if(!window.emailjs || !OB_MAIL.templateId) return;   // 未設定ならスキップ（保存はされている）
+  try{
+    await emailjs.send(OB_MAIL.serviceId, OB_MAIL.templateId, {
+      to_email  : OB_MAIL.to,
+      subject   : `【OB戦申込・${kind}】${data.name} さん`,
+      user_name : data.name,
+      entry_type: kind,
+      message   : obMailBody(data, kind),
+      reply_to  : OB_MAIL.to
+    });
+  }catch(e){ console.warn("メール通知に失敗（保存は完了しています）:", e); }
+}
+
 form.addEventListener("submit",async e=>{
   e.preventDefault();
   const am=pick("am"), pm=pick("pm");
@@ -1138,11 +1184,13 @@ form.addEventListener("submit",async e=>{
   try{
     if(editingId){
       await store.update(editingId,data);
+      if(OB_MAIL.sendOnEdit) notifyStaff(data,"変更");
       showToast("変更を保存しました ✅");
       if(editingId===myId && joining) celebrate();
     }else{
       const id=await store.add(data);
       myId=id; localStorage.setItem(MYKEY,id);
+      notifyStaff(data,"新規");   // 幹事メールへバックアップ通知
       render();   // 自分のカードを即座に「あなた」表示へ（スナップショットとの競合対策）
       if(joining){ celebrate(); showToast("🎉 登録ありがとう！当日会おう！"); }
       else showToast("受付けました。気が変わったらいつでも出席に変更OK 💪");
@@ -1156,7 +1204,9 @@ form.addEventListener("submit",async e=>{
 $("#delBtn").onclick=async()=>{
   if(!editingId) return;
   if(!confirm("この登録を削除しますか？")) return;
+  const removed = all.find(x=>x.id===editingId);
   await store.remove(editingId);
+  if(OB_MAIL.sendOnEdit && removed) notifyStaff(removed,"削除");
   if(editingId===myId){ myId=null; localStorage.removeItem(MYKEY); }
   closeModal(); showToast("削除しました");
 };
