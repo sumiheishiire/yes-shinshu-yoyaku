@@ -328,6 +328,14 @@
   .setup b{color:#5f4408}
   .setup code{background:#fff;border:1px solid #eadfbf;padding:1px 6px;border-radius:6px;font-size:12px}
 
+  /* PM回答期限バナー */
+  .deadline{margin-top:16px;background:linear-gradient(135deg,#fff3d6,#ffe7b0);border:1px solid #f1cf88;border-radius:14px;padding:13px 16px;display:flex;align-items:center;gap:12px;color:#6e4e12;font-weight:700;font-size:13.5px;line-height:1.6}
+  .deadline .cal{flex-shrink:0;background:#c9932a;color:#fff;border-radius:10px;padding:6px 10px;text-align:center;line-height:1.1}
+  .deadline .cal b{display:block;font-family:"Bebas Neue",sans-serif;font-size:22px}
+  .deadline .cal span{font-size:9px;letter-spacing:.08em}
+  .deadline .d{font-family:"Bebas Neue",sans-serif;font-size:17px;color:#b3730f;vertical-align:-1px;margin:0 2px}
+  .deadline b.hl{color:#a8560c}
+
   /* 対戦相手・長野高校OB（PM）表示 */
   .nagano-box{margin-top:12px;background:linear-gradient(135deg,#eaf1fb,#dceafa);border:1px solid #c9ddf3;border-radius:14px;padding:12px 16px;display:flex;align-items:center;gap:12px}
   .nagano-box .n{font-family:"Bebas Neue",sans-serif;font-size:32px;color:#2b5f9e;line-height:1}
@@ -430,6 +438,8 @@
       <div class="si"><span class="ic">💰</span><div><b>参加費 <span style="font-size:10px;color:#fff;background:#c9932a;border-radius:5px;padding:1px 6px;vertical-align:1px;font-weight:800">予定</span></b><span>AM出席 500円／PMプレー 3,000円／PM見学 無料<br><span style="font-size:11px">当日現金で回収・金額は変更になる場合があります</span></span></div></div>
     </div>
   </div>
+
+  <div class="deadline" id="deadlineBar"></div>
 
   <div class="cta-row" id="regist">
     <button class="btn btn-primary" id="openNew">⚽️ 出欠を登録する</button>
@@ -610,6 +620,9 @@
     <details class="faq"><summary><span class="q">Q</span>駐車場はどこ？<span class="arw">›</span></summary>
       <div class="a"><b>第一駐車場</b>をご利用ください。<b>スタジアム入口の最寄り</b>の駐車場です。</div></details>
 
+    <details class="faq"><summary><span class="q">Q</span>回答の期限はある？<span class="arw">›</span></summary>
+      <div class="a"><b>🏆 PM（合同OB戦）は 7月26日（日）までにご回答ください。</b>長野高校OBとの試合の組み合わせ・カテゴリ配分を事前に決めるため、人数を早めに把握したいためです。<br><b>🌅 AM（吉田グラウンドの恒例OB戦）は回答任意</b>です（当日参加でもOK）。もちろん、AMも回答いただけると準備の参考になり助かります。<br>期限後も、参加したくなったら幹事までご連絡ください。できる限り調整します 🙌</div></details>
+
     <details class="faq"><summary><span class="q">Q</span>申込内容を後から変えられる？<span class="arw">›</span></summary>
       <div class="a">いつでも変更できます。このページの自分のカードから「✏️ 変更」で修正できますし、<b>一度「欠席」で出しても、後から「やっぱり参加！」に変更OK</b>です。まずは気軽に登録してください 🙌</div></details>
 
@@ -718,6 +731,7 @@
       </div>
 
       <div class="feebox" id="feeBox"></div>
+      <div class="hint" style="text-align:center;margin-bottom:8px">⏰ <b>PMの出欠は7/26まで</b>にご回答を（試合配分のため）。🌅 AMは任意です。</div>
 
       <div class="row">
         <button type="submit" class="btn btn-primary btn-block" id="submitBtn">登録する</button>
@@ -745,6 +759,7 @@ const firebaseConfig = {
   appId: "1:664348645067:web:5cd634d0736da0f7dd6d4e"
 };
 const EVENT_DATE = new Date("2026-08-14T09:30:00+09:00");   // AM OB戦キックオフ（カウントダウンの目標）
+const PM_DEADLINE = new Date("2026-07-26T23:59:59+09:00");  // PM（合同OB戦）の出欠回答期限
 const GOAL = 40;
 
 /* 【あとで設定】対戦相手・長野高校OBのPM参加人数。
@@ -1151,6 +1166,20 @@ function tick(){
   $("#cd-m").textContent=String(m).padStart(2,"0"); $("#cd-s").textContent=String(s).padStart(2,"0");
 }
 tick(); setInterval(tick,1000);
+
+/* ---------- PM回答期限バナー ---------- */
+(function(){
+  const box=$("#deadlineBar"); if(!box) return;
+  const dl=PM_DEADLINE;
+  const dstr=dl.toLocaleDateString("ja-JP",{month:"numeric",day:"numeric",weekday:"short"});
+  const now=new Date();
+  const days=Math.ceil((dl-now)/864e5);
+  const remain = days>0 ? `あと<span class="d">${days}</span>日` : (days===0? "本日まで！" : "");
+  const past = dl < now;
+  box.innerHTML = past
+    ? `<div class="cal"><b>〆</b><span>PM</span></div><div>🏆 PM（合同OB戦）の回答受付は <b class="hl">${dstr}</b> で一旦締め切りました。<br>これから参加したい方は、幹事までご連絡ください（追加調整します）。AMの回答は任意・いつでもOKです。</div>`
+    : `<div class="cal"><b>${dl.getMonth()+1}/${dl.getDate()}</b><span>まで</span></div><div>🏆 <b class="hl">PM（合同OB戦）の出欠は ${dstr} まで</b>にご回答ください ${remain}。<br>試合の組み合わせ・配分を事前に決めるため、期限を設けています。※ 🌅 AMの回答は<b>任意</b>（必須ではありません／いつでも変更OK）。</div>`;
+})();
 
 /* ---------- 対戦相手・長野高校OB（PM）の参加状況 ---------- */
 if(NAGANO_OB != null && !isNaN(NAGANO_OB)){
