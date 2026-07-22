@@ -260,11 +260,27 @@
   .qitem .qq{display:flex;gap:9px;font-weight:800;font-size:14px;line-height:1.5}
   .qitem .qq .mk{color:var(--pitch);font-family:"Bebas Neue",sans-serif;font-size:17px;flex-shrink:0}
   .qitem .who{font-size:11px;color:#b9c4bb;font-weight:700;margin-left:auto;flex-shrink:0;white-space:nowrap}
-  .qitem .aa{display:flex;gap:9px;margin-top:10px;padding-top:10px;border-top:1px dashed #e6efe6;font-size:13.5px;line-height:1.75;font-weight:500;color:#33473a}
+  .qitem .aa-wrap{margin-top:10px;padding-top:10px;border-top:1px dashed #e6efe6}
+  .qitem .aa{display:flex;gap:9px;font-size:13.5px;line-height:1.75;font-weight:500;color:#33473a}
   .qitem .aa .mk{color:var(--gold);font-family:"Bebas Neue",sans-serif;font-size:17px;flex-shrink:0}
   .qitem .pending{margin-top:8px;font-size:12px;color:var(--muted);font-weight:700}
   .qitem textarea{width:100%;margin-top:8px;padding:10px;border:2px solid #e0e8e0;border-radius:9px;font-family:inherit;font-size:13px;resize:vertical;min-height:60px}
   .qitem textarea:focus{outline:none;border-color:var(--pitch)}
+  .qitem .to{font-size:11.5px;font-weight:800;color:#c9932a;margin-bottom:3px}
+  .qitem .pinrow{display:flex;align-items:center;gap:6px;margin-top:8px;font-size:12px;font-weight:700;color:var(--muted)}
+  .qitem .pinrow input{width:15px;height:15px}
+
+  /* 事務局からの掲示（回答をピン留め） */
+  .pinned-box{margin-top:16px;background:linear-gradient(135deg,#fff8e6,#fff2d1);border:1px solid #f1cf88;border-radius:16px;padding:16px 20px}
+  .pinned-box .ph{display:flex;align-items:center;gap:8px;font-weight:900;font-size:14px;color:#7a5a12;margin-bottom:10px}
+  .pinned-box .pitem{background:rgba(255,255,255,.75);border-radius:12px;padding:12px 14px;margin-bottom:8px}
+  .pinned-box .pitem:last-child{margin-bottom:0}
+  .pinned-box .pitem .pq{font-weight:800;font-size:13.5px;color:#4a3400;display:flex;gap:8px}
+  .pinned-box .pitem .pq .mk{color:#c9932a;font-family:"Bebas Neue",sans-serif;font-size:16px;flex-shrink:0}
+  .pinned-box .pitem .pa-wrap{margin-top:6px}
+  .pinned-box .pitem .pa{font-size:13px;color:#33473a;font-weight:500;line-height:1.7;display:flex;gap:8px}
+  .pinned-box .pitem .pa .mk{color:var(--pitch);font-family:"Bebas Neue",sans-serif;font-size:16px;flex-shrink:0}
+  .pinned-box .pitem .to{font-size:11px;font-weight:800;color:#a9791b;margin-bottom:2px}
 
   /* 幹事メニューの表 */
   .atbl{border-collapse:collapse;width:100%;font-size:13px;white-space:nowrap}
@@ -442,6 +458,8 @@
   </div>
 
   <div class="deadline" id="deadlineBar"></div>
+
+  <div id="pinnedQABox"></div>
 
   <div class="cta-row" id="regist">
     <button class="btn btn-primary" id="openNew">⚽️ 出欠を登録する</button>
@@ -980,10 +998,11 @@ function renderQ(){
       <div class="qq"><span class="mk">Q</span><span>${esc(q.text)}</span>
         <span class="who">${q.by? esc(q.by)+" さん":"匿名"}</span></div>
       ${q.answer
-        ? `<div class="aa"><span class="mk">A</span><span>${esc(q.answer).replace(/\n/g,"<br>")}</span></div>`
+        ? `<div class="aa-wrap">${q.by?`<div class="to">→ ${esc(q.by)}さんへ</div>`:""}<div class="aa"><span class="mk">A</span><span>${esc(q.answer).replace(/\n/g,"<br>")}</span></div></div>`
         : `<div class="pending">⏳ 事務局が回答予定です</div>`}
       ${isAdmin? `
         <textarea data-ans="${q.id}" placeholder="回答を入力…">${esc(q.answer||"")}</textarea>
+        <label class="pinrow"><input type="checkbox" data-pin="${q.id}" ${q.pinned?"checked":""}> 📌 みんなへのお知らせとしても掲示する</label>
         <div style="display:flex;gap:6px;margin-top:6px">
           <button class="mini" data-save="${q.id}">💾 回答を保存</button>
           <button class="mini" data-delq="${q.id}" style="color:#b04a4a">削除</button>
@@ -994,7 +1013,8 @@ function renderQ(){
     $("#qList").querySelectorAll("[data-save]").forEach(b=>b.onclick=async()=>{
       const id=b.dataset.save;
       const val=$(`textarea[data-ans="${id}"]`).value.trim();
-      await qstore.update(id,{answer:val});
+      const pinned=$(`input[data-pin="${id}"]`).checked;
+      await qstore.update(id,{answer:val, pinned});
       showToast("回答を保存しました ✅");
     });
     $("#qList").querySelectorAll("[data-delq]").forEach(b=>b.onclick=async()=>{
@@ -1003,6 +1023,21 @@ function renderQ(){
       showToast("削除しました");
     });
   }
+  renderPinned();
+}
+
+/* 事務局からの掲示（回答に「掲示」チェックを入れたQ&Aを、目立つ位置にも表示） */
+function renderPinned(){
+  const box=$("#pinnedQABox");
+  const pinned=allQ.filter(q=>q.pinned && q.answer);
+  if(!pinned.length){ box.innerHTML=""; return; }
+  box.innerHTML = `<div class="pinned-box">
+    <div class="ph">📌 事務局からのお知らせ</div>
+    ${pinned.map(q=>`<div class="pitem">
+      <div class="pq"><span class="mk">Q</span><span>${esc(q.text)}</span></div>
+      <div class="pa-wrap">${q.by?`<div class="to">→ ${esc(q.by)}さんへ</div>`:""}<div class="pa"><span class="mk">A</span><span>${esc(q.answer).replace(/\n/g,"<br>")}</span></div></div>
+    </div>`).join("")}
+  </div>`;
 }
 $("#qSend").onclick=async()=>{
   const text=$("#qText").value.trim();
