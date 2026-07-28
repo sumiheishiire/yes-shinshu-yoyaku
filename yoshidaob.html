@@ -465,6 +465,7 @@
     <button class="btn btn-primary" id="openNew">⚽️ 出欠を登録する</button>
     <button class="btn btn-ghost" id="openMine" style="display:none">✏️ 自分の登録を編集</button>
   </div>
+  <div id="entryClosedBox"></div>
 
   <div id="setupBanner"></div>
 
@@ -645,7 +646,7 @@
       <div class="a"><b>第一駐車場</b>をご利用ください。<b>スタジアム入口の最寄り</b>の駐車場です。</div></details>
 
     <details class="faq"><summary><span class="q">Q</span>回答の期限はある？<span class="arw">›</span></summary>
-      <div class="a"><b>🏆 PM（合同OB戦）は 7月26日（日）までにご回答ください。</b>長野高校OBとの試合の組み合わせ・カテゴリ配分を事前に決めるため、人数を早めに把握したいためです。<br><b>🌅 AM（吉田グラウンドの恒例OB戦）は回答任意</b>です（当日参加でもOK）。もちろん、AMも回答いただけると準備の参考になり助かります。<br>期限後も、参加したくなったら幹事までご連絡ください。できる限り調整します 🙌</div></details>
+      <div class="a"><b>🏆 PM（合同OB戦）は 7月26日（日）までにご回答ください。</b>長野高校OBとの試合の組み合わせ・カテゴリ配分を事前に決めるため、人数を早めに把握したいためです。<br><b>🌅 AM（吉田グラウンドの恒例OB戦）は回答任意</b>です（当日参加でもOK）。もちろん、AMも回答いただけると準備の参考になり助かります。<br>期限後の追加参加も歓迎です。できる限り調整します 🙌</div></details>
 
     <details class="faq"><summary><span class="q">Q</span>申込内容を後から変えられる？<span class="arw">›</span></summary>
       <div class="a">いつでも変更できます。このページの自分のカードから「✏️ 変更」で修正できますし、<b>一度「欠席」で出しても、後から「やっぱり参加！」に変更OK</b>です。まずは気軽に登録してください 🙌</div></details>
@@ -703,7 +704,7 @@
   💰 参加費 おひとり 3,000円・当日現金で回収します（<b>予定</b>／変更になる場合があります）<br>
   🥤 飲み物は<b>基本的に各自でご準備ください</b>（真夏の開催です。多めにどうぞ）<br>
   📱 携帯番号は当日連絡用に幹事だけが確認します（一覧には表示されません）。<br>
-  内容の追加・変更はいつでもできます。VAMOS! 一戦必勝、8/14に集まりましょう！ ⚽️🔥
+  出欠の事前受付は7/26で締め切りました（追加参加も歓迎です）。VAMOS! 一戦必勝、8/14に集まりましょう！ ⚽️🔥
 </footer>
 
 <!-- ===== MODAL ===== -->
@@ -784,6 +785,12 @@ const firebaseConfig = {
 };
 const EVENT_DATE = new Date("2026-08-14T09:30:00+09:00");   // AM OB戦キックオフ（カウントダウンの目標）
 const PM_DEADLINE = new Date("2026-07-26T23:59:59+09:00");  // PM（合同OB戦）の出欠回答期限
+/* 出欠フォームの事前受付を締め切るフラグ（true で入力停止）。
+   ・追加の参加を妨げる意図はありません
+   ・おおよその参加人数を把握するための集計でした
+   ・試合の配分（チーム編成）検討のための「事前申込」でした
+   連絡先の案内は動線がないため表示しない（追加参加歓迎の旨だけ明示）。 */
+const ENTRY_CLOSED = true;
 const GOAL = 40;
 
 /* 【あとで設定】対戦相手・長野高校OBのPM参加人数。
@@ -975,14 +982,19 @@ function render(){
     </div>`;
   }).join("");
 
-  // 自分編集ボタン
+  // 自分編集ボタン（受付終了時は非表示）
   const me = all.find(x=>x.id===myId);
-  $("#openMine").style.display = me? "inline-block":"none";
+  $("#openMine").style.display = (me && !ENTRY_CLOSED)? "inline-block":"none";
+  $("#openNew").style.display = ENTRY_CLOSED? "none":"inline-block";
   $("#openNew").textContent = me? "➕ 別の人を登録する" : "⚽️ 出欠を登録する";
 
   // クリックハンドラ
   g.querySelectorAll("[data-edit]").forEach(b=>b.onclick=()=>openEdit(b.dataset.edit));
   pl.querySelectorAll("[data-edit]").forEach(b=>b.onclick=()=>openEdit(b.dataset.edit));
+  if(ENTRY_CLOSED){  // 受付終了：出欠カードの「変更」ボタンを隠す（質問コーナーは対象外）
+    g.querySelectorAll("[data-edit]").forEach(b=>b.style.display="none");
+    pl.querySelectorAll("[data-edit]").forEach(b=>b.style.display="none");
+  }
 
   if(isAdmin) renderAdmin();
 }
@@ -1113,7 +1125,14 @@ function animateNum(el,to){
 }
 
 /* ---------- モーダル操作 ---------- */
-function openModal(){ overlay.classList.add("open"); }
+function showEntryClosed(){
+  showToast("出欠の事前受付は7/26で締め切りました。追加参加も歓迎です。");
+  const el=$("#regist"); if(el) el.scrollIntoView({behavior:"smooth",block:"center"});
+}
+function openModal(){
+  if(ENTRY_CLOSED){ showEntryClosed(); return; }   // 事前受付終了：入力を停止
+  overlay.classList.add("open");
+}
 function closeModal(){ overlay.classList.remove("open"); }
 $("#closeModal").onclick=closeModal;
 overlay.onclick=e=>{ if(e.target===overlay) closeModal(); };
@@ -1266,8 +1285,19 @@ tick(); setInterval(tick,1000);
   const remain = days>0 ? `あと<span class="d">${days}</span>日` : (days===0? "本日まで！" : "");
   const past = dl < now;
   box.innerHTML = past
-    ? `<div class="cal"><b>〆</b><span>PM</span></div><div>🏆 PM（合同OB戦）の回答受付は <b class="hl">${dstr}</b> で一旦締め切りました。<br>これから参加したい方は、幹事までご連絡ください（追加調整します）。AMの回答は任意・いつでもOKです。</div>`
+    ? `<div class="cal"><b>〆</b><span>受付</span></div><div>🏆 出欠の事前受付は <b class="hl">${dstr}</b> で締め切りました。これは<b>おおよその参加人数の把握</b>と<b>試合の配分（チーム編成）検討</b>のための<b>事前申込</b>でした。<br><b>追加の参加は歓迎です</b>（締切は参加を妨げるものではありません）🙌</div>`
     : `<div class="cal"><b>${dl.getMonth()+1}/${dl.getDate()}</b><span>まで</span></div><div>🏆 <b class="hl">PM（合同OB戦）の出欠は ${dstr} まで</b>にご回答ください ${remain}。<br>試合の組み合わせ・配分を事前に決めるため、期限を設けています。※ 🌅 AMの回答は<b>任意</b>（必須ではありません／いつでも変更OK）。</div>`;
+})();
+
+/* ---------- 出欠フォーム 事前受付終了の告知 ---------- */
+(function(){
+  const box=$("#entryClosedBox"); if(!box || !ENTRY_CLOSED) return;
+  box.innerHTML=`<div style="background:#eef6ef;border:1px solid #cfe6d3;border-radius:14px;padding:16px 18px;margin-top:14px;color:#1f5133;line-height:1.7;font-size:13.5px">
+    <div style="font-weight:900;font-size:15px;color:#14622f;margin-bottom:6px">🙏 出欠の事前受付は締め切りました（7/26）</div>
+    たくさんのお申し込みをありがとうございました。今回の受付は、<b>おおよその参加人数を把握</b>し、<b>試合の配分（年代別のチーム編成）を検討する</b>ための<b>事前申込</b>でした。<br>
+    <b>追加の参加を歓迎します。締め切りは参加を妨げるものではありません。</b><br>
+    <span style="color:#6b8a72;font-size:12px">※ このページの参加メンバー一覧・当日のながれは引き続きご覧いただけます。</span>
+  </div>`;
 })();
 
 /* ---------- 対戦相手・長野高校OB（PM）の参加状況 ---------- */
