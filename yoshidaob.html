@@ -346,6 +346,10 @@
   .setup b{color:#5f4408}
   .setup code{background:#fff;border:1px solid #eadfbf;padding:1px 6px;border-radius:6px;font-size:12px}
 
+  /* AM集合時間変更の告知バナー（最上部・強調） */
+  .time-alert{background:linear-gradient(135deg,#ffe4e4,#ffd0d0);border:2px solid #f2a5a5;border-radius:14px;padding:12px 18px;margin:0 0 16px;display:flex;align-items:center;justify-content:center;gap:10px;color:#7a1f1f;font-weight:800;font-size:14px;line-height:1.5;text-align:center;flex-wrap:wrap}
+  .time-alert .big{font-family:"Bebas Neue",sans-serif;font-size:24px;color:#b3241f;vertical-align:-2px;margin:0 3px}
+
   /* PM回答期限バナー */
   .deadline{margin-top:16px;background:linear-gradient(135deg,#fff3d6,#ffe7b0);border:1px solid #f1cf88;border-radius:14px;padding:13px 16px;display:flex;align-items:center;gap:12px;color:#6e4e12;font-weight:700;font-size:13.5px;line-height:1.6}
   .deadline .cal{flex-shrink:0;background:#c9932a;color:#fff;border-radius:10px;padding:6px 10px;text-align:center;line-height:1.1}
@@ -410,6 +414,7 @@
 </nav>
 
 <header class="hero">
+  <div class="time-alert">⚠️ <b>AM集合時間が変更になりました</b>：<span class="big">9:15</span>集合（<b>9:45キックオフ</b>）</div>
   <span class="kicker"><span class="dot"></span>NAGANO YOSHIDA × NAGANO — OB MATCH 2026</span>
   <h1 class="title">長野吉田高校<br><span style="color:var(--gold-soft)">OB戦</span></h1>
   <p class="subtitle">🌅 AM は母校での恒例OB戦、🏆 PM は長野高校との初の合同OB戦。<br>当日を楽しみ切るために、今日から少しずつ体を動かしておきましょう ⚽️🔥</p>
@@ -425,7 +430,7 @@
     <span class="chip">📅 2026年8月14日（金）</span>
     <span class="chip">📍 長野Uスタジアム（PM）</span>
   </div>
-  <div class="cd-cap">⚽️ AM OB戦キックオフ（9:30〜 長野吉田高校グラウンド）まで</div>
+  <div class="cd-cap">⚽️ AM OB戦キックオフ（9:45〜 長野吉田高校グラウンド）まで</div>
   <div class="countdown" id="countdown">
     <div class="cd"><b id="cd-d">--</b><span>DAYS</span></div>
     <div class="cd"><b id="cd-h">--</b><span>HOURS</span></div>
@@ -451,8 +456,8 @@
 
   <div class="panel" style="margin-top:12px">
     <div class="sched">
-      <div class="si"><span class="ic">🌅</span><div><b>AM OB戦</b><span>9:30〜／長野吉田高校グラウンド</span></div></div>
-      <div class="si"><span class="ic">🏆</span><div><b>合同OB戦</b><span>12:20集合／長野Uスタジアム</span></div></div>
+      <div class="si"><span class="ic">🌅</span><div><b>AM OB戦</b><span>9:15集合・9:45〜／長野吉田高校グラウンド</span></div></div>
+      <div class="si"><span class="ic">🏆</span><div><b>合同OB戦</b><span>12:45頃集合（目安）／長野Uスタジアム</span></div></div>
       <div class="si"><span class="ic">💰</span><div><b>参加費 <span style="font-size:10px;color:#fff;background:#c9932a;border-radius:5px;padding:1px 6px;vertical-align:1px;font-weight:800">予定</span></b><span>AM出席 500円／PMプレー 3,000円／PM見学 無料<br><span style="font-size:11px">当日現金で回収・金額は変更になる場合があります</span></span></div></div>
     </div>
   </div>
@@ -493,35 +498,35 @@
       <div class="tl">
         <div class="tl-item key">
           <span class="tl-dot"></span>
-          <span class="tl-time">9:30〜</span>
+          <span class="tl-time">9:15集合<br>9:45〜11:45</span>
           <div class="tl-body"><b>🌅 AM OB戦 ＜現役世代とのゲームあり＞</b>
-            <span>母校のグラウンドで、OB同士のゲームに加えて<b>最強の現役世代との一戦</b>も。<br>若手OBにとっては、ここが一番の見どころかもしれません 🔥</span><br>
+            <span>9:15集合、<b>9:45キックオフ</b>。母校のグラウンドで、OB同士のゲームに加えて<b>最強の現役世代との一戦</b>も。<br>若手OBにとっては、ここが一番の見どころかもしれません 🔥<br><b>終了は11:45予定</b>です。</span><br>
             <span class="place">📍 長野吉田高校グラウンド</span></div>
         </div>
         <div class="tl-item">
           <span class="tl-dot"></span>
           <span class="tl-time">移動</span>
           <div class="tl-body"><b>🚗 長野Uスタジアムへ（車で約30分）</b>
-            <span>移動時間がかかります。余裕をもってどうぞ</span></div>
+            <span>AM終了（11:45予定）後、移動時間がかかります。余裕をもってどうぞ</span></div>
         </div>
         <div class="tl-item key">
           <span class="tl-dot"></span>
-          <span class="tl-time">12:20</span>
-          <div class="tl-body"><b>集合</b>
-            <span>第一駐車場（スタジアム入口の最寄り）をご利用ください</span><br>
+          <span class="tl-time">12:45頃</span>
+          <div class="tl-body"><b>集合（目安）</b>
+            <span>第一駐車場（スタジアム入口の最寄り）をご利用ください。<b>13:00の全体写真撮影に間に合うこと</b>が何より重要です。余裕をもってお越しください</span><br>
             <span class="place stadium">🏟 長野Uスタジアム</span></div>
         </div>
         <div class="tl-item key">
           <span class="tl-dot"></span>
-          <span class="tl-time">12:35頃</span>
+          <span class="tl-time">13:00頃</span>
           <div class="tl-body"><b>📸 全体写真撮影</b>
-            <span>全員で記念の一枚。時間は調整予定です</span></div>
+            <span>全員で記念の一枚。ここから合同OB戦の進行がスタートします。時間は調整予定です</span></div>
         </div>
         <div class="tl-item key">
           <span class="tl-dot"></span>
-          <span class="tl-time">12:35〜15:25</span>
+          <span class="tl-time">13:00〜15:25</span>
           <div class="tl-body"><b>🏆 合同OB戦（長野OB vs 吉田OB）</b>
-            <span>年代別のカテゴリで、20分ゲームを6本</span></div>
+            <span>年代別のカテゴリで、15分ゲームを6本の予定（見直し中）</span></div>
         </div>
         <div class="tl-item">
           <span class="tl-dot"></span>
@@ -585,7 +590,8 @@
           <dl class="info-row"><dt>駐車場</dt><dd><b>第一駐車場</b>をご利用ください<br><span style="color:var(--muted);font-size:12px">スタジアム入口の最寄り</span></dd></dl>
           <dl class="info-row"><dt>更衣室</dt><dd>使用可（<b>シャワー・洗面つき</b>）</dd></dl>
           <dl class="info-row"><dt>ウォームアップ</dt><dd>専用エリアが使えます</dd></dl>
-          <dl class="info-row"><dt>キッチンカー</dt><dd>2〜3台の出店予定<br><span style="color:var(--muted);font-size:12px">駐車場エリア。飲み物は各自でご準備を</span></dd></dl>
+          <dl class="info-row"><dt>キッチンカー</dt><dd>🍜ラーメン・🍛ガパオライスの<b>2台</b><br><span style="color:var(--muted);font-size:12px">長野高校OB約65名＋現役約30名も利用するため<b>混雑が予想されます</b>。ご自身の食事はできるだけ各自でご準備ください</span></dd></dl>
+          <dl class="info-row"><dt>飲食</dt><dd>グラウンド（ピッチ内）は<b>NG</b><br><span style="color:var(--muted);font-size:12px"><b>メインスタンドでは飲食OK</b>です</span></dd></dl>
           <dl class="info-row"><dt>観覧</dt><dd>メインスタンドのみ<br><span style="color:var(--muted);font-size:12px">ご家族・ご友人の応援もぜひ</span></dd></dl>
         </div>
         <div>
@@ -610,7 +616,7 @@
       <div class="a"><b>ユニフォームは不要です。当日ビブスを配布します。</b>動きやすいウェアとスパイクだけご用意ください。久しぶりの方も、手ぶら感覚で大丈夫です。</div></details>
 
     <details class="faq"><summary><span class="q">Q</span>何時にどこへ行けばいい？<span class="arw">›</span></summary>
-      <div class="a">午前は <b>9:30〜 長野吉田高校グラウンド</b>でOB戦。午後は <b>長野Uスタジアムに12:20集合</b>です。<b>第一駐車場（スタジアム入口の最寄り）</b>をご利用ください。</div></details>
+      <div class="a">午前は <b>9:15集合・9:45〜 長野吉田高校グラウンド</b>でOB戦（終了は<b>11:45予定</b>）。午後は <b>長野Uスタジアムに12:45頃を目安に集合</b>してください。<b>第一駐車場（スタジアム入口の最寄り）</b>をご利用ください。<b>13:00の全体写真撮影に間に合うこと</b>が一番重要です。</div></details>
 
     <details class="faq"><summary><span class="q">Q</span>吉田高校からスタジアムまで、移動が間に合う？<span class="arw">›</span></summary>
       <div class="a">車で<b>約30分</b>かかります。ここが今回いちばんの調整ポイントですが、<b>スタート時に全員が揃っている必要はありません</b>。参加メンバーが固まり次第、試合スケジュールを見直しますし、写真撮影の時間も調整する予定です。<b>到着が多少遅れても大丈夫</b>ですので、安心してご参加ください。</div></details>
@@ -631,7 +637,7 @@
       <div class="a">観覧は<b>メインスタンドのみ</b>ご利用いただけます（他エリアは閉鎖）。ぜひ応援にお越しください。</div></details>
 
     <details class="faq"><summary><span class="q">Q</span>飲み物や食事は？<span class="arw">›</span></summary>
-      <div class="a"><b>飲み物は基本的に各自でご準備ください。</b>こちらでも一定量は用意しますが、足りなくなる可能性があります。真夏の開催ですので、<b>多めにお持ちいただくことを強くおすすめします</b>。<br>キッチンカーが2〜3台出店する予定ですが、台数が限られるため<b>あてにせず、各自でのご準備をお願いします</b>。</div></details>
+      <div class="a"><b>飲み物は基本的に各自でご準備ください。</b>こちらでも一定量は用意しますが、足りなくなる可能性があります。真夏の開催ですので、<b>多めにお持ちいただくことを強くおすすめします</b>。<br>キッチンカーは<b>🍜ラーメン・🍛ガパオライスの2台</b>出店予定ですが、長野高校OB（約65名）・現役（約30名）も利用するため<b>かなり混雑する可能性</b>があります。あてにせず、<b>各自でのお食事のご準備をおすすめします</b>。<br>なお、<b>グラウンド（ピッチ内）での飲食はNG</b>ですが、<b>メインスタンドでの飲食は可能</b>です。</div></details>
 
     <details class="faq"><summary><span class="q">Q</span>参加費は？当日払える？<span class="arw">›</span></summary>
       <div class="a">出席する内容ごとに分かれます（<b>当日現金で回収</b>）。<br>・🌅 <b>AM OB戦に出席</b>：500円<br>・⚽ <b>PM 合同OB戦でプレー</b>：3,000円（予定）<br>・👀 <b>PM 見学で出席</b>：無料<br>例）AM＋PMプレーなら 3,500円。申込フォームで選ぶと<b>その場で合計額が表示</b>されます。<br><b>※金額はあくまで「予定」で、変更になる場合があります。</b>お釣りのないようご用意いただけると助かります。</div></details>
@@ -700,7 +706,7 @@
 </div>
 
 <footer>
-  🌅 AM 9:30〜 長野吉田高校グラウンド ／ 🏆 PM 12:20集合 長野Uスタジアム（第一駐車場）<br>
+  🌅 AM 9:15集合・9:45〜（終了11:45予定） 長野吉田高校グラウンド ／ 🏆 PM 12:45頃集合目安 長野Uスタジアム（第一駐車場・写真撮影13:00〜）<br>
   💰 参加費 おひとり 3,000円・当日現金で回収します（<b>予定</b>／変更になる場合があります）<br>
   🥤 飲み物は<b>基本的に各自でご準備ください</b>（真夏の開催です。多めにどうぞ）<br>
   📱 携帯番号は当日連絡用に幹事だけが確認します（一覧には表示されません）。<br>
@@ -725,7 +731,7 @@
       </div>
 
       <div class="field">
-        <label>🌅 AM OB戦（長野吉田高校グラウンド・9:30〜）</label>
+        <label>🌅 AM OB戦（長野吉田高校グラウンド・9:15集合／9:45〜）</label>
         <div class="seg" id="segAm">
           <label class="warm"><input type="radio" name="am" value="yes"><span class="box"><span class="em">☀️</span>出席<span class="fee">500円</span></span></label>
           <label class="absent"><input type="radio" name="am" value="no" checked><span class="box"><span class="em">🙇</span>欠席<span class="fee none">—</span></span></label>
@@ -734,7 +740,7 @@
       </div>
 
       <div class="field">
-        <label>🏆 PM 合同OB戦（長野Uスタジアム・12:20集合）</label>
+        <label>🏆 PM 合同OB戦（長野Uスタジアム・12:45頃集合目安）</label>
         <div class="seg col3" id="segPm">
           <label><input type="radio" name="pm" value="play" checked><span class="box"><span class="em">⚽</span>プレー<span class="fee">3,000円<small> 予定</small></span></span></label>
           <label class="watch"><input type="radio" name="pm" value="watch"><span class="box"><span class="em">👀</span>見学<span class="fee free">無料</span></span></label>
@@ -783,7 +789,7 @@ const firebaseConfig = {
   messagingSenderId: "664348645067",
   appId: "1:664348645067:web:5cd634d0736da0f7dd6d4e"
 };
-const EVENT_DATE = new Date("2026-08-14T09:30:00+09:00");   // AM OB戦キックオフ（カウントダウンの目標）
+const EVENT_DATE = new Date("2026-08-14T09:45:00+09:00");   // AM OB戦キックオフ（カウントダウンの目標）
 const PM_DEADLINE = new Date("2026-07-26T23:59:59+09:00");  // PM（合同OB戦）の出欠回答期限
 /* 出欠フォームの事前受付を締め切るフラグ（true で入力停止）。
    ・追加の参加を妨げる意図はありません
