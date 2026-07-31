@@ -824,12 +824,19 @@ if (configured) {
     },
     async removeContact(id){ await fs.deleteDoc(fs.doc(db,...PATH_C,id)); },
 
-    /* 幹事メニュー用の事前チェック。private 配下へ実際に書いて消してみて、
-       ルールが入っているかを判定する（「設定したつもり」を防ぐ）。 */
+    /* 幹事メニュー用の事前チェック。
+       ★「書けること」だけでなく「**読めないこと**」まで確かめる。
+         保存先を private に移しただけではルールは変わらないため、
+         ルール未適用だと連絡先が誰にでも読める状態のままになる。
+         書き込み成功だけを見て「安全」と表示するのは危険なので、
+         読めてしまった場合は明確に失敗として扱う。 */
     async preflightContact(){
       const ref = fs.doc(db,...PATH_C,"__preflight");
-      await fs.setDoc(ref,{at:Date.now()});
-      await fs.deleteDoc(ref);
+      await fs.setDoc(ref,{at:Date.now()});          // 書けなければ throw（ルール不足）
+      let readable=false;
+      try{ await fs.getDocs(fs.collection(db,...PATH_C)); readable=true; }catch(_){ /* 読めない＝正常 */ }
+      try{ await fs.deleteDoc(ref); }catch(_){}
+      if(readable) throw Object.assign(new Error("contacts are readable"),{code:"contacts-readable"});
     }
   };
 
@@ -1122,14 +1129,22 @@ async function checkContactRules(){
     box.className="bkst ok";
     box.innerHTML=`✅ 連絡先は<b>非公開領域に保存されています</b>（読み取り不可）。<small>閲覧は Firebaseコンソール ＞ Firestore ＞ <code>${esc(PATH_C.join("/"))}</code> から。CSVには連絡先は含まれません。</small>`;
   }catch(err){
+    const readable = err?.code==="contacts-readable";
     box.className="bkst danger";
-    box.innerHTML=`🚨 <b>連絡先が保存できない状態です（${esc(err?.code||"error")}）。</b>
-      <small>Firestoreのルールが未設定のため、入力された連絡先が保存されません（出欠登録そのものは正常です）。<br>
+    box.innerHTML=`🚨 <b>${readable
+        ? "連絡先が「誰でも読める」状態です。ルールが未適用です。"
+        : `連絡先が保存できない状態です（${esc(err?.code||"error")}）。`}</b>
+      <small>${readable
+        ? "保存先は非公開領域に移っていますが、<b>Firestoreのルールがまだ緩いため保護されていません</b>。この状態で案内（QR）を配らないでください。"
+        : "入力された連絡先が保存されません（出欠登録そのものは正常です）。"}<br>
       Firebaseコンソール ＞ Firestore Database ＞ ルール に次を追加して「公開」してください：<br>
       <code style="display:block;white-space:pre;overflow-x:auto;margin-top:6px;padding:8px;background:#fff;border:1px solid #e5cf9d;border-radius:4px">match /artifacts/{appId}/private/{document=**} {
   allow create, update, delete: if request.auth != null;
   allow read: if false;
-}</code></small>`;
+}</code>
+      ※ 既存のルールが <code>match /artifacts/{appId}/{document=**}</code> のように
+      private まで含んでしまっている場合は、そちらを <code>/public/</code> 限定に狭める必要があります。
+      （このチェックは ?admin を開くたびに自動で再実行されます）</small>`;
   }
 }
 
