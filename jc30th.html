@@ -27,10 +27,6 @@
     --absent:#a09a8e;
     --sec:#7a4a52;           /* 2次会のアクセント（葡萄色） */
     --sec-lt:#f6ecec;
-    /* 1996年の大会冊子（セピアの表紙）から採った色。
-       使いどころは「あの日の一冊」セクションだけに限定し、
-       ページ全体の紺×金の世界観は崩さない。 */
-    --sepia:#a85f37; --sepia-lt:#c98a5e; --sepia-dp:#6d3a1f;
   }
   *{box-sizing:border-box}
   html{scroll-behavior:smooth}
@@ -92,6 +88,10 @@
   .hero-book .cap{
     margin-top:12px;font-size:10.5px;letter-spacing:.14em;font-weight:700;
     color:var(--gold-lt);opacity:.92;line-height:1.7;
+  }
+  .hero-book .cap small{
+    display:block;margin-top:5px;font-size:9.5px;letter-spacing:.05em;
+    font-weight:600;opacity:.62;color:#fff;
   }
   /* 紙の縦罫のような静かなテクスチャ */
   .hero::after{
@@ -276,29 +276,6 @@
   .rc .rt{font-size:11px;font-weight:800;color:var(--muted);letter-spacing:.04em}
   .rc .rn{font-family:"Noto Serif JP",serif;font-size:15.5px;font-weight:700;margin-top:3px}
 
-  /* ===== あの日の一冊（1996年の大会冊子） ===== */
-  .book{display:grid;grid-template-columns:180px 1fr;gap:24px;align-items:center}
-  @media(max-width:560px){
-    .book{grid-template-columns:1fr;gap:18px;justify-items:center;text-align:center}
-    /* 中央揃えのなかで左罫だけ残ると据わりが悪いので、この塊だけ左揃えに戻す */
-    .bk-body .meta{text-align:left;display:inline-block}
-  }
-  /* 実物のスキャンなので、比率は画像そのものに任せる（切り取らない） */
-  .bk-cover{
-    width:100%;max-width:180px;line-height:0;
-    border-radius:2px;overflow:hidden;
-    box-shadow:0 10px 26px rgba(109,58,31,.32), 0 0 0 1px rgba(109,58,31,.18);
-    transform:rotate(-1.4deg);transition:transform .35s cubic-bezier(.22,1,.36,1)
-  }
-  .book:hover .bk-cover{transform:rotate(0deg) translateY(-3px)}
-  .bk-cover img{width:100%;height:auto;display:block}
-
-  .bk-body h3{margin:0 0 9px;font-family:"Noto Serif JP",serif;font-size:17px;font-weight:900;color:var(--sepia-dp)}
-  .bk-body p{margin:0 0 11px;font-size:13.5px;line-height:2;color:#4a4038;font-weight:500}
-  .bk-body .meta{font-size:11.5px;color:var(--muted);font-weight:700;line-height:1.7;
-    border-left:2px solid var(--sepia-lt);padding-left:11px}
-  .bk-body .meta em{font-style:normal;font-family:"DM Serif Display",serif;font-size:14px;color:var(--sepia);margin-right:5px}
-
   /* FAQ */
   .faq{background:var(--card);border:1px solid #ebe3d4;border-radius:5px;margin-bottom:8px;overflow:hidden}
   .faq summary{cursor:pointer;padding:15px 16px;font-weight:800;font-size:14.5px;list-style:none;display:flex;align-items:center;gap:11px;transition:background .15s}
@@ -463,7 +440,9 @@
   <figure class="hero-book">
     <img src="jc30th_cover.jpg" width="1100" height="1876"
          alt="1996年 第45回全国会員大会 長野大会 冊子の表紙。雪をいただいた山なみと、大会ポスターの貼られたバス停の待合小屋">
-    <figcaption class="cap">あの日、手にしていた一冊</figcaption>
+    <figcaption class="cap">あの日、手にしていた一冊
+      <small>社団法人 日本青年会議所　第45回 全国会員大会 長野大会</small>
+    </figcaption>
   </figure>
 
   <div class="datebar">
@@ -623,29 +602,6 @@
       <div class="tl-note" style="margin-top:14px">
         ご案内文（2026年8月10日付）の差出人一覧です。当時の実行委員長・<b>荒井 久也</b>氏のリーダーシップのもと、
         メンバー全員が心をひとつにし、大会を大成功へと導きました。あの経験は、私たちの青春の確かな一頁です。
-      </div>
-    </div>
-  </section>
-
-  <!-- あの日の一冊（1996年の大会冊子） -->
-  <section class="blk" id="book">
-    <div class="blk-head"><h2>📖 あの日の一冊</h2></div>
-    <div class="panel">
-      <div class="book">
-        <div id="bkCover"></div>
-        <div class="bk-body">
-          <h3>この表紙を、覚えていますか。</h3>
-          <p>
-            水を張った田のほとりに立つ、木造のバス停の待合小屋。
-            その扉には、私たちの大会ポスターが貼られていました。
-            背には、雪をいただいた山なみ。<br>
-            あの年、この一冊を手にして、全国から来た仲間を迎えました。
-          </p>
-          <div class="meta">
-            <em>1996</em>社団法人 日本青年会議所<br>
-            第45回 全国会員大会 長野大会
-          </div>
-        </div>
       </div>
     </div>
   </section>
@@ -829,12 +785,10 @@ const ENTRY_CLOSED = false;
    PDFへのリンクなら { href:"jc30th.pdf", label:"ご案内PDFを開く" } でも可。 */
 const EXTRA_DOC = null;
 
-/* 1996年の大会冊子・表紙（実物のスキャン）。
-   ヒーローの背景と「あの日の一冊」セクションの両方で使っている。
-   差し替えるときは、同じ縦長の比率の画像にすること
-   （ヒーローは cover 指定なので、極端に横長だと山なみが切れる）。
+/* 1996年の大会冊子・表紙（実物のスキャン）は jc30th_cover.jpg。
+   HTML側（ヒーローの .hero-book）に直接書いてあるので、差し替えるときは
+   img の src を書き換える。
    ※ 画像を追加・変更したら .gitignore に !ファイル名 を足すのを忘れずに。 */
-const COVER_IMG = "jc30th_cover.jpg";
 
 /* ============================================================
    申込を幹事メールへ通知（Firestoreと独立した二重バックアップ）
@@ -1494,13 +1448,6 @@ tick(); setInterval(tick,1000);
       📄 <a href="${esc(EXTRA_DOC.href)}" target="_blank" rel="noopener" style="color:#7a5c19;font-weight:900">${esc(EXTRA_DOC.label||"ご案内資料を開く")}</a>
     </div>`;
   }
-})();
-
-/* ---------- あの日の一冊（表紙） ---------- */
-(function(){
-  const box=$("#bkCover"); if(!box || !COVER_IMG) return;
-  box.innerHTML=`<div class="bk-cover"><img src="${esc(COVER_IMG)}" alt="1996年 第45回全国会員大会 長野大会 冊子の表紙。雪をいただいた山なみと、大会ポスターの貼られたバス停の待合小屋" loading="lazy"></div>
-    <div style="text-align:center;font-size:10.5px;color:var(--muted);font-weight:700;margin-top:10px;line-height:1.6">1996年 大会冊子 表紙</div>`;
 })();
 
 /* ---------- 拡散ボタン ---------- */
