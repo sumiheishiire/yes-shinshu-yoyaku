@@ -133,6 +133,24 @@
     background:rgba(255,255,255,.07);border:1px solid var(--line);
     padding:9px 16px;border-radius:3px;font-size:14px;font-weight:700;display:flex;align-items:center;gap:8px;
   }
+  /* ヒーロー内の登録ボタン（QRからの着地点） */
+  .hero-cta{margin:26px auto 2px}
+  .hero-cta .btn{box-shadow:0 12px 30px rgba(201,164,92,.5)}
+  .hero-cta .hint2{display:block;margin-top:11px;font-size:11.5px;font-weight:700;color:var(--gold-lt);opacity:.9;letter-spacing:.04em}
+
+  /* 画面下に貼りつく登録ボタン（上下どちらのボタンも見えていないときだけ出す） */
+  .stickycta{
+    position:fixed;left:0;right:0;bottom:0;z-index:80;display:none;
+    padding:10px 14px calc(10px + env(safe-area-inset-bottom,0px));
+    background:rgba(255,253,249,.97);backdrop-filter:blur(10px);
+    border-top:1px solid #e6ddcb;box-shadow:0 -6px 22px rgba(12,24,44,.14);
+    transform:translateY(120%);transition:transform .28s cubic-bezier(.22,1,.36,1);
+  }
+  .stickycta.on{display:block}
+  .stickycta.show{transform:none}
+  .stickycta .btn{width:100%;max-width:520px;margin:0 auto;display:block;padding:15px;font-size:16px}
+  body.hascta{padding-bottom:80px}
+
   .cd-cap{margin-top:28px;font-size:11.5px;font-weight:700;letter-spacing:.14em;color:var(--gold-lt)}
   .countdown{display:flex;justify-content:center;gap:9px;margin-top:12px;flex-wrap:wrap}
   .cd{min-width:72px;background:rgba(0,0,0,.22);border:1px solid var(--line);border-radius:4px;padding:12px 6px}
@@ -463,6 +481,11 @@
     あの日、心をひとつにした仲間と、もう一度。
   </p>
 
+  <div class="datebar">
+    <span class="chip">📅 2026年10月9日（金）18:00〜</span>
+    <span class="chip">📍 ホテル国際21「弥生の間」</span>
+  </div>
+
   <figure class="hero-book">
     <img src="jc30th_cover.jpg" width="1100" height="1876"
          alt="1996年 第45回全国会員大会 長野大会 冊子の表紙。雪をいただいた山なみと、大会ポスターの貼られたバス停の待合小屋">
@@ -471,9 +494,10 @@
     </figcaption>
   </figure>
 
-  <div class="datebar">
-    <span class="chip">📅 2026年10月9日（金）18:00〜</span>
-    <span class="chip">📍 ホテル国際21「弥生の間」</span>
+  <!-- QRから来た方が最初の画面で必ず出会えるように、ヒーロー内にも登録ボタンを置く -->
+  <div class="hero-cta" id="heroCta">
+    <button class="btn btn-primary" id="openNewHero">✍️ 出欠を登録する</button>
+    <span class="hint2">30秒で完了・あとから何度でも変更できます</span>
   </div>
 
   <div class="cd-cap">開宴まで</div>
@@ -818,6 +842,10 @@
       <button type="button" class="del" id="delBtn" style="display:none">この登録を削除する</button>
     </form>
   </div>
+</div>
+
+<div class="stickycta" id="stickyCta">
+  <button class="btn btn-primary" id="openNewSticky">✍️ 出欠を登録する</button>
 </div>
 
 <canvas id="confetti"></canvas>
@@ -1179,6 +1207,14 @@ function render(){
   $("#openNew").style.display  = CFG.entryClosed? "none":"inline-block";
   $("#openNew").textContent    = me? "➕ 別の方を登録する" : "✍️ 出欠を登録する";
 
+  // ヒーローと画面下のボタンは、登録済みかどうかで文言を変える
+  const ctaLabel = me? "✏️ 自分の登録を変更する" : "✍️ 出欠を登録する";
+  $("#openNewHero").textContent   = ctaLabel;
+  $("#openNewSticky").textContent = ctaLabel;
+  $("#heroCta").querySelector(".hint2").textContent =
+    me? "内容の変更・欠席への切替もこちらから" : "30秒で完了・あとから何度でも変更できます";
+  updateSticky();
+
   // ハンドラ
   document.querySelectorAll("[data-edit]").forEach(b=>b.onclick=()=>openEdit(b.dataset.edit));
   document.querySelectorAll("[data-want]").forEach(b=>b.onclick=async()=>{
@@ -1452,8 +1488,9 @@ function animateNum(el,to){
 function openModal(){
   if(CFG.entryClosed && !isStaff()){ showToast("事前の出欠受付は終了しました。ご参加のご相談は幹事までお願いします。"); return; }
   overlay.classList.add("open");
+  updateSticky();
 }
-function closeModal(){ overlay.classList.remove("open"); }
+function closeModal(){ overlay.classList.remove("open"); updateSticky(); }
 $("#closeModal").onclick=closeModal;
 overlay.onclick=e=>{ if(e.target===overlay) closeModal(); };
 document.addEventListener("keydown",e=>{ if(e.key==="Escape") closeModal(); });
@@ -1517,8 +1554,16 @@ function openEdit(id){
   $("#delBtn").style.display = (id===myId)? "block":"none";
   openModal();
 }
+/* 登録済みなら「自分の登録を変更」、未登録なら新規登録へ。
+   QRから来た人がどのボタンを押しても、正しい画面にたどり着くようにする。 */
+function openRegist(){
+  if(myId && all.some(x=>x.id===myId)) openEdit(myId);
+  else openNew();
+}
 $("#openNew").onclick=openNew;
 $("#openMine").onclick=()=>{ if(myId) openEdit(myId); };
+$("#openNewHero").onclick=openRegist;
+$("#openNewSticky").onclick=openRegist;
 
 /* ---------- 幹事メールへの通知（未設定なら静かにスキップ） ---------- */
 function mailBody(data, kind){
@@ -1705,6 +1750,29 @@ $("#btnMail").onclick=()=>{
   const url=location.href.split("?")[0];
   location.href = `mailto:?subject=${encodeURIComponent("【ご案内】"+SHARE_TITLE)}&body=${encodeURIComponent(SHARE_TEXT+"\n"+url+"\n\n※1996年度に長野青年会議所に在籍された方が対象です。お心当たりの方にご共有ください。")}`;
 };
+
+/* ---------- 画面下の登録ボタン ----------
+   ヒーロー内のボタンも中段のボタンも画面に無いときだけ出す。
+   （同じボタンが2つ同時に見えないようにするため） */
+const stickyBar = $("#stickyCta");
+let ctaVisible = new Set();
+function updateSticky(){
+  const closed = CFG.entryClosed && !isStaff();
+  const modalOpen = overlay.classList.contains("open");
+  const on = !closed;
+  stickyBar.classList.toggle("on", on);
+  document.body.classList.toggle("hascta", on);
+  stickyBar.classList.toggle("show", on && !modalOpen && ctaVisible.size===0);
+}
+(function(){
+  const targets=[$("#heroCta"), $("#regist")].filter(Boolean);
+  if(!("IntersectionObserver" in window)){ return; }
+  const io=new IntersectionObserver(entries=>{
+    entries.forEach(e=>{ e.isIntersecting? ctaVisible.add(e.target) : ctaVisible.delete(e.target); });
+    updateSticky();
+  },{threshold:0});
+  targets.forEach(t=>io.observe(t));
+})();
 
 /* ---------- トースト ---------- */
 let toastT;
