@@ -27,6 +27,10 @@
     --absent:#a09a8e;
     --sec:#7a4a52;           /* 2次会のアクセント（葡萄色） */
     --sec-lt:#f6ecec;
+    /* 1996年の大会冊子（セピアの表紙）から採った色。
+       使いどころは「あの日の一冊」セクションだけに限定し、
+       ページ全体の紺×金の世界観は崩さない。 */
+    --sepia:#a85f37; --sepia-lt:#c98a5e; --sepia-dp:#6d3a1f; --sepia-snow:#ecd6c0;
   }
   *{box-sizing:border-box}
   html{scroll-behavior:smooth}
@@ -87,6 +91,16 @@
     padding:7px 18px;border-radius:2px;margin-bottom:22px;
   }
   .kicker .dot{width:6px;height:6px;background:var(--gold);transform:rotate(45deg)}
+  /* 大会ロゴの山形を思わせる小さな稜線マーク */
+  .kicker .mk{display:block;width:17px;height:9px;flex-shrink:0}
+  .kicker .mk path{fill:none;stroke:var(--gold);stroke-width:1.6;stroke-linejoin:round}
+
+  /* ヒーロー下端の稜線（冊子表紙の山なみを、輪郭だけ borrow する） */
+  .hero .ridge{
+    position:absolute;left:0;right:0;bottom:0;z-index:0;
+    width:100%;height:clamp(52px,9vw,96px);display:block;pointer-events:none;
+    fill:rgba(201,164,92,.085);
+  }
 
   /* シグネチャ：1996 —— 30 —— 2026 */
   .arc{display:flex;align-items:center;justify-content:center;gap:clamp(10px,3.4vw,26px);margin-bottom:14px}
@@ -252,6 +266,35 @@
   .rc .rt{font-size:11px;font-weight:800;color:var(--muted);letter-spacing:.04em}
   .rc .rn{font-family:"Noto Serif JP",serif;font-size:15.5px;font-weight:700;margin-top:3px}
 
+  /* ===== あの日の一冊（1996年の大会冊子） ===== */
+  .book{display:grid;grid-template-columns:158px 1fr;gap:22px;align-items:center}
+  @media(max-width:560px){ .book{grid-template-columns:1fr;gap:18px;justify-items:center;text-align:center} }
+  .bk-cover{
+    width:100%;max-width:158px;aspect-ratio:9/14;position:relative;overflow:hidden;
+    border-radius:2px;box-shadow:0 10px 26px rgba(109,58,31,.32), 0 0 0 1px rgba(109,58,31,.18);
+    background:linear-gradient(180deg,#b06439 0%,#c98a5e 46%,#a75c33 100%);
+    transform:rotate(-1.4deg);transition:transform .35s cubic-bezier(.22,1,.36,1)
+  }
+  .book:hover .bk-cover{transform:rotate(0deg) translateY(-3px)}
+  .bk-cover img{width:100%;height:100%;object-fit:cover;display:block}
+  .bk-sky{position:absolute;inset:0}
+  .bk-mt{position:absolute;left:0;right:0;top:42%;width:100%;height:26%}
+  .bk-fg{position:absolute;left:0;right:0;bottom:17%;top:62%;background:linear-gradient(180deg,#9d5730,#7c4022)}
+  /* バス停の待合小屋 */
+  .bk-hut{position:absolute;right:14%;bottom:19%;width:34%;height:20%;background:#5d3018;border-radius:1px}
+  .bk-hut::before{content:"";position:absolute;left:-14%;right:-14%;top:-13%;height:15%;background:#e8dccb;border-radius:1px}
+  .bk-hut::after{content:"";position:absolute;left:34%;top:26%;width:34%;height:52%;background:#c9d8e6}
+  .bk-band{position:absolute;left:0;right:0;bottom:0;background:#241610;padding:7px 8px 8px;text-align:center}
+  .bk-band .o{display:block;font-size:5.5px;color:#e8dccb;letter-spacing:.06em;font-weight:700;line-height:1}
+  .bk-band .t{display:block;font-family:"Noto Serif JP",serif;font-size:8.5px;color:#e8b95e;font-weight:900;letter-spacing:.01em;margin-top:3px;line-height:1.25}
+  .bk-mark{position:absolute;left:9%;top:5%;width:30%;height:auto}
+
+  .bk-body h3{margin:0 0 9px;font-family:"Noto Serif JP",serif;font-size:17px;font-weight:900;color:var(--sepia-dp)}
+  .bk-body p{margin:0 0 11px;font-size:13.5px;line-height:2;color:#4a4038;font-weight:500}
+  .bk-body .meta{font-size:11.5px;color:var(--muted);font-weight:700;line-height:1.7;
+    border-left:2px solid var(--sepia-lt);padding-left:11px}
+  .bk-body .meta em{font-style:normal;font-family:"DM Serif Display",serif;font-size:14px;color:var(--sepia);margin-right:5px}
+
   /* FAQ */
   .faq{background:var(--card);border:1px solid #ebe3d4;border-radius:5px;margin-bottom:8px;overflow:hidden}
   .faq summary{cursor:pointer;padding:15px 16px;font-weight:800;font-size:14.5px;list-style:none;display:flex;align-items:center;gap:11px;transition:background .15s}
@@ -388,7 +431,10 @@
 </nav>
 
 <header class="hero">
-  <span class="kicker"><span class="dot"></span>1996年度 社団法人 長野青年会議所</span>
+  <span class="kicker">
+    <svg class="mk" viewBox="0 0 34 18" aria-hidden="true"><path d="M1 16 L9 4 L15 12 L22 2 L33 16"/></svg>
+    1996年度 社団法人 長野青年会議所
+  </span>
 
   <div class="arc">
     <span class="rule"></span>
@@ -422,6 +468,11 @@
     <div class="cd"><b id="cd-m">--</b><span>MIN</span></div>
     <div class="cd"><b id="cd-s">--</b><span>SEC</span></div>
   </div>
+
+  <!-- 冊子表紙の山なみを、輪郭だけヒーロー下端に -->
+  <svg class="ridge" viewBox="0 0 1200 120" preserveAspectRatio="none" aria-hidden="true">
+    <path d="M0,120 L0,80 L62,60 L124,86 L192,44 L246,68 L306,30 L364,58 L424,20 L476,54 L542,74 L612,38 L682,66 L744,46 L812,76 L882,50 L952,82 L1022,56 L1092,84 L1152,66 L1200,88 L1200,120 Z"/>
+  </svg>
 
   <div class="memorial">
     当時、卓越したリーダーシップで大会を成功へと導いてくださった<br>
@@ -567,6 +618,28 @@
       <div class="tl-note" style="margin-top:14px">
         ご案内文（2026年8月10日付）の差出人一覧です。当時の実行委員長・<b>荒井 久也</b>氏のリーダーシップのもと、
         メンバー全員が心をひとつにし、大会を大成功へと導きました。あの経験は、私たちの青春の確かな一頁です。
+      </div>
+    </div>
+  </section>
+
+  <!-- あの日の一冊（1996年の大会冊子） -->
+  <section class="blk" id="book">
+    <div class="blk-head"><h2>📖 あの日の一冊</h2></div>
+    <div class="panel">
+      <div class="book">
+        <div id="bkCover"></div>
+        <div class="bk-body">
+          <h3>雪の稜線と、バス停の待合小屋。</h3>
+          <p>
+            大会でお配りした冊子の表紙は、セピアに沈んだ一枚の風景でした。
+            雪をいただいた山なみ、水を張った田、そして大会ポスターの貼られた木造の待合小屋。
+            ご記憶にある方も、多いのではないでしょうか。
+          </p>
+          <div class="meta">
+            <em>1996</em>社団法人 日本青年会議所<br>
+            第45回 全国会員大会 長野大会
+          </div>
+        </div>
       </div>
     </div>
   </section>
@@ -749,6 +822,14 @@ const ENTRY_CLOSED = false;
    例) const EXTRA_DOC = { img:"jc30th_flyer.png", cap:"当日のご案内" };
    PDFへのリンクなら { href:"jc30th.pdf", label:"ご案内PDFを開く" } でも可。 */
 const EXTRA_DOC = null;
+
+/* 「あの日の一冊」に出す1996年の大会冊子・表紙。
+   初期状態は、表紙の構図をCSSで再現した**イメージ**を表示している
+   （実物のスキャン画像ではないため、キャプションにもその旨を出す）。
+   実物を載せる場合は、画像をリポジトリに置いてファイル名を入れる。
+   例) const COVER_IMG = "jc30th_cover.jpg";
+   ※ 画像を追加したときは .gitignore に !ファイル名 を足すのを忘れずに。 */
+const COVER_IMG = null;
 
 /* ============================================================
    申込を幹事メールへ通知（Firestoreと独立した二重バックアップ）
@@ -1408,6 +1489,39 @@ tick(); setInterval(tick,1000);
       📄 <a href="${esc(EXTRA_DOC.href)}" target="_blank" rel="noopener" style="color:#7a5c19;font-weight:900">${esc(EXTRA_DOC.label||"ご案内資料を開く")}</a>
     </div>`;
   }
+})();
+
+/* ---------- あの日の一冊（表紙） ----------
+   COVER_IMG が未設定のうちは、表紙の構図をCSSで再現したイメージを出す。
+   実物ではないので、キャプションで「イメージ」と明示する。 */
+(function(){
+  const box=$("#bkCover"); if(!box) return;
+  if(COVER_IMG){
+    box.innerHTML=`<div class="bk-cover"><img src="${esc(COVER_IMG)}" alt="1996年 第45回全国会員大会 長野大会 冊子表紙"></div>
+      <div style="text-align:center;font-size:11px;color:var(--muted);font-weight:700;margin-top:9px">1996年 大会冊子 表紙</div>`;
+    return;
+  }
+  box.innerHTML=`
+    <div class="bk-cover" role="img" aria-label="1996年の大会冊子 表紙のイメージ。雪の山なみとバス停の待合小屋">
+      <div class="bk-sky"></div>
+      <svg class="bk-mt" viewBox="0 0 120 40" preserveAspectRatio="none" aria-hidden="true">
+        <path d="M0,40 L0,26 L14,14 L24,22 L38,6 L50,18 L62,4 L74,16 L86,9 L98,20 L110,12 L120,24 L120,40 Z" fill="#8f4d2a"/>
+        <path d="M38,6 L44,12 L50,18 L56,11 L62,4 L68,10 L74,16 L70,13 L62,9 L54,14 L46,10 Z" fill="var(--sepia-snow)" opacity=".9"/>
+        <path d="M14,14 L19,18 L24,22 L20,19 L16,17 Z" fill="var(--sepia-snow)" opacity=".75"/>
+      </svg>
+      <div class="bk-fg"></div>
+      <div class="bk-hut"></div>
+      <svg class="bk-mark" viewBox="0 0 40 16" aria-hidden="true">
+        <path d="M2 14 L8 4 L13 10 L19 2 L26 10 L31 4 L38 14" fill="none" stroke="#3f5aa6" stroke-width="2.4" stroke-linejoin="round"/>
+      </svg>
+      <div class="bk-band">
+        <span class="o">社団法人 日本青年会議所</span>
+        <span class="t">第45回 全国会員大会 長野大会</span>
+      </div>
+    </div>
+    <div style="text-align:center;font-size:10.5px;color:var(--muted);font-weight:700;margin-top:9px;line-height:1.6">
+      1996年 大会冊子 表紙より<br><span style="font-weight:600;opacity:.8">※ 構図を再現したイメージです</span>
+    </div>`;
 })();
 
 /* ---------- 拡散ボタン ---------- */
