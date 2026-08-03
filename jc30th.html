@@ -71,16 +71,27 @@
   @media(max-width:520px){ .nav{top:10px;right:10px} .nav-btn{padding:9px 13px;font-size:12px} }
 
   /* ===== HERO ===== */
-  /* 1996年の大会冊子の表紙そのものを、紺のヴェール越しに敷く。
-     開いた瞬間に「あの表紙」だと分かることを狙う。
-     文字の可読性は上の紺グラデーションで確保している。 */
+  /* 表紙は背景に敷かない。縦長なので cover で切ると、
+     いちばん記憶に残る待合小屋・金の帯・ロゴが全部切れてしまう。
+     代わりに下の .hero-book で「冊子そのもの」として見せる。 */
   .hero{
     position:relative;color:#fff;text-align:center;padding:56px 18px 44px;overflow:hidden;
     background:
-      radial-gradient(900px 420px at 50% -14%, rgba(201,164,92,.30), transparent 62%),
-      linear-gradient(178deg, rgba(12,22,42,.80) 0%, rgba(12,22,42,.74) 42%, rgba(10,20,40,.88) 100%),
-      url("jc30th_cover.jpg") center 26%/cover no-repeat,
+      radial-gradient(900px 420px at 50% -14%, rgba(201,164,92,.26), transparent 62%),
       linear-gradient(168deg,var(--navy) 0%, var(--navy-mid) 58%, var(--navy-deep) 100%);
+  }
+
+  /* 1996年の大会冊子。開いた瞬間に目に入る位置に、実物のまま置く */
+  .hero-book{margin:28px auto 4px;width:clamp(128px,20vw,170px)}
+  .hero-book img{
+    width:100%;height:auto;display:block;border-radius:2px;
+    box-shadow:0 16px 38px rgba(0,0,0,.52), 0 0 0 1px rgba(255,255,255,.2);
+    transform:rotate(-2deg);transition:transform .4s cubic-bezier(.22,1,.36,1);
+  }
+  .hero-book:hover img{transform:rotate(0deg) translateY(-4px)}
+  .hero-book .cap{
+    margin-top:12px;font-size:10.5px;letter-spacing:.14em;font-weight:700;
+    color:var(--gold-lt);opacity:.92;line-height:1.7;
   }
   /* 紙の縦罫のような静かなテクスチャ */
   .hero::after{
@@ -448,6 +459,12 @@
     1996年、私たちが主管した日本JC全国会員大会・長野大会から、早くも30年。<br>
     あの日、心をひとつにした仲間と、もう一度。
   </p>
+
+  <figure class="hero-book">
+    <img src="jc30th_cover.jpg" width="1100" height="1876"
+         alt="1996年 第45回全国会員大会 長野大会 冊子の表紙。雪をいただいた山なみと、大会ポスターの貼られたバス停の待合小屋">
+    <figcaption class="cap">あの日、手にしていた一冊</figcaption>
+  </figure>
 
   <div class="datebar">
     <span class="chip">📅 2026年10月9日（金）18:00〜</span>
