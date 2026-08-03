@@ -311,6 +311,34 @@
   .pinned-box .pitem .pa .mk{color:var(--navy);font-family:"DM Serif Display",serif;font-size:16px;flex-shrink:0}
   .pinned-box .pitem .to{font-size:11px;font-weight:800;color:#9c7a35;margin-bottom:2px}
 
+  /* 幹事ログイン */
+  .loginwrap{background:#f8f4ec;border:1px solid #e5dccb;border-radius:6px;padding:20px}
+  .loginwrap .lh{font-family:"Noto Serif JP",serif;font-weight:900;font-size:16px;margin-bottom:8px}
+  .loginwrap p{margin:0 0 14px;font-size:12.5px;color:var(--muted);font-weight:600;line-height:1.9}
+  .lrow{display:flex;gap:8px;flex-wrap:wrap}
+  .lrow input{flex:1;min-width:190px;padding:12px 14px;border:2px solid #e5dccb;border-radius:5px;font-size:15px;font-family:inherit;background:#fff}
+  .lrow input:focus{outline:none;border-color:var(--navy)}
+  .lerr{margin-top:10px;font-size:12.5px;font-weight:700;color:#a8535b;line-height:1.7}
+  .whoami{display:flex;align-items:center;gap:12px;flex-wrap:wrap;background:#eef4ec;border:1px solid #cfe0cb;
+    border-radius:5px;padding:10px 14px;margin-bottom:14px;font-size:13px;font-weight:700;color:#3c6b3a}
+  .whoami .mini{margin-left:auto}
+
+  /* 設定パネル */
+  .setbox{background:#f6f1e6;border:1px solid #e5dccb;border-radius:6px;padding:18px 20px;margin-bottom:6px}
+  .setbox .sh{font-family:"Noto Serif JP",serif;font-weight:900;font-size:14.5px;margin-bottom:14px}
+  .sgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px 18px;margin-bottom:16px}
+  .sgrid label{display:block;font-size:12.5px;font-weight:800}
+  .sgrid label.wide{grid-column:1/-1}
+  .sgrid input[type=text],.sgrid input[type=date],.sgrid input[type=number],.sgrid textarea{
+    width:100%;margin-top:6px;padding:11px 12px;border:2px solid #e5dccb;border-radius:5px;
+    font-size:15px;font-family:inherit;background:#fff}
+  .sgrid textarea{min-height:64px;resize:vertical;font-size:14px}
+  .sgrid input:focus,.sgrid textarea:focus{outline:none;border-color:var(--navy)}
+  .sgrid .sn{display:block;margin-top:5px;font-size:11px;color:var(--muted);font-weight:600;line-height:1.65}
+  .sgrid label.chk{grid-column:1/-1;font-size:13px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .sgrid label.chk input{width:17px;height:17px;margin:0}
+  .sgrid label.chk .sn{width:100%;margin-top:0}
+
   /* 幹事メニューの表 */
   .atbl{border-collapse:collapse;width:100%;font-size:13px;white-space:nowrap}
   .atbl th{background:#f6f1e6;text-align:left;font-size:11px;color:var(--muted);padding:8px 10px;border-bottom:2px solid #e9e0ce}
@@ -369,6 +397,11 @@
   .setup{background:#faf3e3;border:1px solid #e5cf9d;color:#7a5c19;border-radius:6px;padding:15px 17px;margin-top:18px;font-size:13px;line-height:1.85}
   .setup b{color:#5c4410}
   .setup code{background:#fff;border:1px solid #ecdcb4;padding:1px 6px;border-radius:3px;font-size:12px}
+
+  /* 幹事からのお知らせ */
+  .notice{margin-top:16px;background:linear-gradient(135deg,#eef4fb,#e2ecf8);border:1px solid #c9dcef;border-radius:6px;padding:15px 18px}
+  .notice .nh{font-weight:900;font-size:13.5px;color:#28456f;margin-bottom:7px;font-family:"Noto Serif JP",serif}
+  .notice .nb{font-size:13.5px;line-height:1.95;color:#2f3d50;font-weight:600}
 
   /* 締切バナー */
   .deadline{margin-top:16px;background:linear-gradient(135deg,#faf3e3,#f3e6c8);border:1px solid #e5cf9d;border-radius:6px;padding:14px 17px;display:flex;align-items:center;gap:13px;color:#6c521a;font-weight:700;font-size:13.5px;line-height:1.75}
@@ -477,12 +510,13 @@
       <div class="si"><span class="ic">🏨</span><div><b>会場</b><span>ホテル国際21（旧 HQホテル）「弥生の間」</span></div></div>
       <div class="si"><span class="ic">💴</span><div><b>登録料</b><span>10,000円<br>当日受付にて徴収いたします</span></div></div>
       <div class="si"><span class="ic">👥</span><div><b>対象者</b><span>1996年度に長野青年会議所に在籍していた<br>正会員ならびに準会員</span></div></div>
-      <div class="si"><span class="ic">🥂</span><div><b>2次会 <span class="tag sec">会費未定</span></b><span>ホテル国際21 16F「ブーランジェ」<br>本会終了後に開催予定。会費は決まり次第ご案内します</span></div></div>
+      <div class="si"><span class="ic">🥂</span><div><b>2次会 <span class="tag sec js-feetag">会費未定</span></b><span>ホテル国際21 16F「ブーランジェ」<br>本会終了後に開催予定。<span class="js-feeline">会費は決まり次第ご案内します</span></span></div></div>
       <div class="si"><span class="ic">✉️</span><div><b>ご案内</b><span>2026年8月10日／1996年度 社団法人長野青年会議所</span></div></div>
     </div>
   </div>
 
   <div id="deadlineBar"></div>
+  <div id="noticeBox"></div>
   <div id="pinnedQABox"></div>
 
   <!-- 登録ボタン -->
@@ -564,7 +598,7 @@
           <span class="tl-dot"></span>
           <span class="tl-time">20:15</span>
           <div class="tl-body"><b>🥂 2次会</b>
-            <span>本会終了後、<b>同じホテルの16階</b>へ移動して開催します。移動が短いので、そのまま流れで参加いただけます。<b>会費は決まり次第、このページでご案内します。</b>まずは「出席／検討中／欠席」のご意向だけお聞かせください。</span>
+            <span>本会終了後、<b>同じホテルの16階</b>へ移動して開催します。移動が短いので、そのまま流れで参加いただけます。<b class="js-feeline">会費は決まり次第、このページでご案内します。</b>まずは「出席／検討中／欠席」のご意向だけお聞かせください。</span>
             <span class="place sec">📍 ホテル国際21 16F「ブーランジェ」</span></div>
         </div>
       </div>
@@ -599,13 +633,13 @@
     <div class="blk-head"><h2>❓ よくある質問</h2></div>
 
     <details class="faq"><summary><span class="q">Q</span>参加費（登録料）はいくら？当日払える？<span class="arw">›</span></summary>
-      <div class="a"><b>登録料は10,000円</b>で、<b>当日受付にて徴収</b>いたします。事前の振込は不要です。お釣りのないようご用意いただけると受付がスムーズです。<br>なお<b>2次会の会費は別途</b>となります（金額は決まり次第、このページでご案内します）。</div></details>
+      <div class="a"><b>登録料は10,000円</b>で、<b>当日受付にて徴収</b>いたします。事前の振込は不要です。お釣りのないようご用意いただけると受付がスムーズです。<br>なお<b>2次会の会費は別途</b>となります（<span class="js-feeline">金額は決まり次第、このページでご案内します</span>）。</div></details>
 
     <details class="faq"><summary><span class="q">Q</span>2次会だけ／本会だけの参加でもいい？<span class="arw">›</span></summary>
       <div class="a">もちろん結構です。登録フォームでは<b>「30周年の集い（本会）」と「2次会」を別々に</b>ご回答いただけます。<b>本会だけ</b>でも、<b>2次会だけ</b>でも歓迎です。2次会は「<b>検討中</b>」も選べますので、迷っている段階でそのままご登録ください。</div></details>
 
     <details class="faq"><summary><span class="q">Q</span>2次会の会場や会費は？<span class="arw">›</span></summary>
-      <div class="a">会場は<b>ホテル国際21の16階「ブーランジェ」</b>です。本会と同じホテル内ですので、移動の心配はありません。<br><b>会費は現在調整中</b>で、決まり次第このページを更新してご案内します。<br>まずは<b>おおよその人数を把握したい</b>ため、現時点でのご意向（出席／検討中／欠席）だけお聞かせください。<b>あとから何度でも変更できます。</b></div></details>
+      <div class="a">会場は<b>ホテル国際21の16階「ブーランジェ」</b>です。本会と同じホテル内ですので、移動の心配はありません。<br><b class="js-feeline">会費は現在調整中で、決まり次第このページを更新してご案内します。</b><br>まずは<b>おおよその人数を把握したい</b>ため、現時点でのご意向（出席／検討中／欠席）だけお聞かせください。<b>あとから何度でも変更できます。</b></div></details>
 
     <details class="faq"><summary><span class="q">Q</span>対象者は？自分は参加していいの？<span class="arw">›</span></summary>
       <div class="a"><b>1996年度に長野青年会議所に在籍していた正会員ならびに準会員</b>の皆さまが対象です。在籍期間の長短は問いません。「自分は少ししか関われなかった」という方も、どうぞご遠慮なくお越しください。</div></details>
@@ -649,18 +683,70 @@
   <section class="blk" id="adminBlk" style="display:none">
     <div class="blk-head"><h2>🔑 幹事メニュー</h2><span class="count gray" id="cntAll">0</span></div>
     <div class="panel">
-      <div id="ruleStatus"></div>
-      <div id="bkStatus"></div>
-      <p style="margin:0 0 13px;font-size:13px;color:var(--muted);font-weight:600;line-height:1.85">
-        出欠データの一覧。<b>定期的にCSV/JSONを保存</b>しておくと、万一のときも復元できます。<br>
-        <b>連絡先（携帯・メール）はこの画面にもCSVにも出ません。</b>非公開領域に分離してあり、Firebaseコンソールからのみ確認できます。
-      </p>
-      <div class="cta-row" style="margin:0 0 16px;justify-content:flex-start">
-        <button class="btn btn-primary btn-sm" id="dlCsv">⬇️ CSVダウンロード</button>
-        <button class="btn btn-ghost btn-sm" id="dlJson">⬇️ JSONバックアップ</button>
-        <button class="btn btn-ghost btn-sm" id="dlAuto">🛟 この端末の自動控え</button>
+      <!-- 未ログイン時：ここだけ表示 -->
+      <div id="loginBox">
+        <div class="loginwrap">
+          <div class="lh">🔐 幹事ログイン</div>
+          <p>出欠一覧・連絡先・設定の変更は、幹事アカウントでログインしてからご利用ください。<br>
+             一度ログインすれば、この端末では次回から自動でログイン状態になります。</p>
+          <div class="lrow">
+            <input type="email" id="lgMail" placeholder="メールアドレス" autocomplete="username">
+            <input type="password" id="lgPass" placeholder="パスワード" autocomplete="current-password">
+            <button class="btn btn-primary btn-sm" id="lgBtn">ログイン</button>
+          </div>
+          <div id="lgErr" class="lerr"></div>
+        </div>
       </div>
-      <div style="overflow-x:auto"><table class="atbl" id="adminTable"></table></div>
+
+      <!-- ログイン後 -->
+      <div id="staffBox" style="display:none">
+        <div class="whoami">
+          <span>✅ <b id="lgWho"></b> でログイン中</span>
+          <button class="mini" id="lgOut">ログアウト</button>
+        </div>
+
+        <div id="ruleStatus"></div>
+        <div id="bkStatus"></div>
+
+        <!-- 設定 -->
+        <div class="setbox">
+          <div class="sh">⚙️ 設定（変更するとすぐ全員の画面に反映されます）</div>
+          <div class="sgrid">
+            <label>2次会の会費
+              <input type="text" id="stFee" placeholder="例）5,000円　※空欄＝未定と表示">
+              <span class="sn">決まったら入力してください。ページ内の「会費未定」がすべて置き換わります</span>
+            </label>
+            <label>回答期限
+              <input type="date" id="stDeadline">
+              <span class="sn">空欄なら期限バナーを出しません</span>
+            </label>
+            <label>目標人数
+              <input type="number" id="stGoal" min="0" max="999" placeholder="50">
+              <span class="sn">0 にすると目標表記とバーが消えます</span>
+            </label>
+            <label class="wide">お知らせ
+              <textarea id="stNotice" placeholder="例）2次会の会費が決まりました。5,000円です。"></textarea>
+              <span class="sn">入力すると、ページ上部に全員へ向けて掲示されます（空欄で非表示）</span>
+            </label>
+            <label class="chk">
+              <input type="checkbox" id="stClosed"> 出欠の受付を停止する
+              <span class="sn">停止しても、幹事は代理で登録・修正できます</span>
+            </label>
+          </div>
+          <button class="btn btn-primary btn-sm" id="stSave">💾 設定を保存</button>
+        </div>
+
+        <p style="margin:18px 0 13px;font-size:13px;color:var(--muted);font-weight:600;line-height:1.85">
+          出欠データの一覧。<b>定期的にCSV/JSONを保存</b>しておくと、万一のときも復元できます。<br>
+          <b>「受付」欄は当日の受付用</b>です。チェックすると受付済みとして集計されます。
+        </p>
+        <div class="cta-row" style="margin:0 0 16px;justify-content:flex-start">
+          <button class="btn btn-primary btn-sm" id="dlCsv">⬇️ CSVダウンロード</button>
+          <button class="btn btn-ghost btn-sm" id="dlJson">⬇️ JSONバックアップ</button>
+          <button class="btn btn-ghost btn-sm" id="dlAuto">🛟 この端末の自動控え</button>
+        </div>
+        <div style="overflow-x:auto"><table class="atbl" id="adminTable"></table></div>
+      </div>
     </div>
   </section>
 </div>
@@ -668,7 +754,7 @@
 <footer>
   <span class="fname">1996年 日本JC全国会員大会主管　30周年の集い</span><br>
   📅 2026年10月9日（金）18:00〜　📍 ホテル国際21（旧HQホテル）「弥生の間」<br>
-  💴 登録料 10,000円（当日受付にて徴収）／🥂 2次会 ホテル国際21 16F「ブーランジェ」・会費は別途（未定）<br>
+  💴 登録料 10,000円（当日受付にて徴収）／🥂 2次会 ホテル国際21 16F「ブーランジェ」・会費は別途（<span class="js-feeword">未定</span>）<br>
   🔒 連絡先は非公開の保管場所に分けて保存し、当日連絡用に管理者のみが確認します（一覧には表示されません）。<br>
   1996年度 社団法人 長野青年会議所
 </footer>
@@ -704,7 +790,7 @@
       <div class="field">
         <label>🥂 2次会（本会終了後・16F「ブーランジェ」）</label>
         <div class="seg" id="segSec">
-          <label class="sec"><input type="radio" name="sec" value="yes"><span class="box"><span class="em">🥂</span>出席<span class="fee tbd">会費未定</span></span></label>
+          <label class="sec"><input type="radio" name="sec" value="yes"><span class="box"><span class="em">🥂</span>出席<span class="fee tbd js-feetag">会費未定</span></span></label>
           <label class="maybe"><input type="radio" name="sec" value="maybe" checked><span class="box"><span class="em">🤔</span>検討中<span class="fee none">—</span></span></label>
           <label class="absent"><input type="radio" name="sec" value="no"><span class="box"><span class="em">🙇</span>欠席<span class="fee none">—</span></span></label>
         </div>
@@ -752,20 +838,22 @@ const firebaseConfig = {
   appId: "1:664348645067:web:5cd634d0736da0f7dd6d4e"
 };
 
-/* ---- イベント設定（ここだけ触ればOK） ---- */
+/* ---- イベント設定 ---- */
 const EVENT_DATE = new Date("2026-10-09T18:00:00+09:00");  // 開宴（カウントダウンの目標）
 
-/* 回答期限。ご案内文に記載がないため、初期は null（バナー非表示）。
-   期限を設けるときだけ、例のように日付を入れてください。
-   例) const DEADLINE = new Date("2026-09-25T23:59:59+09:00"); */
-const DEADLINE = null;
-
-/* 参加目標人数。1996年度の在籍者数が不明のため暫定。
-   null にすると「目標」表記とプログレスバーの目盛りが消え、人数だけの表示になります。 */
-const GOAL = 50;
-
-/* 事前受付を締め切るフラグ（true で入力停止） */
-const ENTRY_CLOSED = false;
+/* ============================================================
+   運用設定は「幹事メニュー」から画面上で変更できます。
+   （HTMLの書き換え＝外注作業をしなくても、会費や期限を直せます）
+   下の値は、まだ一度も設定を保存していないときに使われる初期値です。
+   ============================================================ */
+const DEFAULTS = {
+  secFee     : "",     // 2次会の会費。空欄＝「未定」と表示。例）"5,000円"
+  goal       : 50,     // 参加目標人数。0 にすると目標表記とバーが消える
+  deadline   : "",     // 回答期限 "YYYY-MM-DD"。空欄＝期限バナー非表示
+  entryClosed: false,  // true で出欠の受付を停止
+  notice     : ""      // 全員に見せるお知らせ。空欄＝非表示
+};
+let CFG = {...DEFAULTS};
 
 /* 【来週追加予定】案内チラシ等の画像を差し込むスロット。
    画像URL（GitHubに置いた画像のパス等）を入れると、登録ボタンの下に表示されます。
@@ -811,20 +899,41 @@ const PATH_Q = ["artifacts", "jc-nagano-1996-30th", "public", "data", "questions
    ★このパスには専用のルール追加が必要（引継ぎメモ 8章参照）。 */
 const PATH_C = ["artifacts", "jc-nagano-1996-30th", "private", "data", "contacts"];
 
-const SCHEMA = 2;   // v2: 連絡先を private/data/contacts へ分離
+/* 幹事が画面から変更できる設定（会費・期限・目標人数・受付停止・お知らせ）。
+   ここに置くことで、HTMLを書き換えずに運用側で直せる。 */
+const PATH_S = ["artifacts", "jc-nagano-1996-30th", "public", "data", "settings", "config"];
+
+const SCHEMA = 3;   // v3: 設定のクラウド化・受付チェックインに対応
 
 /* ---------- ストレージ抽象化（Firestore or ローカル） ---------- */
 const configured = !!firebaseConfig.apiKey && firebaseConfig.apiKey.length > 10;
 let store, qstore;
+/* 幹事ログイン。参加者は匿名のまま、幹事だけがメール/パスワードでサインインする。
+   「幹事かどうか」は “匿名でないアカウントでサインインしているか” で判定し、
+   実際の権限は Firestore のルール側（幹事のメールアドレス）で担保する。
+   ※ 幹事のメールアドレスはHTMLに書かない（公開ファイルなので）。 */
+let authApi = null;
 
 if (configured) {
   const { initializeApp } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js");
   const au = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js");
   const fs = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
   const app = initializeApp(firebaseConfig);
+  const auth = au.getAuth(app);
 
-  // 予約サイトと同じ「匿名認証」。ログイン画面は出ません（裏で自動サインイン）
-  await au.signInAnonymously(au.getAuth(app));
+  // すでに幹事としてサインイン済みならその状態を維持し、
+  // 未サインインのときだけ匿名でサインインする（参加者にログイン画面は出さない）
+  const first = await new Promise(res=>{ const un = au.onAuthStateChanged(auth, u=>{ un(); res(u); }); });
+  if (!first) await au.signInAnonymously(auth);
+
+  authApi = {
+    user  : ()=> auth.currentUser,
+    isStaff: ()=> { const u=auth.currentUser; return !!u && !u.isAnonymous; },
+    email : ()=> auth.currentUser?.email || "",
+    async login(mail, pass){ await au.signInWithEmailAndPassword(auth, mail, pass); },
+    async logout(){ await au.signOut(auth); await au.signInAnonymously(auth); },
+    onChange(cb){ au.onAuthStateChanged(auth, cb); }
+  };
 
   const db = fs.getFirestore(app);
   const col = fs.collection(db, ...PATH);
@@ -852,19 +961,49 @@ if (configured) {
     },
     async removeContact(id){ await fs.deleteDoc(fs.doc(db,...PATH_C,id)); },
 
-    /* 幹事メニュー用の事前チェック。
-       ★「書けること」だけでなく「**読めないこと**」まで確かめる。
-         保存先を private に移しただけではルールは変わらないため、
-         ルール未適用だと連絡先が誰にでも読める状態のままになる。
-         書き込み成功だけを見て「安全」と表示するのは危険なので、
-         読めてしまった場合は明確に失敗として扱う。 */
-    async preflightContact(){
-      const ref = fs.doc(db,...PATH_C,"__preflight");
-      await fs.setDoc(ref,{at:Date.now()});          // 書けなければ throw（ルール不足）
-      let readable=false;
-      try{ await fs.getDocs(fs.collection(db,...PATH_C)); readable=true; }catch(_){ /* 読めない＝正常 */ }
-      try{ await fs.deleteDoc(ref); }catch(_){}
-      if(readable) throw Object.assign(new Error("contacts are readable"),{code:"contacts-readable"});
+    /* 連絡先の一括読み出し。幹事でサインインしているときだけ成功する
+       （ルールで幹事のメール以外の read を拒否しているため）。 */
+    async loadContacts(){
+      const snap = await fs.getDocs(fs.collection(db,...PATH_C));
+      const m={}; snap.docs.forEach(d=>{ m[d.id]=d.data(); }); return m;
+    },
+
+    /* 当日の受付チェック */
+    async setCheckin(id, on){
+      await fs.updateDoc(fs.doc(db,...PATH,id), { checkedIn:!!on, checkedInAt: on? Date.now():null });
+    },
+
+    /* 幹事が画面から変える設定 */
+    subscribeSettings(cb){
+      fs.onSnapshot(fs.doc(db,...PATH_S), d=>cb(d.exists()? d.data():{}), err=>console.warn("settings:",err));
+    },
+    async saveSettings(patch){
+      await fs.setDoc(fs.doc(db,...PATH_S), {...patch, updatedAt:Date.now()}, {merge:true});
+    },
+
+    /* 連絡先まわりの実地監査。「設定したつもり」を防ぐため、
+       思い込みではなく実際に読み書きを試して判定する。
+         ・幹事は読めるか        （読めないと一覧に出せない）
+         ・匿名ユーザーは書けるか（書けないと参加者の連絡先が保存されない）
+         ・匿名ユーザーは読めるか（読めてしまうと保護されていない）
+       匿名側の判定は、別インスタンスで匿名サインインして確かめる。 */
+    async auditContacts(){
+      const out={staffCanRead:null, anonCanWrite:null, anonCanRead:null};
+      try{ await fs.getDocs(fs.collection(db,...PATH_C)); out.staffCanRead=true; }
+      catch(_){ out.staffCanRead=false; }
+      try{
+        const app2 = initializeApp(firebaseConfig, "audit-"+Date.now());
+        const auth2 = au.getAuth(app2);
+        await au.signInAnonymously(auth2);
+        const db2 = fs.getFirestore(app2);
+        const ref2 = fs.doc(db2,...PATH_C,"__audit");
+        try{ await fs.setDoc(ref2,{at:Date.now()}); out.anonCanWrite=true; }
+        catch(_){ out.anonCanWrite=false; }
+        try{ await fs.getDocs(fs.collection(db2,...PATH_C)); out.anonCanRead=true; }
+        catch(_){ out.anonCanRead=false; }
+        try{ await fs.deleteDoc(ref2); }catch(_){}
+      }catch(e){ console.warn("audit:",e); }
+      return out;
     }
   };
 
@@ -904,7 +1043,25 @@ if (configured) {
       const KC="jc30_local_c"; const c=JSON.parse(localStorage.getItem(KC)||"{}");
       delete c[id]; localStorage.setItem(KC,JSON.stringify(c));
     },
-    async preflightContact(){ /* デモモードは常に成功 */ }
+    async auditContacts(){ return {staffCanRead:true, anonCanWrite:true, anonCanRead:false}; },
+    async loadContacts(){ return JSON.parse(localStorage.getItem("jc30_local_c")||"{}"); },
+    async setCheckin(id,on){
+      const a=read(); const i=a.findIndex(x=>x.id===id);
+      if(i>=0){ a[i].checkedIn=!!on; a[i].checkedInAt=on?Date.now():null; write(a); emit(); }
+    },
+    subscribeSettings(cb){
+      const KS="jc30_local_s";
+      const rd=()=>{ try{return JSON.parse(localStorage.getItem(KS)||"{}")}catch{return{}} };
+      cb(rd());
+      window.addEventListener("storage",e=>{ if(e.key===KS) cb(rd()); });
+      window.addEventListener("jc30-settings",()=>cb(rd()));
+    },
+    async saveSettings(patch){
+      const KS="jc30_local_s";
+      const cur=JSON.parse(localStorage.getItem(KS)||"{}");
+      localStorage.setItem(KS, JSON.stringify({...cur,...patch}));
+      window.dispatchEvent(new Event("jc30-settings"));
+    }
   };
 
   const KQ = "jc30_local_q";
@@ -961,17 +1118,18 @@ function render(){
   $("#cntPend").textContent  = absent.length;
 
   // プログレス（本会の出席者 / 目標）
-  if(GOAL){
-    $("#goalSuffix").textContent = `　目標 ${GOAL}名`;
-    const pct = Math.min(100, mainN/GOAL*100);
+  if(CFG.goal){
+    $("#goalSuffix").textContent = `　目標 ${CFG.goal}名`;
+    const pct = Math.min(100, mainN/CFG.goal*100);
     $("#barFill").style.width = pct+"%";
-    const remain = GOAL-mainN;
+    const remain = CFG.goal-mainN;
     $("#goalMsg").innerHTML = mainN===0
       ? "まずは、あなたの一票から。"
       : (remain>0
         ? `目標まで <span class="hl">あと${remain}</span>名。<br>心当たりの方に、ぜひこのページを。`
         : `🎉 <span class="hl">${mainN}</span>名。目標を超えました！`);
   }else{
+    $("#goalSuffix").textContent = "";
     $("#barFill").style.width = mainN? "100%":"0";
     $("#goalMsg").innerHTML = mainN? "当日が楽しみです。" : "まずは、あなたの一票から。";
   }
@@ -1017,8 +1175,8 @@ function render(){
 
   // 自分編集ボタン
   const me = all.find(x=>x.id===myId);
-  $("#openMine").style.display = (me && !ENTRY_CLOSED)? "inline-block":"none";
-  $("#openNew").style.display  = ENTRY_CLOSED? "none":"inline-block";
+  $("#openMine").style.display = (me && !CFG.entryClosed)? "inline-block":"none";
+  $("#openNew").style.display  = CFG.entryClosed? "none":"inline-block";
   $("#openNew").textContent    = me? "➕ 別の方を登録する" : "✍️ 出欠を登録する";
 
   // ハンドラ
@@ -1033,7 +1191,8 @@ function render(){
       if(on) showToast(`${p.name} さんに「会いたい」を送りました 👋`);
     }catch(e){ console.warn(e); }
   });
-  if(ENTRY_CLOSED){
+  // 受付停止中でも、幹事は代理修正できるように編集ボタンを残す
+  if(CFG.entryClosed && !isStaff()){
     document.querySelectorAll("[data-edit]").forEach(b=>b.style.display="none");
   }
 
@@ -1109,29 +1268,85 @@ $("#qText").addEventListener("keydown",e=>{ if(e.key==="Enter") $("#qSend").clic
 const fmtDate = t => t? new Date(t).toLocaleString("ja-JP",{month:"numeric",day:"numeric",hour:"2-digit",minute:"2-digit"}) : "";
 function sorted(){ return [...all].sort((a,b)=>(a.createdAt||0)-(b.createdAt||0)); }
 
+let contacts = {};        // 幹事ログイン時のみ中身が入る（id → {phone, mail}）
+let settingsLoaded = false;
+
 function renderAdmin(){
   $("#adminBlk").style.display="block";
   $("#cntAll").textContent=all.length;
+
+  const staff = isStaff();
+  $("#loginBox").style.display = staff? "none":"block";
+  $("#staffBox").style.display = staff? "block":"none";
+  if(!staff) return;                       // 未ログインなら中身は一切描かない
+
+  $("#lgWho").textContent = authApi? authApi.email() : "幹事";
   checkContactRules();
   renderBackupStatus();
+  if(!settingsLoaded){ fillSettingsForm(); settingsLoaded=true; }
+
   const rows=sorted();
   const feeSum=rows.filter(p=>mainOf(p)==="yes").length*10000;
+  const checked=rows.filter(p=>p.checkedIn).length;
+
   $("#adminTable").innerHTML=
-    `<thead><tr><th>#</th><th>お名前</th><th>所属</th><th>本会</th><th>2次会</th><th>登録料</th><th>連絡先</th><th>ひとこと</th><th>会いたい</th><th>登録</th><th>更新</th></tr></thead><tbody>`+
-    rows.map((p,i)=>{const m=mainOf(p), s=secOf(p); return `<tr>
+    `<thead><tr><th>#</th><th>受付</th><th>お名前</th><th>所属</th><th>本会</th><th>2次会</th><th>登録料</th>
+      <th>携帯</th><th>メール</th><th>ひとこと</th><th>会いたい</th><th>登録</th><th>操作</th></tr></thead><tbody>`+
+    rows.map((p,i)=>{
+      const m=mainOf(p), s=secOf(p), c=contacts[p.id]||{};
+      return `<tr>
       <td class="n">${String(i+1).padStart(2,"0")}</td>
+      <td style="text-align:center"><input type="checkbox" data-checkin="${p.id}" ${p.checkedIn?"checked":""} style="width:18px;height:18px"></td>
       <td><b>${esc(p.name)}</b></td>
       <td>${esc(p.org||"—")}</td>
       <td class="${m==="yes"?'yes':'no-'}">${m==="yes"?"出席":"欠席"}</td>
       <td class="${s==="no"?'no-':'yes'}">${secLabel(s)}</td>
       <td>${m==="yes"?"¥10,000":"—"}</td>
-      <td>${p.hasContact?'<span class="yes">🔒 あり</span>':'<span class="no-">なし</span>'}</td>
-      <td style="white-space:normal;max-width:220px">${esc(p.comment||"")}</td>
+      <td>${esc(c.phone||(p.hasContact?"—":""))}</td>
+      <td>${esc(c.mail||"")}</td>
+      <td style="white-space:normal;max-width:200px">${esc(p.comment||"")}</td>
       <td>${wantsOf(p).length||"—"}</td>
       <td>${fmtDate(p.createdAt)}</td>
-      <td>${fmtDate(p.updatedAt)}</td>
+      <td><button class="mini" data-adel="${p.id}" style="color:#a8535b">削除</button></td>
     </tr>`}).join("")+
-    `<tr><td colspan="5" style="text-align:right;font-weight:800">登録料 合計（見込み）</td><td colspan="6" style="font-weight:800">¥${feeSum.toLocaleString()}</td></tr></tbody>`;
+    `<tr>
+       <td colspan="6" style="text-align:right;font-weight:800">受付済み ${checked} / ${rows.length} 名　　登録料 合計（見込み）</td>
+       <td colspan="7" style="font-weight:800">¥${feeSum.toLocaleString()}</td>
+     </tr></tbody>`;
+
+  // 受付チェック
+  $("#adminTable").querySelectorAll("[data-checkin]").forEach(cb=>cb.onchange=async()=>{
+    try{ await store.setCheckin(cb.dataset.checkin, cb.checked); }
+    catch(e){ alert("受付の記録に失敗しました: "+e.message); cb.checked=!cb.checked; }
+  });
+
+  // 幹事による削除（本人の端末でなくても消せる）
+  $("#adminTable").querySelectorAll("[data-adel]").forEach(b=>b.onclick=async()=>{
+    const id=b.dataset.adel, p=all.find(x=>x.id===id); if(!p) return;
+    if(!confirm(`${p.name} さんの登録を削除します。よろしいですか？\n（この操作は元に戻せません）`)) return;
+    try{
+      await store.remove(id);
+      try{ await store.removeContact(id); }catch(_){}
+      if(id===myId){ myId=null; localStorage.removeItem(MYKEY); }
+      showToast("削除しました");
+    }catch(e){ alert("削除に失敗しました: "+e.message); }
+  });
+}
+
+/* 連絡先の読み込み（幹事のみ成功する） */
+async function loadContactsIfStaff(){
+  if(!isStaff()){ contacts={}; return; }
+  try{ contacts = await store.loadContacts(); }
+  catch(e){ contacts={}; console.warn("連絡先の読み込み不可:", e.code||e); }
+}
+
+/* 設定フォームへ現在値を流し込む */
+function fillSettingsForm(){
+  $("#stFee").value      = CFG.secFee || "";
+  $("#stDeadline").value = CFG.deadline || "";
+  $("#stGoal").value     = (CFG.goal ?? "");
+  $("#stNotice").value   = CFG.notice || "";
+  $("#stClosed").checked = !!CFG.entryClosed;
 }
 
 function download(name,text,mime){
@@ -1151,29 +1366,28 @@ let rulesChecked=false;
 async function checkContactRules(){
   const box=$("#ruleStatus"); if(!box || rulesChecked) return;
   rulesChecked=true;
-  box.className="bkst warn"; box.innerHTML="🔄 連絡先の保存先（非公開領域）を確認しています…";
-  try{
-    await store.preflightContact();
+  box.className="bkst warn"; box.innerHTML="🔄 連絡先の保護状態を確認しています…";
+  const r = await store.auditContacts();
+  const ng=[];
+  if(r.anonCanRead)        ng.push("<b>参加者（匿名）が連絡先を読めてしまいます</b>＝保護されていません");
+  if(r.anonCanWrite===false) ng.push("<b>参加者が連絡先を保存できません</b>＝入力しても記録されません");
+  if(r.staffCanRead===false) ng.push("<b>幹事が連絡先を読めません</b>＝ルールの幹事メールをご確認ください");
+
+  if(!ng.length){
     box.className="bkst ok";
-    box.innerHTML=`✅ 連絡先は<b>非公開領域に保存されています</b>（読み取り不可）。<small>閲覧は Firebaseコンソール ＞ Firestore ＞ <code>${esc(PATH_C.join("/"))}</code> から。CSVには連絡先は含まれません。</small>`;
-  }catch(err){
-    const readable = err?.code==="contacts-readable";
-    box.className="bkst danger";
-    box.innerHTML=`🚨 <b>${readable
-        ? "連絡先が「誰でも読める」状態です。ルールが未適用です。"
-        : `連絡先が保存できない状態です（${esc(err?.code||"error")}）。`}</b>
-      <small>${readable
-        ? "保存先は非公開領域に移っていますが、<b>Firestoreのルールがまだ緩いため保護されていません</b>。この状態で案内（QR）を配らないでください。"
-        : "入力された連絡先が保存されません（出欠登録そのものは正常です）。"}<br>
-      Firebaseコンソール ＞ Firestore Database ＞ ルール に次を追加して「公開」してください：<br>
-      <code style="display:block;white-space:pre;overflow-x:auto;margin-top:6px;padding:8px;background:#fff;border:1px solid #e5cf9d;border-radius:4px">match /artifacts/{appId}/private/{document=**} {
-  allow create, update, delete: if request.auth != null;
-  allow read: if false;
-}</code>
-      ※ 既存のルールが <code>match /artifacts/{appId}/{document=**}</code> のように
-      private まで含んでしまっている場合は、そちらを <code>/public/</code> 限定に狭める必要があります。
-      （このチェックは ?admin を開くたびに自動で再実行されます）</small>`;
+    box.innerHTML=`✅ 連絡先は<b>幹事だけが読める状態</b>です。<small>参加者は保存のみ可・閲覧不可。一覧とCSVには幹事にだけ表示されます。</small>`;
+    return;
   }
+  box.className="bkst danger";
+  box.innerHTML=`🚨 <b>連絡先の保護設定に問題があります。</b>
+    <small>${ng.map(t=>"・"+t).join("<br>")}<br><br>
+    ${r.anonCanRead? "<b>この状態で案内（QR）を配らないでください。</b><br>":""}
+    Firebaseコンソール ＞ Firestore Database ＞ ルール を、引継ぎメモ8章のとおりに設定してください。
+    <code style="display:block;white-space:pre;overflow-x:auto;margin-top:6px;padding:8px;background:#fff;border:1px solid #e5cf9d;border-radius:4px">match /artifacts/{appId}/private/{document=**} {
+  allow create, update, delete: if request.auth != null;
+  allow read: if request.auth.token.email == '幹事のメールアドレス';
+}</code>
+    （このチェックは幹事メニューを開くたびに再実行されます）</small>`;
 }
 
 const BK_KEY="jc30_lastbackup";
@@ -1205,10 +1419,11 @@ function renderBackupStatus(){
 
 $("#dlCsv").onclick=()=>{
   const q=v=>`"${String(v??"").replace(/"/g,'""')}"`;
-  const head=["No","お名前","所属","本会","2次会","登録料","連絡先","ひとこと","会いたい数","登録日時","更新日時"];
-  const body=sorted().map((p,i)=>[i+1,p.name,p.org||"",mainOf(p)==="yes"?"出席":"欠席",secLabel(secOf(p)),
-    mainOf(p)==="yes"?10000:0,p.hasContact?"あり(Firebaseコンソールで確認)":"なし",
-    p.comment||"",wantsOf(p).length,fmtDate(p.createdAt),fmtDate(p.updatedAt)].map(q).join(","));
+  const head=["No","受付","お名前","所属","本会","2次会","登録料","携帯","メール","ひとこと","会いたい数","登録日時","更新日時"];
+  const body=sorted().map((p,i)=>{const c=contacts[p.id]||{}; return [
+    i+1, p.checkedIn?"済":"", p.name, p.org||"", mainOf(p)==="yes"?"出席":"欠席", secLabel(secOf(p)),
+    mainOf(p)==="yes"?10000:0, c.phone||"", c.mail||"",
+    p.comment||"", wantsOf(p).length, fmtDate(p.createdAt), fmtDate(p.updatedAt)].map(q).join(",");});
   download(`JC30周年の集い_出欠_${stamp()}.csv`, "﻿"+[head.map(q).join(","),...body].join("\r\n"), "text/csv;charset=utf-8");
   markBackup();
   showToast("CSVを保存しました 💾");
@@ -1235,7 +1450,7 @@ function animateNum(el,to){
 
 /* ---------- モーダル操作 ---------- */
 function openModal(){
-  if(ENTRY_CLOSED){ showToast("事前の出欠受付は終了しました。ご参加のご相談は幹事までお願いします。"); return; }
+  if(CFG.entryClosed && !isStaff()){ showToast("事前の出欠受付は終了しました。ご参加のご相談は幹事までお願いします。"); return; }
   overlay.classList.add("open");
 }
 function closeModal(){ overlay.classList.remove("open"); }
@@ -1254,12 +1469,14 @@ function updateFeeBox(){
     box.innerHTML=`今回は<b>欠席</b>で承ります 🙇<span class="brk">お気持ちが変わったら、いつでも出席に変更できます</span>`;
   }else if(m==="yes"){
     box.classList.remove("zero");
-    const extra = s==="yes" ? "＋ 2次会の会費（16F「ブーランジェ」・金額未定・別途）"
+    const feeTxt = (CFG.secFee||"").trim();
+    const extra = s==="yes" ? `＋ 2次会の会費（16F「ブーランジェ」・${feeTxt? feeTxt : "金額未定"}・別途）`
                 : s==="maybe" ? "2次会は「検討中」で承ります" : "2次会は欠席で承ります";
     box.innerHTML=`当日の登録料：<span class="amt">10,000</span>円<span class="brk">${extra}　※当日受付にて徴収</span>`;
   }else{
     box.classList.add("zero");
-    box.innerHTML=`本会は欠席、<b>2次会${secLabel(s)}</b>で承ります 🥂<span class="brk">会場はホテル国際21 16F「ブーランジェ」／会費は決まり次第ご案内します</span>`;
+    const f=(CFG.secFee||"").trim();
+    box.innerHTML=`本会は欠席、<b>2次会${secLabel(s)}</b>で承ります 🥂<span class="brk">会場はホテル国際21 16F「ブーランジェ」／会費は${f? f : "決まり次第ご案内します"}</span>`;
   }
 }
 $("#segMain").addEventListener("change",updateFeeBox);
@@ -1407,17 +1624,48 @@ function tick(){
 }
 tick(); setInterval(tick,1000);
 
-/* ---------- 回答期限バナー（DEADLINE を設定したときだけ表示） ---------- */
-(function(){
-  const box=$("#deadlineBar"); if(!box || !DEADLINE) return;
-  const dstr=DEADLINE.toLocaleDateString("ja-JP",{month:"numeric",day:"numeric",weekday:"short"});
-  const days=Math.ceil((DEADLINE-new Date())/864e5);
-  const past = DEADLINE < new Date();
+/* ---------- 設定をページ全体へ反映 ----------
+   会費・お知らせ・期限・受付停止は、幹事メニューから変更されたら
+   その場で全員の画面に反映される（再読み込み不要）。 */
+const isStaff = ()=> !!(authApi && authApi.isStaff());
+
+function applySettings(){
+  const fee = (CFG.secFee||"").trim();
+  // 「会費未定」→「会費 5,000円」のように、決まったら表記が入れ替わる
+  document.querySelectorAll(".js-feetag").forEach(el=>{ el.textContent = fee? `会費 ${fee}` : "会費未定"; });
+  document.querySelectorAll(".js-feeword").forEach(el=>{ el.textContent = fee || "未定"; });
+  document.querySelectorAll(".js-feeline").forEach(el=>{
+    el.textContent = fee
+      ? `会費は ${fee}（当日申し受けます）`
+      : "会費は決まり次第、このページでご案内します";
+  });
+
+  // お知らせ
+  const nb=$("#noticeBox");
+  if(nb){
+    const n=(CFG.notice||"").trim();
+    nb.innerHTML = n
+      ? `<div class="notice"><div class="nh">📣 幹事からのお知らせ</div><div class="nb">${esc(n).replace(/\n/g,"<br>")}</div></div>`
+      : "";
+  }
+
+  renderDeadline();
+  render();
+}
+
+/* ---------- 回答期限バナー（設定で日付を入れたときだけ表示） ---------- */
+function renderDeadline(){
+  const box=$("#deadlineBar"); if(!box) return;
+  const d = CFG.deadline ? new Date(CFG.deadline+"T23:59:59+09:00") : null;
+  if(!d || isNaN(d)){ box.className=""; box.innerHTML=""; return; }
+  const dstr=d.toLocaleDateString("ja-JP",{month:"numeric",day:"numeric",weekday:"short"});
+  const days=Math.ceil((d-new Date())/864e5);
+  const past = d < new Date();
   box.className="deadline";
   box.innerHTML = past
     ? `<div class="cal"><b>〆</b><span>受付</span></div><div>出欠の事前受付は <b>${dstr}</b> で締め切りました。<br><b>追加のご参加は歓迎です</b>。幹事までご連絡ください 🙌</div>`
-    : `<div class="cal"><b>${DEADLINE.getMonth()+1}/${DEADLINE.getDate()}</b><span>まで</span></div><div><b>出欠のご回答は ${dstr} まで</b>にお願いいたします${days>0?`（あと<span class="d">${days}</span>日）`:"（本日まで！）"}。<br>お席・お料理のご手配のため、お早めにご登録いただけると助かります。</div>`;
-})();
+    : `<div class="cal"><b>${d.getMonth()+1}/${d.getDate()}</b><span>まで</span></div><div><b>出欠のご回答は ${dstr} まで</b>にお願いいたします${days>0?`（あと<span class="d">${days}</span>日）`:"（本日まで！）"}。<br>お席・お料理のご手配のため、お早めにご登録いただけると助かります。</div>`;
+}
 
 /* ---------- 後日追加資料のスロット ---------- */
 (function(){
@@ -1523,9 +1771,72 @@ function autoBackup(list){
   try{ localStorage.setItem("jc30_autobackup", JSON.stringify({at:Date.now(), schema:SCHEMA, path:PATH.join("/"), count:list.length, data:list})); }catch(_){}
 }
 
+/* ---------- 幹事ログイン ---------- */
+async function doLogin(){
+  const mail=$("#lgMail").value.trim(), pass=$("#lgPass").value;
+  const err=$("#lgErr");
+  if(!mail || !pass){ err.textContent="メールアドレスとパスワードを入力してください。"; return; }
+  if(!authApi){ err.textContent="この端末ではログイン機能が使えません（デモモード）。"; return; }
+  $("#lgBtn").disabled=true; err.textContent="";
+  try{
+    await authApi.login(mail, pass);
+    $("#lgPass").value="";
+    await loadContactsIfStaff();
+    settingsLoaded=false;
+    render();
+    showToast("ログインしました 🔑");
+  }catch(e){
+    const c=String(e.code||"");
+    err.textContent =
+      c.includes("invalid-credential")||c.includes("wrong-password")||c.includes("user-not-found")
+        ? "メールアドレスまたはパスワードが違います。"
+      : c.includes("too-many-requests") ? "試行回数が多すぎます。しばらく時間をおいてください。"
+      : c.includes("operation-not-allowed") ? "Firebase側でメール/パスワード認証が有効になっていません（引継ぎメモ 9章）。"
+      : "ログインに失敗しました（"+c+"）";
+  }finally{ $("#lgBtn").disabled=false; }
+}
+$("#lgBtn").onclick=doLogin;
+$("#lgPass").addEventListener("keydown",e=>{ if(e.key==="Enter") doLogin(); });
+$("#lgOut").onclick=async()=>{
+  if(!authApi) return;
+  await authApi.logout();
+  contacts={}; settingsLoaded=false;
+  render(); showToast("ログアウトしました");
+};
+
+/* ---------- 設定の保存 ---------- */
+$("#stSave").onclick=async()=>{
+  const goalRaw=$("#stGoal").value.trim();
+  const patch={
+    secFee     : $("#stFee").value.trim(),
+    deadline   : $("#stDeadline").value,
+    goal       : goalRaw===""? DEFAULTS.goal : Math.max(0, parseInt(goalRaw)||0),
+    notice     : $("#stNotice").value.trim(),
+    entryClosed: $("#stClosed").checked
+  };
+  $("#stSave").disabled=true;
+  try{
+    await store.saveSettings(patch);
+    showToast("設定を保存しました ✅ 全員の画面に反映されます");
+  }catch(e){
+    alert("設定の保存に失敗しました: "+e.message+"\n（Firestoreのルールで settings への書き込みが許可されているかご確認ください）");
+  }finally{ $("#stSave").disabled=false; }
+};
+
 /* ---------- 購読開始（すべての定義の後に実行する） ---------- */
 store.subscribe(list=>{ all=list; if(list.length) autoBackup(list); render(); });
 qstore.subscribe(list=>{ allQ=list; renderQ(); });
+store.subscribeSettings(s=>{
+  CFG = {...DEFAULTS, ...(s||{})};
+  if(isAdmin && isStaff()) fillSettingsForm();
+  applySettings();
+});
+
+/* 認証状態が変わったら、連絡先の読み直しと再描画を行う */
+if(authApi){
+  authApi.onChange(async()=>{ await loadContactsIfStaff(); render(); });
+  await loadContactsIfStaff();
+}
 </script>
 
 <!--
@@ -1549,19 +1860,27 @@ qstore.subscribe(list=>{ allQ=list; renderQ(); });
 
      match /artifacts/{appId}/private/{document=**} {
        allow create, update, delete: if request.auth != null;
-       allow read: if false;
+       allow read: if request.auth.token.email == '幹事のメールアドレス';
      }
 
-   追加できているかは、?admin を開けば画面上部で自動判定される
-   （緑＝OK／赤＝未設定。赤のときは貼り付けるルールもその場に表示される）。
+   設定できているかは、?admin を開いて幹事ログインすれば自動判定される
+   （緑＝OK／赤＝問題あり。赤のときは何が問題かをその場に表示する）。
 
- 【あとで設定するもの】
-   1) DEADLINE   … 出欠の回答期限を設けるなら日付を入れる（初期 null＝非表示）
-   2) GOAL       … 目標人数。1996年度の在籍者数に合わせて調整（初期 50）
-   3) EXTRA_DOC  … 来週追加予定の資料。画像なら {img:"...", cap:"..."}
+ 【画面から変えられるもの（HTMLの修正は不要）】
+   幹事メニュー ＞ ⚙️設定 で、次の5つをいつでも変更できる。
+     ・2次会の会費（決まったら入力。ページ内の「会費未定」が一斉に変わる）
+     ・回答期限（空欄なら期限バナーを出さない）
+     ・目標人数（0 で目標表記とバーを消す）
+     ・お知らせ（ページ上部に全員へ掲示。空欄で非表示）
+     ・出欠の受付停止（停止中でも幹事は代理登録・修正が可能）
+   保存先は artifacts/jc-nagano-1996-30th/public/data/settings/config
+
+ 【HTMLを直さないと変えられないもの】
+   1) EVENT_DATE … 開宴日時（カウントダウンの目標）
+   2) EXTRA_DOC  … 追加資料。画像なら {img:"...", cap:"..."}
                     PDFなら {href:"...", label:"..."}
-   4) JC_MAIL    … 幹事へのメール通知。templateId が空のうちは送信されません
-   5) ENTRY_CLOSED … 受付を締め切るとき true
+   3) JC_MAIL    … 幹事へのメール通知。templateId が空のうちは送信されません
+   4) 冊子表紙の画像 … ヒーローの .hero-book の img src
 
  【公開方法】
    このHTMLを GitHub Pages に置いて【URL】を共有します。
