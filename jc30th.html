@@ -928,8 +928,15 @@ const PATH_Q = ["artifacts", "jc-nagano-1996-30th", "public", "data", "questions
 const PATH_C = ["artifacts", "jc-nagano-1996-30th", "private", "data", "contacts"];
 
 /* 幹事が画面から変更できる設定（会費・期限・目標人数・受付停止・お知らせ）。
-   ここに置くことで、HTMLを書き換えずに運用側で直せる。 */
-const PATH_S = ["artifacts", "jc-nagano-1996-30th", "public", "data", "settings", "config"];
+   ここに置くことで、HTMLを書き換えずに運用側で直せる。
+
+   ★ public/ の外に置いてある理由：
+     Firestoreのルールは「どれか1つのブロックが許可すれば通る」ため、
+     public/** に「全員書き込み可」のブロックがあると、その配下に置いた
+     設定は何を重ねても全員が書き換えられてしまう。
+     config/ という別の枝に分けることで、「読むのは全員／書けるのは幹事だけ」
+     を確実に効かせている。 */
+const PATH_S = ["artifacts", "jc-nagano-1996-30th", "config", "settings"];
 
 const SCHEMA = 3;   // v3: 設定のクラウド化・受付チェックインに対応
 
