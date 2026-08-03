@@ -1755,24 +1755,34 @@ $("#btnMail").onclick=()=>{
    ヒーロー内のボタンも中段のボタンも画面に無いときだけ出す。
    （同じボタンが2つ同時に見えないようにするため） */
 const stickyBar = $("#stickyCta");
-let ctaVisible = new Set();
+
+/* 他の登録ボタンが画面内にあるか。位置を直接測るので、
+   IntersectionObserver が使えない環境でも確実に動く。 */
+function ctaOnScreen(){
+  const vh = window.innerHeight || document.documentElement.clientHeight;
+  return [$("#heroCta"), $("#regist")].some(el=>{
+    if(!el || el.offsetParent===null) return false;
+    const r = el.getBoundingClientRect();
+    return r.bottom > 0 && r.top < vh;
+  });
+}
 function updateSticky(){
   const closed = CFG.entryClosed && !isStaff();
   const modalOpen = overlay.classList.contains("open");
   const on = !closed;
   stickyBar.classList.toggle("on", on);
   document.body.classList.toggle("hascta", on);
-  stickyBar.classList.toggle("show", on && !modalOpen && ctaVisible.size===0);
+  stickyBar.classList.toggle("show", on && !modalOpen && !ctaOnScreen());
 }
-(function(){
-  const targets=[$("#heroCta"), $("#regist")].filter(Boolean);
-  if(!("IntersectionObserver" in window)){ return; }
-  const io=new IntersectionObserver(entries=>{
-    entries.forEach(e=>{ e.isIntersecting? ctaVisible.add(e.target) : ctaVisible.delete(e.target); });
-    updateSticky();
-  },{threshold:0});
-  targets.forEach(t=>io.observe(t));
-})();
+let stickyTick=false;
+function onScrollCta(){
+  if(stickyTick) return;
+  stickyTick=true;
+  requestAnimationFrame(()=>{ stickyTick=false; updateSticky(); });
+}
+addEventListener("scroll", onScrollCta, {passive:true});
+addEventListener("resize", onScrollCta);
+updateSticky();
 
 /* ---------- トースト ---------- */
 let toastT;
