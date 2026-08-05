@@ -346,6 +346,11 @@
   .setup b{color:#5f4408}
   .setup code{background:#fff;border:1px solid #eadfbf;padding:1px 6px;border-radius:6px;font-size:12px}
 
+  /* 移動手段マッチング：縦並びセグメント */
+  .seg.vertical{flex-direction:column;gap:8px}
+  .seg.vertical .box{text-align:left;padding:12px 14px}
+  .seg.vertical .box .em{display:inline-block;margin:0 6px 0 0;font-size:17px}
+
   /* AM集合時間変更の告知バナー（最上部・強調） */
   .time-alert{background:linear-gradient(135deg,#ffe4e4,#ffd0d0);border:2px solid #f2a5a5;border-radius:14px;padding:12px 18px;margin:0 0 16px;display:flex;align-items:center;justify-content:center;gap:10px;color:#7a1f1f;font-weight:800;font-size:14px;line-height:1.5;text-align:center;flex-wrap:wrap}
   .time-alert .big{font-family:"Bebas Neue",sans-serif;font-size:24px;color:#b3241f;vertical-align:-2px;margin:0 3px}
@@ -406,6 +411,7 @@
     <a href="#regist" class="cta">⚽️ 出欠を登録する</a>
     <a href="#members">🔥 参加メンバー</a>
     <a href="#schedule">⏱ 当日のながれ</a>
+    <a href="#ride">🚗 移動手段</a>
     <a href="#history">📊 これまでのOB戦</a>
     <a href="#facility">🚿 設備・持ち物</a>
     <a href="#faq">❓ よくある質問</a>
@@ -539,6 +545,33 @@
         ただし、<b>スタート時に全員が揃っている必要はありません</b>。参加メンバーが固まり次第、試合スケジュールは見直します。写真撮影の時間も調整する予定です。到着が多少遅れても大丈夫ですので、安心してお申し込みください。<br><br>
         ※ 試合の組み合わせ・時間は<b>参加申込状況によって変更</b>になります。<br>
         ※ 大会全体は 10:30 開会式スタート。午前中は長野Uスタジアムで長野高校の現役戦が行われ、<b>吉田OBは午後から合流</b>する流れです。
+      </div>
+    </div>
+  </section>
+
+  <!-- 移動手段マッチング -->
+  <section class="blk" id="ride">
+    <div class="blk-head"><h2>🚗 移動手段のマッチング</h2><span class="count gray" id="cntRide">0</span></div>
+    <div class="panel">
+      <p style="margin:0 0 14px;font-size:13.5px;color:var(--muted);font-weight:600;line-height:1.7">
+        AMからPMへは<b>車での移動が必須</b>です。年代もさまざまなので、<b>移動手段に不安がある方</b>は遠慮なく教えてください。<br>
+        近い年代の先輩・後輩が「乗せてくよ」と声をかけやすいよう、この一覧には<b>氏名・年齢だけ</b>を表示します（携帯番号は幹事のみが確認します）。<br>
+        <b>まだ出欠を申込んでいない方も回答OK</b>です。移動手段がネックで迷っている方も、ぜひ教えてください。
+      </p>
+      <div class="cta-row" style="margin:0 0 18px;justify-content:flex-start">
+        <button class="btn btn-primary btn-sm" id="openRide">🚗 移動手段を回答する</button>
+      </div>
+
+      <h3 style="margin:18px 0 8px;font-size:14px;font-weight:900;color:var(--pitch-dark)">🙋 相乗り希望・検討中</h3>
+      <div id="rideNeedList"></div>
+      <div class="empty" id="rideNeedEmpty">まだ回答はありません</div>
+
+      <h3 style="margin:22px 0 8px;font-size:14px;font-weight:900;color:var(--pitch-dark)">🚗 送迎できます</h3>
+      <div id="rideOfferList"></div>
+      <div class="empty" id="rideOfferEmpty">まだ回答はありません</div>
+
+      <div class="tl-note" style="margin-top:16px">
+        気になる方がいたら、<b>LINEグループで直接声をかけてください</b> 🙌 マッチングが難しい場合は幹事が個別に調整します。
       </div>
     </div>
   </section>
@@ -772,6 +805,53 @@
   </div>
 </div>
 
+<!-- ===== 移動手段 MODAL ===== -->
+<div class="ov" id="rideOverlay">
+  <div class="modal">
+    <button class="close" id="closeRideModal" aria-label="閉じる">×</button>
+    <h3 id="rideModalTitle">移動手段を教えてください</h3>
+    <p class="lead">AM→PMの移動について、今の状況を教えてください。あとから変更もOKです。</p>
+    <form id="rideForm">
+      <div class="field">
+        <label>氏名 <span style="color:#c65">*</span></label>
+        <input type="text" id="rName" placeholder="例）山田 太郎" autocomplete="off" required>
+      </div>
+      <div class="field">
+        <label>年齢</label>
+        <input type="number" id="rAge" placeholder="例）38" min="10" max="99" inputmode="numeric">
+        <div class="hint">マッチングの参考にします（任意）</div>
+      </div>
+      <div class="field">
+        <label>移動手段の状況 <span style="color:#c65">*</span></label>
+        <div class="seg vertical" id="segRide">
+          <label><input type="radio" name="ride" value="offer"><span class="box"><span class="em">🚗</span>自分の車で行く（他の人を<b>乗せられる</b>）</span></label>
+          <label><input type="radio" name="ride" value="self" checked><span class="box"><span class="em">🚗</span>自分の車で行く（自分の分でいっぱい）</span></label>
+          <label><input type="radio" name="ride" value="need"><span class="box"><span class="em">🙋</span>移動手段が不安・相乗りさせてほしい</span></label>
+          <label><input type="radio" name="ride" value="undecided"><span class="box"><span class="em">❓</span>移動手段がネックで参加を迷っている</span></label>
+        </div>
+      </div>
+      <div class="field" id="seatsField" style="display:none">
+        <label>空き人数の目安</label>
+        <input type="number" id="rSeats" min="1" max="4" placeholder="例）2">
+        <div class="hint">無理のない範囲で大丈夫です</div>
+      </div>
+      <div class="field">
+        <label>携帯番号 <span style="color:#c65">*</span></label>
+        <input type="tel" id="rPhone" placeholder="090-1234-5678" autocomplete="off" required>
+        <div class="hint">一覧には出ません（幹事のみ確認）。マッチングが難しい場合の連絡用です</div>
+      </div>
+      <div class="field">
+        <label>💬 補足（出発エリアなど）</label>
+        <textarea id="rComment" placeholder="例）長野市街から向かいます／子供と一緒です　など" maxlength="140"></textarea>
+      </div>
+      <div class="row">
+        <button type="submit" class="btn btn-primary btn-block" id="rideSubmitBtn">回答する</button>
+      </div>
+      <button type="button" class="del" id="rideDelBtn" style="display:none">この回答を削除する</button>
+    </form>
+  </div>
+</div>
+
 <canvas id="confetti"></canvas>
 <div class="toast" id="toast"></div>
 
@@ -832,11 +912,12 @@ if (window.emailjs && OB_MAIL.publicKey) { try { emailjs.init(OB_MAIL.publicKey)
    ============================================================ */
 const PATH   = ["artifacts", "ob-soccer-2026", "public", "data", "entries"];
 const PATH_Q = ["artifacts", "ob-soccer-2026", "public", "data", "questions"];
+const PATH_R = ["artifacts", "ob-soccer-2026", "public", "data", "rides"];   // 移動手段マッチング
 const SCHEMA = 2;   // v2: AM/PM別出欠・PM3状態(プレー/見学/欠席)・コメントに対応。旧v1データも norm() で表示可。
 
 /* ---------- ストレージ抽象化（Firestore or ローカル） ---------- */
 const configured = !!firebaseConfig.apiKey && firebaseConfig.apiKey.length > 10;
-let store, qstore;
+let store, qstore, rstore;
 
 if (configured) {
   const { initializeApp } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js");
@@ -869,6 +950,14 @@ if (configured) {
     async update(id,patch){ await fs.updateDoc(fs.doc(db,...PATH_Q,id),{...patch,answeredAt:Date.now()}); },
     async remove(id){ await fs.deleteDoc(fs.doc(db,...PATH_Q,id)); }
   };
+
+  const colR = fs.collection(db, ...PATH_R);
+  rstore = {
+    subscribe(cb){ fs.onSnapshot(colR, snap => cb(snap.docs.map(d=>({id:d.id,...d.data()}))), err=>console.error(err)); },
+    async add(data){ const r = await fs.addDoc(colR,{...data,createdAt:Date.now()}); return r.id; },
+    async update(id,patch){ await fs.updateDoc(fs.doc(db,...PATH_R,id),{...patch,updatedAt:Date.now()}); },
+    async remove(id){ await fs.deleteDoc(fs.doc(db,...PATH_R,id)); }
+  };
 } else {
   const KEY = "ob2026_local";
   const read = ()=>{ try{return JSON.parse(localStorage.getItem(KEY)||"[]")}catch{return[]} };
@@ -898,6 +987,20 @@ if (configured) {
       if(i>=0){a[i]={...a[i],...patch,answeredAt:Date.now()}; writeQ(a); emitQ();} },
     async remove(id){ writeQ(readQ().filter(x=>x.id!==id)); emitQ(); }
   };
+
+  // 移動手段マッチング（デモモード用）
+  const KR = "ob2026_local_r";
+  const readR = ()=>{ try{return JSON.parse(localStorage.getItem(KR)||"[]")}catch{return[]} };
+  const writeR = a=>localStorage.setItem(KR,JSON.stringify(a));
+  let lr=[]; const emitR = ()=>{ const a=readR(); lr.forEach(cb=>cb(a)); };
+  rstore = {
+    subscribe(cb){ lr.push(cb); cb(readR()); },
+    async add(data){ const a=readR(); const id="r"+Date.now()+Math.random().toString(36).slice(2,6);
+      a.push({id,...data,createdAt:Date.now()}); writeR(a); emitR(); return id; },
+    async update(id,patch){ const a=readR(); const i=a.findIndex(x=>x.id===id);
+      if(i>=0){a[i]={...a[i],...patch,updatedAt:Date.now()}; writeR(a); emitR();} },
+    async remove(id){ writeR(readR().filter(x=>x.id!==id)); emitR(); }
+  };
 }
 
 /* ---------- 状態 ---------- */
@@ -905,12 +1008,18 @@ const MYKEY = "ob2026_myid";
 let myId = localStorage.getItem(MYKEY) || null;
 let all = [];
 let editingId = null;
+const RMYKEY = "ob2026_ride_myid";
+let myRideId = localStorage.getItem(RMYKEY) || null;
+let allR = [];
+let editingRideId = null;
 const isAdmin = new URLSearchParams(location.search).has("admin");
 
 /* ---------- 要素 ---------- */
 const $ = s=>document.querySelector(s);
 const overlay=$("#overlay"), form=$("#form");
 const fName=$("#fName"), fAge=$("#fAge"), fPhone=$("#fPhone"), fComment=$("#fComment");
+const rideOverlay=$("#rideOverlay"), rideForm=$("#rideForm");
+const rName=$("#rName"), rAge=$("#rAge"), rPhone=$("#rPhone"), rComment=$("#rComment"), rSeats=$("#rSeats");
 
 /* ---------- データ正規化（旧データも壊さず表示するための互換層） ----------
    旧形式: am(bool), attend(bool)  →  新形式: amStatus("yes"/"no"), pmStatus("play"/"watch"/"no")
@@ -1271,6 +1380,140 @@ $("#delBtn").onclick=async()=>{
   closeModal(); showToast("削除しました");
 };
 
+/* ---------- 移動手段マッチング ---------- */
+function renderRide(){
+  const rows = [...allR].sort((a,b)=>(Number(a.age)||999)-(Number(b.age)||999));
+  const need  = rows.filter(r=>r.status==="need" || r.status==="undecided");
+  const offer = rows.filter(r=>r.status==="offer");
+  $("#cntRide").textContent = rows.length;
+
+  $("#rideNeedEmpty").style.display = need.length? "none":"block";
+  $("#rideNeedList").innerHTML = need.map(r=>{
+    const mine = r.id===myRideId;
+    const tag = r.status==="undecided"
+      ? '<span class="bdg" style="background:#eef0ef;color:#5f6b62;border:1px solid #dde2de">検討中</span>'
+      : '<span class="bdg" style="background:#fdecec;color:#a32d2d;border:1px solid #f3bcbc">相乗り希望</span>';
+    return `<div class="abrow ${mine?'mine':''}">
+      <span class="an">🙋 ${esc(r.name)}${r.age?`<span class="age">${esc(r.age)}歳</span>`:""} ${tag}${mine?' <span class="bdg me" style="margin-left:6px">あなた</span>':''}${r.comment?`<span class="cmt">💬 ${esc(r.comment)}</span>`:""}</span>
+      <button class="mini push" data-rideedit="${r.id}">✏️ 変更</button>
+    </div>`;
+  }).join("");
+
+  $("#rideOfferEmpty").style.display = offer.length? "none":"block";
+  $("#rideOfferList").innerHTML = offer.map(r=>{
+    const mine = r.id===myRideId;
+    return `<div class="abrow ${mine?'mine':''}">
+      <span class="an">🚗 ${esc(r.name)}${r.age?`<span class="age">${esc(r.age)}歳</span>`:""} <span class="bdg" style="background:#e2f3e8;color:#1f7a44;border:1px solid #c5e6cf">空き${esc(r.seats||"?")}</span>${mine?' <span class="bdg me" style="margin-left:6px">あなた</span>':''}${r.comment?`<span class="cmt">💬 ${esc(r.comment)}</span>`:""}</span>
+      <button class="mini push" data-rideedit="${r.id}">✏️ 変更</button>
+    </div>`;
+  }).join("");
+
+  document.querySelectorAll("[data-rideedit]").forEach(b=>b.onclick=()=>openRideEdit(b.dataset.rideedit));
+
+  if(isAdmin) renderRideAdmin();
+}
+
+function openRideModal(){ rideOverlay.classList.add("open"); }
+function closeRideModal(){ rideOverlay.classList.remove("open"); }
+
+function setRidePick(val){
+  rideForm.querySelectorAll('input[name="ride"]').forEach(r=>r.checked = r.value===val);
+  updateSeatsField();
+}
+function updateSeatsField(){
+  const val = rideForm.querySelector('input[name="ride"]:checked')?.value;
+  $("#seatsField").style.display = val==="offer" ? "block":"none";
+}
+$("#segRide").addEventListener("change",updateSeatsField);
+
+function openRideNew(){
+  editingRideId=null;
+  $("#rideModalTitle").textContent="移動手段を教えてください";
+  rideForm.reset();
+  setRidePick("self");
+  $("#rideSubmitBtn").textContent="回答する";
+  $("#rideDelBtn").style.display="none";
+  openRideModal(); rName.focus();
+}
+function openRideEdit(id){
+  const r=allR.find(x=>x.id===id); if(!r) return;
+  editingRideId=id;
+  $("#rideModalTitle").textContent="回答を変更";
+  rName.value=r.name||""; rAge.value=r.age||""; rPhone.value=r.phone||""; rComment.value=r.comment||""; rSeats.value=r.seats||"";
+  setRidePick(r.status||"self");
+  $("#rideSubmitBtn").textContent="変更を保存";
+  $("#rideDelBtn").style.display = (id===myRideId)? "block":"none";
+  openRideModal();
+}
+$("#openRide").onclick=openRideNew;
+$("#closeRideModal").onclick=closeRideModal;
+rideOverlay.onclick=e=>{ if(e.target===rideOverlay) closeRideModal(); };
+
+rideForm.addEventListener("submit",async e=>{
+  e.preventDefault();
+  const status = rideForm.querySelector('input[name="ride"]:checked')?.value || "self";
+  const data = {
+    name: rName.value.trim(),
+    age: rAge.value? Number(rAge.value): null,
+    phone: rPhone.value.trim(),
+    status,
+    seats: status==="offer" ? (Number(rSeats.value)||null) : null,
+    comment: rComment.value.trim()
+  };
+  if(!data.name){ rName.focus(); return; }
+  if(!data.phone){ rPhone.focus(); return; }
+  $("#rideSubmitBtn").disabled=true;
+  try{
+    if(editingRideId){
+      await rstore.update(editingRideId,data);
+      showToast("回答を更新しました ✅");
+    }else{
+      const id = await rstore.add(data);
+      myRideId=id; localStorage.setItem(RMYKEY,id);
+      showToast("ありがとうございます！回答しました ✅");
+    }
+    closeRideModal();
+  }catch(err){
+    alert("送信に失敗しました: "+err.message);
+  }finally{ $("#rideSubmitBtn").disabled=false; }
+});
+
+$("#rideDelBtn").onclick=async()=>{
+  if(!editingRideId) return;
+  if(!confirm("この回答を削除しますか？")) return;
+  await rstore.remove(editingRideId);
+  if(editingRideId===myRideId){ myRideId=null; localStorage.removeItem(RMYKEY); }
+  closeRideModal(); showToast("削除しました");
+};
+
+/* 幹事メニュー：移動手段の全件（携帯番号つき） */
+function renderRideAdmin(){
+  let box=$("#rideAdminBox");
+  if(!box){
+    box=document.createElement("div");
+    box.id="rideAdminBox";
+    box.style.marginTop="16px";
+    $("#ride .panel").appendChild(box);
+  }
+  const rows=[...allR].sort((a,b)=>(a.createdAt||0)-(b.createdAt||0));
+  const statusLabel = s => s==="offer"?"🚗 送迎できる":s==="need"?"🙋 相乗り希望":s==="undecided"?"❓ 検討中(未申込)":"🚗 自分の分のみ";
+  box.innerHTML = rows.length ? `
+    <div class="tl-note" style="margin-top:0">🔑 幹事のみ表示：携帯番号つき全件（${rows.length}件）</div>
+    <div style="overflow-x:auto;margin-top:8px">
+      <table class="atbl">
+        <thead><tr><th>氏名</th><th>年齢</th><th>状況</th><th>空き</th><th>携帯番号</th><th>補足</th></tr></thead>
+        <tbody>${rows.map(r=>`<tr>
+          <td><b>${esc(r.name)}</b></td>
+          <td>${r.age?esc(r.age):"—"}</td>
+          <td>${statusLabel(r.status)}</td>
+          <td>${r.status==="offer"?esc(r.seats||"—"):"—"}</td>
+          <td>${esc(r.phone)}</td>
+          <td style="white-space:normal;max-width:200px">${esc(r.comment||"")}</td>
+        </tr>`).join("")}</tbody>
+      </table>
+    </div>` : "";
+}
+
 /* ---------- カウントダウン ---------- */
 function tick(){
   const now=new Date(), diff=EVENT_DATE-now;
@@ -1384,6 +1627,7 @@ function autoBackup(list){
 /* ---------- 購読開始（すべての定義の後に実行する） ---------- */
 store.subscribe(list=>{ all=list; if(list.length) autoBackup(list); render(); });
 qstore.subscribe(list=>{ allQ=list; renderQ(); });
+rstore.subscribe(list=>{ allR=list; renderRide(); });
 </script>
 
 <!--
