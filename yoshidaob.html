@@ -571,8 +571,14 @@
       <div class="empty" id="rideOfferEmpty">まだ回答はありません</div>
 
       <div class="tl-note" style="margin-top:16px">
-        気になる方がいたら、<b>LINEグループで直接声をかけてください</b> 🙌 マッチングが難しい場合は幹事が個別に調整します。
+        気になる方がいたら、<b>LINEグループで直接声をかけてください</b> 🙌 マッチングが難しい場合は幹事が個別に調整します。<br>
+        直接連絡を取り合って移動手段が見つかったら、自分の欄の<b>「✅ 解決済み」</b>を押して一覧から消してください（間違えても後で戻せます）。
       </div>
+
+      <details style="margin-top:14px">
+        <summary style="cursor:pointer;font-size:12.5px;font-weight:800;color:var(--muted)">✅ マッチング済み（<span id="cntMatched">0</span>件）を表示</summary>
+        <div id="rideMatchedList" style="margin-top:8px"></div>
+      </details>
     </div>
   </section>
 
@@ -1383,9 +1389,16 @@ $("#delBtn").onclick=async()=>{
 /* ---------- 移動手段マッチング ---------- */
 function renderRide(){
   const rows = [...allR].sort((a,b)=>(Number(a.age)||999)-(Number(b.age)||999));
-  const need  = rows.filter(r=>r.status==="need" || r.status==="undecided");
-  const offer = rows.filter(r=>r.status==="offer");
-  $("#cntRide").textContent = rows.length;
+  const active = rows.filter(r=>!r.matched);
+  const matched = rows.filter(r=>r.matched);
+  const need  = active.filter(r=>r.status==="need" || r.status==="undecided");
+  const offer = active.filter(r=>r.status==="offer");
+  $("#cntRide").textContent = active.length;
+
+  const actionBtns = r => `<div style="margin-left:auto;display:flex;gap:6px;flex-shrink:0">
+      <button class="mini" data-matched="${r.id}">✅ 解決済み</button>
+      <button class="mini" data-rideedit="${r.id}">✏️ 変更</button>
+    </div>`;
 
   $("#rideNeedEmpty").style.display = need.length? "none":"block";
   $("#rideNeedList").innerHTML = need.map(r=>{
@@ -1395,7 +1408,7 @@ function renderRide(){
       : '<span class="bdg" style="background:#fdecec;color:#a32d2d;border:1px solid #f3bcbc">相乗り希望</span>';
     return `<div class="abrow ${mine?'mine':''}">
       <span class="an">🙋 ${esc(r.name)}${r.age?`<span class="age">${esc(r.age)}歳</span>`:""} ${tag}${mine?' <span class="bdg me" style="margin-left:6px">あなた</span>':''}${r.comment?`<span class="cmt">💬 ${esc(r.comment)}</span>`:""}</span>
-      <button class="mini push" data-rideedit="${r.id}">✏️ 変更</button>
+      ${actionBtns(r)}
     </div>`;
   }).join("");
 
@@ -1404,11 +1417,29 @@ function renderRide(){
     const mine = r.id===myRideId;
     return `<div class="abrow ${mine?'mine':''}">
       <span class="an">🚗 ${esc(r.name)}${r.age?`<span class="age">${esc(r.age)}歳</span>`:""} <span class="bdg" style="background:#e2f3e8;color:#1f7a44;border:1px solid #c5e6cf">空き${esc(r.seats||"?")}</span>${mine?' <span class="bdg me" style="margin-left:6px">あなた</span>':''}${r.comment?`<span class="cmt">💬 ${esc(r.comment)}</span>`:""}</span>
-      <button class="mini push" data-rideedit="${r.id}">✏️ 変更</button>
+      ${actionBtns(r)}
+    </div>`;
+  }).join("");
+
+  $("#cntMatched").textContent = matched.length;
+  $("#rideMatchedList").innerHTML = matched.map(r=>{
+    const label = r.status==="offer" ? `🚗 送迎できます(空き${esc(r.seats||"?")})` : r.status==="undecided" ? "❓ 検討中だった" : "🙋 相乗り希望だった";
+    return `<div class="abrow" style="opacity:.6">
+      <span class="an">${esc(r.name)}${r.age?`<span class="age">${esc(r.age)}歳</span>`:""} <span class="bdg" style="background:#eef0ef;color:#5f6b62;border:1px solid #dde2de">${label}</span></span>
+      <button class="mini push" data-unmatch="${r.id}">↩️ 戻す</button>
     </div>`;
   }).join("");
 
   document.querySelectorAll("[data-rideedit]").forEach(b=>b.onclick=()=>openRideEdit(b.dataset.rideedit));
+  document.querySelectorAll("[data-matched]").forEach(b=>b.onclick=async()=>{
+    if(!confirm("移動手段が見つかったので、一覧から消しますか？（あとで元に戻せます）")) return;
+    await rstore.update(b.dataset.matched,{matched:true});
+    showToast("よかったです！一覧から消しました ✅");
+  });
+  document.querySelectorAll("[data-unmatch]").forEach(b=>b.onclick=async()=>{
+    await rstore.update(b.dataset.unmatch,{matched:false});
+    showToast("一覧に戻しました");
+  });
 
   if(isAdmin) renderRideAdmin();
 }
@@ -1465,10 +1496,10 @@ rideForm.addEventListener("submit",async e=>{
   $("#rideSubmitBtn").disabled=true;
   try{
     if(editingRideId){
-      await rstore.update(editingRideId,data);
+      await rstore.update(editingRideId,data);   // matchedフラグには触れない（変更で解決済みを戻さない）
       showToast("回答を更新しました ✅");
     }else{
-      const id = await rstore.add(data);
+      const id = await rstore.add({...data,matched:false});
       myRideId=id; localStorage.setItem(RMYKEY,id);
       showToast("ありがとうございます！回答しました ✅");
     }
@@ -1501,7 +1532,7 @@ function renderRideAdmin(){
     <div class="tl-note" style="margin-top:0">🔑 幹事のみ表示：携帯番号つき全件（${rows.length}件）</div>
     <div style="overflow-x:auto;margin-top:8px">
       <table class="atbl">
-        <thead><tr><th>氏名</th><th>年齢</th><th>状況</th><th>空き</th><th>携帯番号</th><th>補足</th></tr></thead>
+        <thead><tr><th>氏名</th><th>年齢</th><th>状況</th><th>空き</th><th>携帯番号</th><th>補足</th><th>マッチング</th></tr></thead>
         <tbody>${rows.map(r=>`<tr>
           <td><b>${esc(r.name)}</b></td>
           <td>${r.age?esc(r.age):"—"}</td>
@@ -1509,6 +1540,7 @@ function renderRideAdmin(){
           <td>${r.status==="offer"?esc(r.seats||"—"):"—"}</td>
           <td>${esc(r.phone)}</td>
           <td style="white-space:normal;max-width:200px">${esc(r.comment||"")}</td>
+          <td>${r.matched?'<span class="bdg" style="background:#e2f3e8;color:#1f7a44;border:1px solid #c5e6cf">✅ 済</span>':'<span class="bdg" style="background:#fdecec;color:#a32d2d;border:1px solid #f3bcbc">未</span>'}</td>
         </tr>`).join("")}</tbody>
       </table>
     </div>` : "";
