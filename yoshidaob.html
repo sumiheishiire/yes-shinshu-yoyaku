@@ -838,7 +838,7 @@
       </div>
       <div class="field" id="seatsField" style="display:none">
         <label>空き人数の目安</label>
-        <input type="number" id="rSeats" min="1" max="4" placeholder="例）2">
+        <input type="number" id="rSeats" min="1" max="9" placeholder="例）2">
         <div class="hint">無理のない範囲で大丈夫です</div>
       </div>
       <div class="field">
@@ -878,11 +878,11 @@ const firebaseConfig = {
 const EVENT_DATE = new Date("2026-08-14T09:45:00+09:00");   // AM OB戦キックオフ（カウントダウンの目標）
 const PM_DEADLINE = new Date("2026-07-26T23:59:59+09:00");  // PM（合同OB戦）の出欠回答期限
 /* 出欠フォームの事前受付を締め切るフラグ（true で入力停止）。
-   ・追加の参加を妨げる意図はありません
-   ・おおよその参加人数を把握するための集計でした
-   ・試合の配分（チーム編成）検討のための「事前申込」でした
-   連絡先の案内は動線がないため表示しない（追加参加歓迎の旨だけ明示）。 */
-const ENTRY_CLOSED = true;
+   7/26でPMの事前申込は一旦締め切ったが、その後も
+   ・出席→欠席への修正（出れなくなった人）
+   ・追加の新規登録（まだ申込んでいない人）
+   が発生し続けているため、再オープンしている。 */
+const ENTRY_CLOSED = false;
 const GOAL = 40;
 
 /* 【あとで設定】対戦相手・長野高校OBのPM参加人数。
