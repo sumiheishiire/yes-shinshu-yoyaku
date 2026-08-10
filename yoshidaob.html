@@ -749,7 +749,7 @@
   💰 参加費 おひとり 3,000円・当日現金で回収します（<b>予定</b>／変更になる場合があります）<br>
   🥤 飲み物は<b>基本的に各自でご準備ください</b>（真夏の開催です。多めにどうぞ）<br>
   📱 携帯番号は当日連絡用に幹事だけが確認します（一覧には表示されません）。<br>
-  出欠の事前受付は7/26で締め切りました（追加参加も歓迎です）。VAMOS! 一戦必勝、8/14に集まりましょう！ ⚽️🔥
+  内容の追加・変更はいつでもできます。VAMOS! 一戦必勝、8/14に集まりましょう！ ⚽️🔥
 </footer>
 
 <!-- ===== MODAL ===== -->
@@ -1556,18 +1556,11 @@ function tick(){
 }
 tick(); setInterval(tick,1000);
 
-/* ---------- PM回答期限バナー ---------- */
+/* ---------- PM回答期限バナー ----------
+   出欠登録を再開したため、「締め切りました」の告知は表示しない（空のまま）。 */
 (function(){
   const box=$("#deadlineBar"); if(!box) return;
-  const dl=PM_DEADLINE;
-  const dstr=dl.toLocaleDateString("ja-JP",{month:"numeric",day:"numeric",weekday:"short"});
-  const now=new Date();
-  const days=Math.ceil((dl-now)/864e5);
-  const remain = days>0 ? `あと<span class="d">${days}</span>日` : (days===0? "本日まで！" : "");
-  const past = dl < now;
-  box.innerHTML = past
-    ? `<div class="cal"><b>〆</b><span>受付</span></div><div>🏆 出欠の事前受付は <b class="hl">${dstr}</b> で締め切りました。これは<b>おおよその参加人数の把握</b>と<b>試合の配分（チーム編成）検討</b>のための<b>事前申込</b>でした。<br><b>追加の参加は歓迎です</b>（締切は参加を妨げるものではありません）🙌</div>`
-    : `<div class="cal"><b>${dl.getMonth()+1}/${dl.getDate()}</b><span>まで</span></div><div>🏆 <b class="hl">PM（合同OB戦）の出欠は ${dstr} まで</b>にご回答ください ${remain}。<br>試合の組み合わせ・配分を事前に決めるため、期限を設けています。※ 🌅 AMの回答は<b>任意</b>（必須ではありません／いつでも変更OK）。</div>`;
+  box.innerHTML="";
 })();
 
 /* ---------- 出欠フォーム 事前受付終了の告知 ---------- */
