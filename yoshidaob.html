@@ -346,6 +346,25 @@
   .setup b{color:#5f4408}
   .setup code{background:#fff;border:1px solid #eadfbf;padding:1px 6px;border-radius:6px;font-size:12px}
 
+  /* ===== 当日受付チェックイン（?checkin 専用画面） ===== */
+  #checkinScreen{position:fixed;inset:0;background:var(--chalk);z-index:500;overflow-y:auto;padding:16px;-webkit-overflow-scrolling:touch}
+  .ci-wrap{max-width:640px;margin:0 auto}
+  .ci-head h1{font-size:19px;margin:0 0 12px;color:var(--pitch-dark);font-weight:900}
+  .ci-stats{display:flex;gap:10px;margin-bottom:14px}
+  .ci-stat{flex:1;background:#fff;border:1px solid #e6efe6;border-radius:12px;padding:10px 8px;text-align:center}
+  .ci-stat b{display:block;font-family:"Bebas Neue",sans-serif;font-size:26px;color:var(--pitch);line-height:1.1}
+  .ci-stat span{font-size:10.5px;color:var(--muted);font-weight:700}
+  #ciSearch{width:100%;padding:16px;font-size:18px;border:2px solid #dbe6db;border-radius:14px;margin-bottom:14px;font-family:inherit;box-sizing:border-box}
+  #ciSearch:focus{outline:none;border-color:var(--pitch)}
+  .ci-row{background:#fff;border:1px solid #e6efe6;border-radius:14px;padding:12px 14px;margin-bottom:10px}
+  .ci-row .ci-name{font-weight:800;font-size:16px;margin-bottom:9px}
+  .ci-row .ci-name .age{font-size:12px;color:var(--muted);font-weight:600;margin-left:4px}
+  .ci-btns{display:flex;gap:8px;flex-wrap:wrap}
+  .ci-btn{flex:1;min-width:140px;padding:13px 10px;border-radius:11px;border:2px solid #e0e8e0;background:#fff;font-weight:800;font-size:13.5px;cursor:pointer;font-family:inherit}
+  .ci-btn.done{background:#e2f3e8;border-color:#8fd0a8;color:#1f7a44}
+  .ci-btn.pending{background:#fff7e3;border-color:var(--gold);color:#8a6410}
+  .ci-empty{text-align:center;color:var(--muted);padding:24px;font-weight:600}
+
   /* 移動手段マッチング：縦並びセグメント */
   .seg.vertical{flex-direction:column;gap:8px}
   .seg.vertical .box{text-align:left;padding:12px 14px}
@@ -752,6 +771,19 @@
   内容の追加・変更はいつでもできます。VAMOS! 一戦必勝、8/14に集まりましょう！ ⚽️🔥
 </footer>
 
+<!-- ===== 当日受付チェックイン（?checkin を付けたときだけ表示） ===== -->
+<div id="checkinScreen" style="display:none">
+  <div class="ci-wrap">
+    <div class="ci-head"><h1>⚽ 当日受付チェックイン</h1></div>
+    <div class="ci-stats">
+      <div class="ci-stat"><b id="ciPaidCount">0</b><span>/ <span id="ciTotalCount">0</span>名 受付済み</span></div>
+      <div class="ci-stat"><b id="ciPaidYen">¥0</b><span>集金済み</span></div>
+    </div>
+    <input type="text" id="ciSearch" placeholder="🔍 氏名の一部を入力" autocomplete="off">
+    <div id="ciList"></div>
+  </div>
+</div>
+
 <!-- ===== MODAL ===== -->
 <div class="ov" id="overlay">
   <div class="modal">
@@ -1019,6 +1051,7 @@ let myRideId = localStorage.getItem(RMYKEY) || null;
 let allR = [];
 let editingRideId = null;
 const isAdmin = new URLSearchParams(location.search).has("admin");
+const isCheckin = new URLSearchParams(location.search).has("checkin");   // 当日受付チェックイン専用画面
 
 /* ---------- 要素 ---------- */
 const $ = s=>document.querySelector(s);
@@ -1118,6 +1151,7 @@ function render(){
   }
 
   if(isAdmin) renderAdmin();
+  if(isCheckin) renderCheckin();
 }
 
 /* ---------- 質問コーナー ---------- */
@@ -1210,6 +1244,78 @@ function renderAdmin(){
       <td>${fmtDate(p.updatedAt)}</td>
     </tr>`}).join("")+
     `<tr><td colspan="5" style="text-align:right;font-weight:800">参加費 合計（予定）</td><td colspan="5" style="font-weight:800">¥${feeSum.toLocaleString()}</td></tr></tbody>`;
+}
+
+/* ---------- 当日受付チェックイン（?checkin） ----------
+   AM ¥500 / PM プレー ¥3,000 の金額は feeOf() と同じロジック（norm経由）を使う。
+   金額が変わったらここではなく元の定義（feeOf内の500/3000）を直すだけでよい。 */
+const amFeeOf = p => norm(p).am==="yes" ? 500 : 0;
+const pmFeeOf = p => norm(p).pm==="play" ? 3000 : 0;
+
+function renderCheckin(){
+  const q = ($("#ciSearch")?.value || "").trim();
+  const joined = all.filter(isJoining);
+  $("#ciTotalCount").textContent = joined.length;
+
+  const paidCount = joined.filter(p=>{
+    const n=norm(p);
+    const needAm = n.am==="yes", needPm = n.pm==="play" || n.pm==="watch";
+    return (!needAm || p.amPaid) && (!needPm || p.pmPaid);
+  }).length;
+  $("#ciPaidCount").textContent = paidCount;
+
+  const paidYen = joined.reduce((s,p)=> s + (p.amPaid?amFeeOf(p):0) + (p.pmPaid?pmFeeOf(p):0), 0);
+  $("#ciPaidYen").textContent = "¥"+paidYen.toLocaleString();
+
+  const list = q
+    ? joined.filter(p=>p.name && p.name.includes(q))
+    : [...joined].sort((a,b)=>(a.createdAt||0)-(b.createdAt||0));
+
+  const box = $("#ciList");
+  if(!list.length){
+    box.innerHTML = `<div class="ci-empty">${q? "該当者がいません":"氏名の一部を入力すると絞り込まれます"}</div>`;
+    return;
+  }
+  const shown = list.slice(0,40);
+  box.innerHTML = shown.map(p=>{
+    const n=norm(p);
+    const btns=[];
+    if(n.am==="yes"){
+      btns.push(`<button class="ci-btn ${p.amPaid?'done':'pending'}" data-ci-am="${p.id}">${p.amPaid?'✅ AM受付済み ¥500':'☐ AM受付 ¥500'}</button>`);
+    }
+    if(n.pm==="play"){
+      btns.push(`<button class="ci-btn ${p.pmPaid?'done':'pending'}" data-ci-pm="${p.id}">${p.pmPaid?'✅ PM受付済み ¥3,000':'☐ PM受付 ¥3,000'}</button>`);
+    } else if(n.pm==="watch"){
+      btns.push(`<button class="ci-btn ${p.pmPaid?'done':'pending'}" data-ci-pm="${p.id}">${p.pmPaid?'✅ PM受付済み(見学)':'☐ PM受付(見学・無料)'}</button>`);
+    }
+    return `<div class="ci-row">
+      <div class="ci-name">${esc(p.name)}${p.age?`<span class="age">${esc(p.age)}歳</span>`:""}</div>
+      <div class="ci-btns">${btns.join("")}</div>
+    </div>`;
+  }).join("") + (list.length>40 ? `<div class="ci-empty">他${list.length-40}件。検索を絞り込んでください</div>` : "");
+
+  box.querySelectorAll("[data-ci-am]").forEach(b=>b.onclick=async()=>{
+    const p=all.find(x=>x.id===b.dataset.ciAm); if(!p) return;
+    b.disabled=true;
+    try{ await store.update(p.id,{amPaid:!p.amPaid, amPaidAt:Date.now()}); }
+    finally{ b.disabled=false; }
+  });
+  box.querySelectorAll("[data-ci-pm]").forEach(b=>b.onclick=async()=>{
+    const p=all.find(x=>x.id===b.dataset.ciPm); if(!p) return;
+    b.disabled=true;
+    try{ await store.update(p.id,{pmPaid:!p.pmPaid, pmPaidAt:Date.now()}); }
+    finally{ b.disabled=false; }
+  });
+}
+
+if(isCheckin){
+  // 通常画面を隠し、チェックイン専用画面だけを表示する
+  ["#nav","header.hero",".wrap.board","footer"].forEach(sel=>{
+    const el=document.querySelector(sel); if(el) el.style.display="none";
+  });
+  const cs=$("#checkinScreen"); if(cs) cs.style.display="block";
+  $("#ciSearch")?.addEventListener("input", renderCheckin);
+  setTimeout(()=>$("#ciSearch")?.focus(), 200);
 }
 
 function download(name,text,mime){
