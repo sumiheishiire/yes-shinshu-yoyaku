@@ -617,13 +617,20 @@
 
       <div class="route-step">
         <span class="rt-num">2</span>
-        <div class="rt-body"><b>🚪「VIP入口」から入場<span class="rt-tag">ここ重要</span></b>
-          <span>通常の<b>チケット売り場の横</b>にある <b>「VIP入口」</b> から入ってください。<br>一般入口ではありません。ここを間違えると入れません。</span></div>
+        <div class="rt-body"><b>🚶 「正面ゲート」から徒歩で入場</b>
+          <span>チケット売り場の横に <b>「正面ゲート」</b> と表示があります。<br><b>車は駐車場に停めたまま</b>、ここからは<b>徒歩</b>で入場してください。</span></div>
       </div>
       <div class="route-arw">▼</div>
 
       <div class="route-step">
         <span class="rt-num">3</span>
+        <div class="rt-body"><b>🚪 その先の「VIP入口」から室内へ<span class="rt-tag">ここ重要</span></b>
+          <span>正面ゲートを入った先に <b>「VIP入口」</b> があります。ここから室内に入ってください。<br>⚠️ <b>2Fからも入れますが、受付は1Fにあります。必ず1Fから入場してください。</b></span></div>
+      </div>
+      <div class="route-arw">▼</div>
+
+      <div class="route-step">
+        <span class="rt-num">4</span>
         <div class="rt-body"><b>⚽ そのままピッチへ進む</b>
           <span>吉田OBが使えるのは、<b>VIP入口からピッチに向かって「右側」</b>です。<b>ベンチ・ロッカールーム・シャワールーム</b>が使えます。</span>
           <div class="rt-side">
@@ -635,7 +642,7 @@
       <div class="route-arw">▼</div>
 
       <div class="route-step goal">
-        <span class="rt-num">4</span>
+        <span class="rt-num">5</span>
         <div class="rt-body"><b>🪑 観戦する方はメインスタンドへ</b>
           <span><b>ピッチから階段を上がって</b>メインスタンドへ。<b>メインスタンドのみ開放</b>されています。<br>☀️ <b>日陰になるので観戦しやすい</b>はずです。ご家族・ご友人の応援もぜひ。</span></div>
       </div>
@@ -735,7 +742,8 @@
         </div>
         <div>
           <dl class="info-row"><dt>ウェア</dt><dd><b>当日ビブスを配布します</b><br><span style="color:var(--muted);font-size:12px">動きやすい服装でお越しください</span></dd></dl>
-          <dl class="info-row"><dt>持ち物<span style="color:#c9932a;font-size:10px;font-weight:800;margin-left:4px">AM/PM共通</span></dt><dd>スパイク／<b>飲み物</b>／着替え・タオル<br>参加費（予定・現金）：AM500円／PMプレー3,000円／見学無料</dd></dl>
+          <dl class="info-row"><dt>持ち物<span style="color:#c9932a;font-size:10px;font-weight:800;margin-left:4px">AM/PM共通</span></dt><dd>スパイク／<b>飲み物</b>／着替え・タオル／<b>ボール</b>（お持ちの方）<br>参加費（予定・現金）：AM500円／PMプレー3,000円／見学無料</dd></dl>
+          <dl class="info-row"><dt>ボール</dt><dd><b>お持ちの方はご持参ください</b> ⚽<br><span style="color:var(--muted);font-size:12px">試合球は確保していますが、アップ用にあると助かります。<br><b>ご自身のボールは、お忘れなくご自身でお持ち帰りください。</b></span></dd></dl>
           <dl class="info-row"><dt>飲み物</dt><dd><b>基本的に各自でご準備ください</b><br><span style="color:var(--muted);font-size:12px">一定量は用意しますが、足りない可能性があります。真夏なので多めに</span></dd></dl>
           <dl class="info-row"><dt>保険</dt><dd>スポーツ保険に加入予定</dd></dl>
         </div>
@@ -1003,6 +1011,10 @@ const PM_DEADLINE = new Date("2026-07-26T23:59:59+09:00");  // PM（合同OB戦�
    ・追加の新規登録（まだ申込んでいない人）
    が発生し続けているため、再オープンしている。 */
 const ENTRY_CLOSED = false;
+/* 移動手段マッチングを終了するフラグ（true でセクションごと非表示）。
+   本番直前でマッチングの役目を終えたため 2026-08-13 にクローズ。
+   false に戻せばそのまま再開できる（回答データは Firestore に残っている）。 */
+const RIDE_CLOSED = true;
 const GOAL = 40;
 
 /* 【あとで設定】対戦相手・長野高校OBのPM参加人数。
@@ -1608,7 +1620,13 @@ $("#delBtn").onclick=async()=>{
 };
 
 /* ---------- 移動手段マッチング ---------- */
+if(RIDE_CLOSED){   // クローズ：セクションとナビのリンクごと隠す（回答データは残す）
+  const sec=document.querySelector("#ride"); if(sec) sec.style.display="none";
+  const nv=document.querySelector('.nav-list a[href="#ride"]'); if(nv) nv.style.display="none";
+}
+
 function renderRide(){
+  if(RIDE_CLOSED) return;
   const rows = [...allR].sort((a,b)=>(Number(a.age)||999)-(Number(b.age)||999));
   const active = rows.filter(r=>!r.matched);
   const matched = rows.filter(r=>r.matched);
