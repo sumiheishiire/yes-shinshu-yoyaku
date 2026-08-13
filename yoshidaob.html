@@ -1388,6 +1388,9 @@ function renderAdmin(){
 /* ---------- 当日受付チェックイン（?checkin） ----------
    AM ¥500 / PM プレー ¥1,500 の金額は feeOf() と同じロジック（norm経由）を使う。
    金額が変わったらここではなく元の定義（feeOf内の500/1500）を直すだけでよい。 */
+/* iOSはWeb標準の音声認識(SpeechRecognition)を実装していないため🎤ボタンが動かない。
+   その場合はキーボード標準の音声入力（マイクアイコン）で代替できる旨をヒントに出す。 */
+let ciMicSupported = !!(window.SpeechRecognition || window.webkitSpeechRecognition);
 const amFeeOf = p => norm(p).am==="yes" ? 500 : 0;
 const pmFeeOf = p => norm(p).pm==="play" ? 1500 : 0;
 
@@ -1458,7 +1461,9 @@ function renderCheckin(){
   if(hint){
     hint.innerHTML = q
       ? (list.length ? `「${esc(q)}」で <b>${list.length}件</b> 見つかりました` : `「${esc(q)}」に一致なし。言い直すか文字で入力してください`)
-      : "🎤 を押すか、氏名・年齢（例：29 ／ 29歳 ／ 20代）で検索できます";
+      : (ciMicSupported
+          ? "🎤 を押すか、氏名・年齢（例：29 ／ 29歳 ／ 20代）で検索できます"
+          : "氏名・年齢（例：29）で検索できます。iPhone/iPadは検索欄をタップ→<b>キーボードのマイク</b>で音声入力できます");
   }
 
   const box = $("#ciList");
@@ -1552,8 +1557,7 @@ if(isCheckin){
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
   const mic=$("#ciMic"), hint=$("#ciHint");
   if(!SR){
-    if(mic) mic.style.display="none";
-    if(hint) hint.textContent="（この端末は音声検索に非対応です。文字で入力してください）";
+    if(mic) mic.style.display="none";   // ヒントの案内文は renderCheckin() 側（ciMicSupported）で出す
   }else{
     let rec=null, listening=false;
     mic.addEventListener("click", ()=>{
