@@ -369,8 +369,15 @@
   .ci-stat{flex:1;background:#fff;border:1px solid #e6efe6;border-radius:12px;padding:10px 8px;text-align:center}
   .ci-stat b{display:block;font-family:"Bebas Neue",sans-serif;font-size:26px;color:var(--pitch);line-height:1.1}
   .ci-stat span{font-size:10.5px;color:var(--muted);font-weight:700}
-  #ciSearch{width:100%;padding:16px;font-size:18px;border:2px solid #dbe6db;border-radius:14px;margin-bottom:14px;font-family:inherit;box-sizing:border-box}
+  .ci-searchrow{display:flex;gap:8px;margin-bottom:6px}
+  #ciSearch{flex:1;min-width:0;padding:16px;font-size:18px;border:2px solid #dbe6db;border-radius:14px;font-family:inherit;box-sizing:border-box}
   #ciSearch:focus{outline:none;border-color:var(--pitch)}
+  .ci-iconbtn{flex-shrink:0;width:58px;border:2px solid #dbe6db;background:#fff;border-radius:14px;font-size:22px;cursor:pointer;font-family:inherit;line-height:1}
+  .ci-iconbtn:active{transform:scale(.96)}
+  #ciMic.listening{background:#fdecec;border-color:#e24b4a;animation:cipulse 1s infinite}
+  @keyframes cipulse{0%,100%{opacity:1}50%{opacity:.55}}
+  .ci-hint{font-size:11.5px;color:var(--muted);font-weight:700;margin:0 0 12px;min-height:16px}
+  .ci-hint b{color:var(--pitch-dark)}
   .ci-row{background:#fff;border:1px solid #e6efe6;border-radius:14px;padding:12px 14px;margin-bottom:10px}
   .ci-row .ci-name{font-weight:800;font-size:16px;margin-bottom:9px}
   .ci-row .ci-name .age{font-size:12px;color:var(--muted);font-weight:600;margin-left:4px}
@@ -456,7 +463,7 @@
 
   #confetti{position:fixed;inset:0;pointer-events:none;z-index:200}
   .toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(20px);opacity:0;
-    background:var(--pitch-dark);color:#fff;padding:14px 22px;border-radius:12px;font-weight:800;z-index:210;
+    background:var(--pitch-dark);color:#fff;padding:14px 22px;border-radius:12px;font-weight:800;z-index:600;
     box-shadow:0 12px 30px rgba(0,0,0,.3);transition:all .3s;max-width:90vw;text-align:center}
   .toast.show{transform:translateX(-50%);opacity:1}
 </style>
@@ -900,7 +907,12 @@
       <div class="ci-stat"><b id="ciPaidCount">0</b><span>/ <span id="ciTotalCount">0</span>名 受付済み</span></div>
       <div class="ci-stat"><b id="ciPaidYen">¥0</b><span>集金済み</span></div>
     </div>
-    <input type="text" id="ciSearch" placeholder="🔍 氏名の一部を入力" autocomplete="off">
+    <div class="ci-searchrow">
+      <input type="text" id="ciSearch" placeholder="🔍 氏名の一部を入力" autocomplete="off">
+      <button type="button" class="ci-iconbtn" id="ciMic" aria-label="音声で検索" title="音声で検索">🎤</button>
+      <button type="button" class="ci-iconbtn" id="ciClear" aria-label="クリア" title="クリア">✕</button>
+    </div>
+    <div class="ci-hint" id="ciHint">🎤 を押して氏名を話すと検索できます</div>
     <div id="ciList"></div>
   </div>
 </div>
@@ -1378,6 +1390,29 @@ function renderAdmin(){
 const amFeeOf = p => norm(p).am==="yes" ? 500 : 0;
 const pmFeeOf = p => norm(p).pm==="play" ? 1500 : 0;
 
+/* 音声入力は聞き取り違いが起きる前提で、段階的にゆるく照合する。
+   ①そのまま部分一致 → ②登録名のほうが短い場合 → ③2文字以上の共通部分（姓だけ拾えた等）
+   カタカナはひらがなに寄せる（登録名にかな表記の人がいるため）。 */
+const ciNorm = s => String(s||"")
+  .replace(/[\s　]/g,"")
+  .replace(/[ァ-ヶ]/g, c=>String.fromCharCode(c.charCodeAt(0)-0x60));
+
+function ciFilter(list, q){
+  const nq = ciNorm(q);
+  if(!nq) return null;
+  let hit = list.filter(p=>ciNorm(p.name).includes(nq));
+  if(hit.length) return hit;
+  hit = list.filter(p=>ciNorm(p.name) && nq.includes(ciNorm(p.name)));
+  if(hit.length) return hit;
+  for(let len=Math.min(4,nq.length); len>=2; len--){
+    const grams=[];
+    for(let i=0;i+len<=nq.length;i++) grams.push(nq.slice(i,i+len));
+    hit = list.filter(p=>grams.some(g=>ciNorm(p.name).includes(g)));
+    if(hit.length) return hit;
+  }
+  return [];
+}
+
 function renderCheckin(){
   const q = ($("#ciSearch")?.value || "").trim();
   const joined = all.filter(isJoining);
@@ -1394,8 +1429,8 @@ function renderCheckin(){
   $("#ciPaidYen").textContent = "¥"+paidYen.toLocaleString();
 
   const list = q
-    ? joined.filter(p=>p.name && p.name.includes(q))
-    : [...joined].sort((a,b)=>(a.createdAt||0)-(b.createdAt||0));
+    ? ciFilter(joined, q)
+    : [...joined].sort((a,b)=>(a.name||"").localeCompare(b.name||"","ja"));
 
   const box = $("#ciList");
   if(!list.length){
@@ -1430,21 +1465,46 @@ function renderCheckin(){
     const p=all.find(x=>x.id===b.dataset.ciBoth); if(!p) return;
     b.disabled=true;
     const now=Date.now();
-    try{ await store.update(p.id,{amPaid:true, amPaidAt:now, pmPaid:true, pmPaidAt:now}); }
+    try{
+      await store.update(p.id,{amPaid:true, amPaidAt:now, pmPaid:true, pmPaidAt:now});
+      ciDone(p, amFeeOf(p)+pmFeeOf(p));   // 完了を知らせて検索をクリア（次の人へ）
+    }
     finally{ b.disabled=false; }
   });
   box.querySelectorAll("[data-ci-am]").forEach(b=>b.onclick=async()=>{
     const p=all.find(x=>x.id===b.dataset.ciAm); if(!p) return;
     b.disabled=true;
-    try{ await store.update(p.id,{amPaid:!p.amPaid, amPaidAt:Date.now()}); }
+    const willPay=!p.amPaid, n2=norm(p);
+    const needPm=(n2.pm==="play"||n2.pm==="watch");
+    try{
+      await store.update(p.id,{amPaid:willPay, amPaidAt:Date.now()});
+      if(willPay) ciDone(p, amFeeOf(p), !needPm || !!p.pmPaid);
+    }
     finally{ b.disabled=false; }
   });
   box.querySelectorAll("[data-ci-pm]").forEach(b=>b.onclick=async()=>{
     const p=all.find(x=>x.id===b.dataset.ciPm); if(!p) return;
     b.disabled=true;
-    try{ await store.update(p.id,{pmPaid:!p.pmPaid, pmPaidAt:Date.now()}); }
+    const willPay=!p.pmPaid, n2=norm(p);
+    const needAm=(n2.am==="yes");
+    try{
+      await store.update(p.id,{pmPaid:willPay, pmPaidAt:Date.now()});
+      if(willPay) ciDone(p, pmFeeOf(p), !needAm || !!p.amPaid);
+    }
     finally{ b.disabled=false; }
   });
+}
+
+/* 受付完了：金額を出して知らせる。その人の受付が全部済んだときだけ検索を空にして次の人へ移る
+   （AM+PMのうち片方だけ処理した場合は、続けて操作できるよう検索を残す） */
+function ciDone(p, yen, clearSearch){
+  showToast(`✅ ${p.name} さん  ${yen? "¥"+yen.toLocaleString()+" 受領":"受付完了"}`);
+  const h=$("#ciHint");
+  if(h) h.innerHTML=`直前の受付：<b>${esc(p.name)}</b> さん${yen?` ／ <b>¥${yen.toLocaleString()}</b>`:""}`;
+  if(clearSearch !== false){
+    const s=$("#ciSearch"); if(s) s.value="";
+  }
+  renderCheckin();
 }
 
 if(isCheckin){
@@ -1454,6 +1514,55 @@ if(isCheckin){
   });
   const cs=$("#checkinScreen"); if(cs) cs.style.display="block";
   $("#ciSearch")?.addEventListener("input", renderCheckin);
+  $("#ciClear")?.addEventListener("click", ()=>{
+    const s=$("#ciSearch"); if(s){ s.value=""; s.focus(); }
+    const h=$("#ciHint"); if(h) h.textContent="🎤 を押して氏名を話すと検索できます";
+    renderCheckin();
+  });
+
+  /* ---- 音声で氏名を検索 ---- */
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  const mic=$("#ciMic"), hint=$("#ciHint");
+  if(!SR){
+    if(mic) mic.style.display="none";
+    if(hint) hint.textContent="（この端末は音声検索に非対応です。文字で入力してください）";
+  }else{
+    let rec=null, listening=false;
+    mic.addEventListener("click", ()=>{
+      if(listening){ try{ rec.stop(); }catch(_){} return; }
+      rec = new SR();
+      rec.lang = "ja-JP";
+      rec.interimResults = false;
+      rec.maxAlternatives = 3;
+      rec.onstart = ()=>{ listening=true; mic.classList.add("listening"); hint.textContent="🎤 お名前をどうぞ…"; };
+      rec.onerror = e=>{
+        hint.textContent = e.error==="not-allowed"
+          ? "⚠️ マイクの使用が許可されていません（ブラウザの設定をご確認ください）"
+          : "⚠️ 聞き取れませんでした。もう一度お試しください";
+      };
+      rec.onend = ()=>{ listening=false; mic.classList.remove("listening"); };
+      rec.onresult = ev=>{
+        const joined = all.filter(isJoining);
+        // 候補を順に試し、最初にヒットしたものを採用（聞き取り違い対策）
+        let best=null, bestTxt="";
+        for(const alt of ev.results[0]){
+          const t=(alt.transcript||"").trim();
+          if(!t) continue;
+          if(!bestTxt) bestTxt=t;
+          const hits=ciFilter(joined,t);
+          if(hits && hits.length){ best=t; break; }
+        }
+        const use = best || bestTxt;
+        $("#ciSearch").value = use;
+        renderCheckin();
+        const n=(ciFilter(joined,use)||[]).length;
+        hint.innerHTML = n ? `「${esc(use)}」で <b>${n}件</b> 見つかりました`
+                           : `「${esc(use)}」に一致なし。言い直すか文字で入力してください`;
+      };
+      try{ rec.start(); }catch(_){ hint.textContent="⚠️ 音声認識を開始できませんでした"; }
+    });
+  }
+
   setTimeout(()=>$("#ciSearch")?.focus(), 200);
 }
 
