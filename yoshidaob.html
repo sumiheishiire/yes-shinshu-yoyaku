@@ -224,7 +224,8 @@
   .tl-dot{width:16px;height:16px;border-radius:50%;background:#fff;border:3px solid var(--pitch);flex-shrink:0;margin-top:4px;z-index:1}
   .tl-item.key .tl-dot{border-color:var(--gold);background:var(--gold);box-shadow:0 0 0 4px rgba(244,197,66,.25)}
   .tl-time{font-family:"Bebas Neue",sans-serif;font-size:19px;color:var(--pitch-dark);min-width:104px;letter-spacing:.03em;padding-top:2px}
-  .tl-body b{display:block;font-size:15px;line-height:1.4}
+  .tl-body>b{display:block;font-size:15px;line-height:1.4}
+  .tl-body span b{color:var(--pitch-dark)}
   .tl-body span{font-size:13px;color:var(--muted);font-weight:600}
   .tl-body .place{display:inline-block;font-size:11px;font-weight:800;background:#eef8f1;color:var(--pitch-dark);border:1px solid #cfe7d7;border-radius:6px;padding:2px 7px;margin-top:4px}
   .tl-body .place.stadium{background:#fff7e3;color:#8a6410;border-color:#f1dca0}
@@ -379,6 +380,21 @@
   .ci-btn.pending{background:#fff7e3;border-color:var(--gold);color:#8a6410}
   .ci-empty{text-align:center;color:var(--muted);padding:24px;font-weight:600}
 
+  /* ===== PM会場の動線（ステップ表示） ===== */
+  .route-step{display:flex;gap:13px;background:#fff;border:1px solid #e6efe6;border-radius:16px;padding:14px 16px;box-shadow:0 3px 10px rgba(8,61,34,.05)}
+  .route-step .rt-num{flex-shrink:0;width:34px;height:34px;border-radius:50%;background:var(--pitch);color:#fff;display:flex;align-items:center;justify-content:center;font-family:"Bebas Neue",sans-serif;font-size:19px;line-height:1}
+  .route-step.goal .rt-num{background:var(--gold);color:#4a3400}
+  .route-step .rt-body{min-width:0}
+  .route-step .rt-body>b{display:block;font-size:15.5px;line-height:1.4;margin-bottom:4px}
+  .route-step .rt-body>span{display:block;font-size:13px;color:#42524a;font-weight:500;line-height:1.75}
+  .route-step .rt-body>span b{color:var(--pitch-dark)}
+  .route-arw{text-align:center;color:#c3ccc4;font-size:20px;line-height:1;margin:5px 0}
+  .rt-side{display:flex;gap:8px;margin-top:11px}
+  .rt-side>div{flex:1;border-radius:10px;padding:10px 8px;font-size:12px;font-weight:800;text-align:center;line-height:1.5}
+  .rt-side .no{background:#f2f4f2;color:#96a09a;border:1px dashed #d4ded4}
+  .rt-side .yes{background:#e2f3e8;color:#1f7a44;border:2px solid #8fd0a8}
+  .rt-tag{display:inline-block;font-size:10.5px;font-weight:800;background:#fff2d1;color:#a9791b;border:1px solid #f1dca0;border-radius:6px;padding:2px 7px;margin-left:5px;vertical-align:1px}
+
   /* 移動手段マッチング：縦並びセグメント */
   .seg.vertical{flex-direction:column;gap:8px}
   .seg.vertical .box{text-align:left;padding:12px 14px}
@@ -444,6 +460,7 @@
     <a href="#regist" class="cta">⚽️ 出欠を登録する</a>
     <a href="#members">🔥 参加メンバー</a>
     <a href="#schedule">⏱ 当日のながれ</a>
+    <a href="#route">🏟 PM会場の動線</a>
     <a href="#ride">🚗 移動手段</a>
     <a href="#history">📊 これまでのOB戦</a>
     <a href="#facility">🚿 設備・持ち物</a>
@@ -583,6 +600,53 @@
     </div>
   </section>
 
+  <!-- PM会場の動線 -->
+  <section class="blk" id="route">
+    <div class="blk-head"><h2>🏟 PM会場の動線</h2></div>
+    <div class="panel">
+      <p style="margin:0 0 16px;font-size:13.5px;color:var(--muted);font-weight:600;line-height:1.7">
+        長野Uスタジアムに着いてから、<b>どこを通ってどこへ行くか</b>。この順番どおりに進んでください。
+      </p>
+
+      <div class="route-step">
+        <span class="rt-num">1</span>
+        <div class="rt-body"><b>🅿️ 第一駐車場に停める</b>
+          <span><b>南長野公園通り</b>から入り、<b>スタジアム北側の大きな駐車場</b>へ。スタジアム入口の最寄りです。</span></div>
+      </div>
+      <div class="route-arw">▼</div>
+
+      <div class="route-step">
+        <span class="rt-num">2</span>
+        <div class="rt-body"><b>🚪「VIP入口」から入場<span class="rt-tag">ここ重要</span></b>
+          <span>通常の<b>チケット売り場の横</b>にある <b>「VIP入口」</b> から入ってください。<br>一般入口ではありません。ここを間違えると入れません。</span></div>
+      </div>
+      <div class="route-arw">▼</div>
+
+      <div class="route-step">
+        <span class="rt-num">3</span>
+        <div class="rt-body"><b>⚽ そのままピッチへ進む</b>
+          <span>吉田OBが使えるのは、<b>VIP入口からピッチに向かって「右側」</b>です。<b>ベンチ・ロッカールーム・シャワールーム</b>が使えます。</span>
+          <div class="rt-side">
+            <div class="no">← 左側<br><span style="font-weight:600">使用しません</span></div>
+            <div class="yes">右側 →<br><span style="font-weight:600">吉田OBはこちら</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="route-arw">▼</div>
+
+      <div class="route-step goal">
+        <span class="rt-num">4</span>
+        <div class="rt-body"><b>🪑 観戦する方はメインスタンドへ</b>
+          <span><b>ピッチから階段を上がって</b>メインスタンドへ。<b>メインスタンドのみ開放</b>されています。<br>☀️ <b>日陰になるので観戦しやすい</b>はずです。ご家族・ご友人の応援もぜひ。</span></div>
+      </div>
+
+      <div class="tl-note" style="margin-top:16px">
+        🍱 <b>飲食はメインスタンドのみ</b>です（ピッチ内での飲食はNG）。<br>
+        🚚 <b>キッチンカーは2Fコンコース</b>に出店予定（🍜ラーメン・🍛ガパオライスの2台）。ただし<b>長野高校OB約65名＋現役約30名も利用するため、かなりの混雑が見込まれます</b>。<b>昼食はある程度ご自身でご準備いただくことをおすすめします。</b>
+      </div>
+    </div>
+  </section>
+
   <!-- 移動手段マッチング -->
   <section class="blk" id="ride">
     <div class="blk-head"><h2>🚗 移動手段のマッチング</h2><span class="count gray" id="cntRide">0</span></div>
@@ -660,6 +724,7 @@
       </div>
       <div class="info-grid">
         <div>
+          <dl class="info-row"><dt>入場口</dt><dd>チケット売り場の横の <b>「VIP入口」</b> から<br><span style="color:var(--muted);font-size:12px">一般入口ではありません。詳しくは上の「🏟 PM会場の動線」をご覧ください</span></dd></dl>
           <dl class="info-row"><dt>ピッチ使用</dt><dd><b>芝生保護のため使用時間に制限</b>があります<br><span style="color:var(--muted);font-size:12px">吉田OBが使えるのは<b>実質120分</b>。80名超の参加のため、<b>お一人あたりのプレー時間は15分前後の見込み</b>です</span></dd></dl>
           <dl class="info-row"><dt>駐車場</dt><dd><b>第一駐車場</b>をご利用ください<br><span style="color:var(--muted);font-size:12px">スタジアム入口の最寄り</span></dd></dl>
           <dl class="info-row"><dt>更衣室</dt><dd>使用可（<b>シャワー・洗面つき</b>）</dd></dl>
