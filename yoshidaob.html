@@ -1501,29 +1501,27 @@ function renderCheckin(){
     const now=Date.now();
     try{
       await store.update(p.id,{amPaid:true, amPaidAt:now, pmPaid:true, pmPaidAt:now});
-      ciDone(p, amFeeOf(p)+pmFeeOf(p));   // 完了を知らせて検索をクリア（次の人へ）
+      ciDone(p, amFeeOf(p)+pmFeeOf(p));
     }
     finally{ b.disabled=false; }
   });
   box.querySelectorAll("[data-ci-am]").forEach(b=>b.onclick=async()=>{
     const p=all.find(x=>x.id===b.dataset.ciAm); if(!p) return;
     b.disabled=true;
-    const willPay=!p.amPaid, n2=norm(p);
-    const needPm=(n2.pm==="play"||n2.pm==="watch");
+    const willPay=!p.amPaid;
     try{
       await store.update(p.id,{amPaid:willPay, amPaidAt:Date.now()});
-      if(willPay) ciDone(p, amFeeOf(p), !needPm || !!p.pmPaid);
+      if(willPay) ciDone(p, amFeeOf(p));
     }
     finally{ b.disabled=false; }
   });
   box.querySelectorAll("[data-ci-pm]").forEach(b=>b.onclick=async()=>{
     const p=all.find(x=>x.id===b.dataset.ciPm); if(!p) return;
     b.disabled=true;
-    const willPay=!p.pmPaid, n2=norm(p);
-    const needAm=(n2.am==="yes");
+    const willPay=!p.pmPaid;
     try{
       await store.update(p.id,{pmPaid:willPay, pmPaidAt:Date.now()});
-      if(willPay) ciDone(p, pmFeeOf(p), !needAm || !!p.amPaid);
+      if(willPay) ciDone(p, pmFeeOf(p));
     }
     finally{ b.disabled=false; }
   });
@@ -1531,11 +1529,10 @@ function renderCheckin(){
 
 /* 受付完了：金額を出して知らせる。その人の受付が全部済んだときだけ検索を空にして次の人へ移る
    （AM+PMのうち片方だけ処理した場合は、続けて操作できるよう検索を残す） */
-function ciDone(p, yen, clearSearch){
+/* 検索語は自動では消さない（✕ボタンで消すまで残す）。
+   同じ年代がまとまって来た時、年齢検索のまま何人も続けて受付できるように。 */
+function ciDone(p, yen){
   showToast(`✅ ${p.name} さん  ${yen? "¥"+yen.toLocaleString()+" 受領":"受付完了"}`);
-  if(clearSearch !== false){
-    const s=$("#ciSearch"); if(s) s.value="";
-  }
   renderCheckin();   // 先に一覧・件数を更新してから、直前の受付メッセージで上書きする（順序が逆だと消される）
   const h=$("#ciHint");
   if(h) h.innerHTML=`直前の受付：<b>${esc(p.name)}</b> さん${yen?` ／ <b>¥${yen.toLocaleString()}</b>`:""}`;
