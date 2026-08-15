@@ -435,6 +435,15 @@
   .nagano-box .t{font-size:13px;font-weight:800;color:#25507f;line-height:1.5}
   .nagano-box .t small{display:block;font-weight:600;color:#5c7aa3;font-size:11px}
 
+  /* 当日の写真（Instagram誘導） */
+  .photo-box{margin-top:12px;background:linear-gradient(135deg,#fdf0e4,#fbe3d0);border:1px solid #f0cfae;border-radius:16px;padding:16px 18px;text-align:center}
+  .photo-box .ph{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:12px}
+  .photo-box .ph .ic{font-size:26px}
+  .photo-box .ph b{display:block;font-size:15px;color:#8a4a1b}
+  .photo-box .ph span{display:block;font-size:12px;color:#a56a3a;font-weight:600}
+  .photo-box .btn{display:inline-flex}
+  .photo-box .ph-note{margin:10px 0 0;font-size:11px;color:#a56a3a;font-weight:600}
+
   /* 過去の実績グラフ */
   .hist-lead{background:linear-gradient(135deg,#0f7a41,#0a5b30);color:#fff;border-radius:16px;padding:18px 20px;margin-bottom:14px}
   .hist-lead .big{font-family:"Bebas Neue",sans-serif;font-size:clamp(30px,8vw,46px);line-height:1;color:var(--gold-soft)}
@@ -475,6 +484,7 @@
   <button class="nav-btn" id="navBtn" aria-label="メニュー"><span class="bars">☰</span> MENU</button>
   <div class="nav-list">
     <a href="#regist" class="cta">⚽️ 出欠を登録する</a>
+    <a href="https://www.instagram.com/forzayoshida/?hl=ja" target="_blank" rel="noopener">📸 当日の写真</a>
     <a href="#members">🔥 参加メンバー</a>
     <a href="#schedule">⏱ 当日のながれ</a>
     <a href="#route">🏟 PM会場の動線</a>
@@ -533,6 +543,12 @@
       <div class="si"><span class="ic">🏆</span><div><b>合同OB戦</b><span>12:30頃集合（目安）／長野Uスタジアム<br><span style="font-size:11px">📸 写真撮影 12:40〜12:55頃</span></span></div></div>
       <div class="si"><span class="ic">💰</span><div><b>参加費 <span style="font-size:10px;color:#fff;background:var(--pitch);border-radius:5px;padding:1px 6px;vertical-align:1px;font-weight:800">確定</span></b><span>AM出席 500円／<b>PMプレー 1,500円</b>／PM見学 無料<br><span style="font-size:11px"><b>AMから参加の方はAM受付でまとめて集金します</b>（AM+PMプレーで2,000円）</span></span></div></div>
     </div>
+  </div>
+
+  <div class="photo-box">
+    <div class="ph"><span class="ic">📸</span><div><b>当日の写真</b><span>Instagramで随時アップしています</span></div></div>
+    <a class="btn btn-primary" href="https://www.instagram.com/forzayoshida/?hl=ja" target="_blank" rel="noopener">📷 Instagramで見る</a>
+    <p class="ph-note">※ LINEグループのアルバムにも写真があります（グループメンバー限定）</p>
   </div>
 
   <div class="deadline" id="deadlineBar"></div>
