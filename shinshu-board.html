@@ -263,6 +263,7 @@ const FY_END   = '2027-01-31';           // 時系列の右端
 
 const COMPANIES = ['矢嶋建築','冨岡建設','土屋建設','田中建築','村山建設','須坂土建',
                    'センターハウス','炭平コーポレーション'];
+const BOARD_URL = 'https://sumiheishiire.github.io/yes-shinshu-yoyaku/shinshu-board.html'; // LINE共有メッセージのリンク先
 
 const firebaseConfig = {
   apiKey: "AIzaSyCpoyVws1Z5T_BrNHExi2SbY0oarmgXKeg",
@@ -537,7 +538,7 @@ function start(){
 function bindAll(){
   const bind=(name,key)=>col(name).onSnapshot(snap=>{
       S[key]=snap.docs.map(d=>Object.assign({id:d.id}, d.data()));
-      banner(''); render();
+      banner(''); render(); applyDeepLink();
     }, err=>{ fallback('読み込みに失敗しました：'+err.message); });
   bind('events','events'); bind('tasks','tasks');
   bind('comments','comments'); bind('activity','activity');
@@ -550,7 +551,32 @@ function fallback(msg){
   S.events=SEED_EVENTS.map(e=>({id:e.id,title:e.t,start:e.s,end:e.e,lead:e.lead,color:e.c,memo:e.memo}));
   S.tasks=SEED_TASKS.map((t,i)=>({id:'seed'+i,eventId:t.ev,title:t.t,owner:t.o,due:t.d,status:t.st,note:t.n}));
   banner('⚠ '+msg+'（表示のみ・保存はできません）');
-  if(S.me) render();
+  if(S.me){ render(); applyDeepLink(); }
+}
+// LINEメッセージの「詳細」リンク（#tk-<id> / #ev-<id>）で開いたとき、
+// 該当のToDo・イベントまで自動で連れて行く。1回開いたら以降は触らない。
+let deepLinkDone=false;
+function applyDeepLink(){
+  if(deepLinkDone) return;
+  const h=location.hash;
+  if(!h) return;
+  if(h.startsWith('#tk-')){
+    const id=h.slice(4);
+    if(!S.tasks.some(t=>t.id===id)) return; // まだ読み込み中の可能性があるので、見つかるまで待つ
+    deepLinkDone=true;
+    S.tab='time'; S.openTask=id;
+    document.querySelectorAll('nav button').forEach(x=>x.classList.toggle('on',x.dataset.tab==='time'));
+    render();
+    setTimeout(()=>{ const el=document.getElementById('tk-'+id); if(el) el.scrollIntoView({behavior:'smooth',block:'center'}); },60);
+  }else if(h.startsWith('#ev-')){
+    const id=h.slice(4);
+    if(!S.events.some(e=>e.id===id)) return;
+    deepLinkDone=true;
+    S.tab='time'; S.openTask=null;
+    document.querySelectorAll('nav button').forEach(x=>x.classList.toggle('on',x.dataset.tab==='time'));
+    render();
+    setTimeout(()=>{ const el=document.getElementById('ev-'+id); if(el) el.scrollIntoView({behavior:'smooth',block:'start'}); },60);
+  }
 }
 
 /* ---------- 書き込み ---------- */
@@ -611,6 +637,29 @@ function ownChip(owner, assignee){
 function statusPill(t, clickable){
   const cls=ST_CLS[t.status]||'t-todo';
   return `<span class="tag ${cls}${clickable?' pill-click':''}"${clickable?` data-cyc="${t.id}" title="タップで状態を進めます"`:''}>${ST_ICON[t.status]||'⚪'} ${ST[t.status]||'未着手'}</span>`;
+}
+/* ---------- LINE共有 ---------- */
+// ToDoの内容を、そのままLINEに貼り付けて送れる文面にする。
+// 特定の人への@メンションはLINE側の機能（本文からは制御できない）なので、
+// 送信前に手動で「@担当者名」を書き足してもらう前提の一文を添える。
+function lineTaskText(t){
+  const e=evOf(t.eventId);
+  const lines=[
+    '【家ッス！信州】ToDoのお知らせ',
+    `・やること：${t.title}`,
+    `・担当：${t.owner?(t.owner+(t.assignee?'（'+t.assignee+'）':'')):'（まだ決まっていません）'}`,
+  ];
+  if(t.due) lines.push(`・期限：${t.due.replace(/-/g,'/')}`);
+  if(e) lines.push(`・イベント：${e.title}`);
+  lines.push(`🔗 詳細：${BOARD_URL}#tk-${t.id}`);
+  lines.push('※送る前に、宛先の方を「@」でメンションしてください');
+  return lines.join('\n');
+}
+function lineShareUrl(text){
+  return 'https://line.me/R/msg/text/?' + encodeURIComponent(text);
+}
+function lineBtn(t){
+  return `<button class="btn" data-line="${t.id}" style="color:#06c755;border-color:#b7ecc8">📱 LINEで知らせる</button>`;
 }
 function evChip(eventId){
   const e=evOf(eventId);
@@ -888,6 +937,7 @@ function taskDetail(t){
       ${(isOpen(t)||!mineAlready)&&alive(t)?`<button class="btn btn-w" data-claim="${t.id}">これ、私（${esc(S.me.company)}）がやります</button>`:''}
       <button class="btn" data-ask="${t.id}">これ大丈夫？と聞く</button>
       ${alive(t)?'':`<button class="btn" data-reopen="${t.id}">未完了に戻す</button>`}
+      ${lineBtn(t)}
     </div>
     <div class="grid2">
       <div class="fld"><label>担当（会社）</label>
@@ -1055,6 +1105,10 @@ function wire(){
     log('🗑 ToDoを消しました：'+t.title); S.openTask=null;
   });
   document.querySelectorAll('[data-newtask]').forEach(b=>b.onclick=()=>newTask(b.dataset.newtask));
+  document.querySelectorAll('[data-line]').forEach(b=>b.onclick=()=>{
+    const t=S.tasks.find(x=>x.id===b.dataset.line); if(!t) return;
+    window.open(lineShareUrl(lineTaskText(t)), '_blank');
+  });
   document.querySelectorAll('[data-ev]').forEach(b=>b.onclick=()=>{
     const id=b.dataset.ev;
     const jumpTo=()=>{ const el=document.getElementById('ev-'+id); if(el) el.scrollIntoView({behavior:'smooth',block:'start'}); };
