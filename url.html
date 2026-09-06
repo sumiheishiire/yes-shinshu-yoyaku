@@ -122,6 +122,12 @@ main{flex:1;min-width:0;padding:12px 16px 70px}
 .bar.s1{background:var(--green)} .bar.s2{background:var(--amber)}
 .bar.s3{background:var(--gray)} .bar.s4{background:var(--red)} .bar.s5{background:var(--purple)}
 .bar.s6{background:var(--blue)}
+.bar.s7{background:#c9c2b4}
+
+/* 没：見えてはいるが主役ではない、という濃さにする */
+.row.dropped,.tile.dropped{opacity:.55}
+.row.dropped:hover,.tile.dropped:hover{opacity:1}
+.row.dropped .ttl,.tile.dropped .tname{text-decoration:line-through;text-decoration-color:#c0b8a8}
 .rb{flex:1;min-width:0;padding:9px 12px}
 .l1{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:2px}
 .ttl{font-weight:700;font-size:.92rem;letter-spacing:.01em}
@@ -130,6 +136,7 @@ main{flex:1;min-width:0;padding:12px 16px 70px}
 .b3{color:var(--gray);border-color:var(--gray)} .b4{color:var(--red);border-color:var(--red)}
 .b5{color:var(--purple);border-color:var(--purple)}
 .b6{color:#fff;background:var(--blue);border-color:var(--blue)}
+.b7{color:#8d8579;border-color:#cdc6b8;background:#efeadf}
 .drop{position:fixed;inset:0;z-index:120;background:rgba(47,72,88,.9);color:#fff;display:none;
   align-items:center;justify-content:center;font-size:1.05rem;letter-spacing:.06em;text-align:center;padding:30px}
 .drop.on{display:flex}
@@ -159,6 +166,7 @@ main{flex:1;min-width:0;padding:12px 16px 70px}
 .tile.s1::before{background:var(--green)} .tile.s2::before{background:var(--amber)}
 .tile.s3::before{background:var(--gray)}  .tile.s4::before{background:var(--red)}
 .tile.s5::before{background:var(--purple)} .tile.s6::before{background:var(--blue)}
+.tile.s7::before{background:#c9c2b4}
 .tmb{aspect-ratio:16/9;background-size:cover;background-position:top center;position:relative;
   border-bottom:1px solid var(--line);display:flex;flex-direction:column;
   align-items:center;justify-content:center;gap:3px;overflow:hidden}
@@ -318,6 +326,7 @@ main{flex:1;min-width:0;padding:12px 16px 70px}
     <h3>作った人</h3><div id="fOwner"></div>
     <h3>タグ</h3><div class="chips" id="fTags"></div>
     <h3>表示</h3>
+    <button class="fl" id="btnDropped">没も表示する</button>
     <button class="fl" id="btnReset">絞り込みを解除</button>
     <button class="fl" id="btnLock">この端末をロック</button>
   </aside>
@@ -393,8 +402,14 @@ var STATUS=[
   {k:'期間終了', c:'s2', b:'b2'},
   {k:'旧版',     c:'s3', b:'b3'},
   {k:'停止中',   c:'s4', b:'b4'},
-  {k:'URL未確認',c:'s5', b:'b5'}
+  {k:'URL未確認',c:'s5', b:'b5'},
+  {k:'没',       c:'s7', b:'b7'}    /* 作ったが採用されなかったもの。既定では表示しない */
 ];
+
+/* 没かどうか。状態が「没」でも、タグに「没」と書いても同じ扱いにする */
+function isDropped(it){
+  return it.status==='没' || (it.tags||[]).indexOf('没')>=0;
+}
 
 var $=function(id){return document.getElementById(id);};
 function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){
@@ -642,9 +657,13 @@ function host(u){ if(!u) return '（URL未発行）';
 
 function filtered(){
   var q=st.q.trim().toLowerCase();
+  /* 没は既定で隠す。ただし「没」で絞り込んだとき、または「没も表示」を押したときは出す */
+  var showD = st.showDropped || st.status==='没' || st.tags.indexOf('没')>=0;
   var r=live().filter(function(it){
+    if(!showD && isDropped(it)) return false;
     if(st.cat && it.cat!==st.cat) return false;
-    if(st.status && it.status!==st.status) return false;
+    if(st.status==='没'){ if(!isDropped(it)) return false; }
+    else if(st.status && it.status!==st.status) return false;
     if(st.owner && (it.owner||'（未記入）')!==st.owner) return false;
     if(st.tags.length){for(var i=0;i<st.tags.length;i++){if((it.tags||[]).indexOf(st.tags[i])<0)return false;}}
     if(q){
@@ -667,28 +686,38 @@ function filtered(){
 /* ── 描画 ── */
 function render(){
   var all=live(), list=filtered();
-  var on=all.filter(function(i){return i.status==='運用中';}).length;
-  $('count').innerHTML='運用中 <b>'+on+'</b> ／ 全 <b>'+all.length+'</b> 件'+
-    (list.length!==all.length?'（表示 '+list.length+'）':'');
+  var dropped=all.filter(isDropped);
+  var active=all.filter(function(i){return !isDropped(i);});   /* 没を除いた「生きている」件数 */
+  var base = st.showDropped ? all : active;                    /* 既定の母数は没を除いたもの */
+  var on=base.filter(function(i){return i.status==='運用中' && !isDropped(i);}).length;
+  $('count').innerHTML='運用中 <b>'+on+'</b> ／ 全 <b>'+base.length+'</b> 件'+
+    (list.length!==base.length?'（表示 '+list.length+'）':'');
+
+  /* 没の見せ方 */
+  $('btnDropped').style.display = dropped.length ? '' : 'none';
+  $('btnDropped').classList.toggle('on', !!st.showDropped);
+  $('btnDropped').innerHTML = (st.showDropped?'没を隠す':'没も表示する')+'<span>'+dropped.length+'</span>';
 
   var cats=['仕事','プライベート'];
-  $('fCat').innerHTML='<button class="fl'+(st.cat===''?' on':'')+'" data-cat="">すべて<span>'+all.length+'</span></button>'+
-    cats.map(function(c){var n=all.filter(function(i){return i.cat===c;}).length;
+  $('fCat').innerHTML='<button class="fl'+(st.cat===''?' on':'')+'" data-cat="">すべて<span>'+base.length+'</span></button>'+
+    cats.map(function(c){var n=base.filter(function(i){return i.cat===c;}).length;
       return '<button class="fl'+(st.cat===c?' on':'')+'" data-cat="'+c+'">'+c+'<span>'+n+'</span></button>';}).join('');
 
-  $('fStatus').innerHTML='<button class="fl'+(st.status===''?' on':'')+'" data-st="">すべて<span>'+all.length+'</span></button>'+
-    STATUS.map(function(s){var n=all.filter(function(i){return i.status===s.k;}).length;
+  $('fStatus').innerHTML='<button class="fl'+(st.status===''?' on':'')+'" data-st="">すべて<span>'+base.length+'</span></button>'+
+    STATUS.map(function(s){
+      var n = (s.k==='没') ? dropped.length
+                           : base.filter(function(i){return i.status===s.k && !isDropped(i);}).length;
       if(!n) return '';
       return '<button class="fl'+(st.status===s.k?' on':'')+'" data-st="'+s.k+'">'+s.k+'<span>'+n+'</span></button>';}).join('');
 
-  var oc={}; all.forEach(function(i){var o=i.owner||'（未記入）'; oc[o]=(oc[o]||0)+1;});
+  var oc={}; base.forEach(function(i){var o=i.owner||'（未記入）'; oc[o]=(oc[o]||0)+1;});
   var owners=Object.keys(oc).sort(function(a,b){ if(a==='自分')return -1; if(b==='自分')return 1;
     return oc[b]-oc[a]||a.localeCompare(b,'ja'); });
-  $('fOwner').innerHTML='<button class="fl'+(st.owner===''?' on':'')+'" data-own="">すべて<span>'+all.length+'</span></button>'+
+  $('fOwner').innerHTML='<button class="fl'+(st.owner===''?' on':'')+'" data-own="">すべて<span>'+base.length+'</span></button>'+
     owners.map(function(o){return '<button class="fl'+(st.owner===o?' on':'')+'" data-own="'+esc(o)+'">'+
       esc(o)+'<span>'+oc[o]+'</span></button>';}).join('');
 
-  var tc={}; all.forEach(function(i){(i.tags||[]).forEach(function(t){tc[t]=(tc[t]||0)+1;});});
+  var tc={}; base.forEach(function(i){(i.tags||[]).forEach(function(t){tc[t]=(tc[t]||0)+1;});});
   var tags=Object.keys(tc).sort(function(a,b){return tc[b]-tc[a]||a.localeCompare(b,'ja');});
   $('fTags').innerHTML=tags.map(function(t){
     return '<button class="chip'+(st.tags.indexOf(t)>=0?' on':'')+'" data-tag="'+esc(t)+'">'+esc(t)+' '+tc[t]+'</button>';}).join('');
@@ -719,7 +748,7 @@ function tileHTML(it){
   var s=statusOf(it.status), sh=db.shots[it.id], v=visual(it);
   var style = sh ? 'background-image:url('+sh.d+')'
                  : 'background:'+v.bg+';color:'+v.fg;
-  return '<article class="tile '+s.c+'" data-id="'+esc(it.id)+'">'+
+  return '<article class="tile '+s.c+(isDropped(it)?' dropped':'')+'" data-id="'+esc(it.id)+'">'+
     '<div class="tacts">'+actsHTML(it)+'</div>'+
     '<div class="tmb'+(sh?' has':'')+'" style="'+style+'">'+
       (sh?'':'<span class="ini">'+esc(v.ini)+'</span><span class="svc">'+esc(v.svc)+'</span>')+
@@ -735,7 +764,7 @@ function tileHTML(it){
 
 function rowHTML(it){
   var s=statusOf(it.status), sh=db.shots[it.id], v=visual(it);
-  return '<article class="row" data-id="'+esc(it.id)+'">'+
+  return '<article class="row '+s.c+(isDropped(it)?' dropped':'')+'" data-id="'+esc(it.id)+'">'+
     '<div class="bar '+s.c+'"></div>'+
     '<div class="rb">'+
       '<div class="l1"><span class="ttl">'+esc(it.name)+'</span>'+
@@ -840,7 +869,10 @@ $('mSave').onclick=function(){
   };
   if(editId){ var it=byId(editId); if(it) Object.assign(it,d); }
   else{ d.id='u'+now().toString(36)+Math.random().toString(36).slice(2,5); db.items.push(d); }
-  saveLocal(); closeModal(); render(); schedulePush(); toast('保存しました');
+  saveLocal(); closeModal(); closeDrawer(); render(); schedulePush();
+  toast(isDropped(d) && !st.showDropped
+    ? '没にしました。一覧から隠れます（左の「没も表示する」で見えます）'
+    : '保存しました');
 };
 $('mDel').onclick=function(){
   if(!editId) return;
@@ -919,7 +951,11 @@ function closeFilter(){ aside.classList.remove('open');
 $('q').addEventListener('input',function(e){ st.q=e.target.value; render(); });
 $('sort').addEventListener('change',function(e){ st.sort=e.target.value; render(); });
 $('btnAdd').onclick=function(){ openModal(null); };
-$('btnReset').onclick=function(){ st={q:'',cat:'',status:'',owner:'',tags:[],sort:st.sort}; $('q').value=''; render(); closeFilter(); };
+$('btnReset').onclick=function(){ st={q:'',cat:'',status:'',owner:'',tags:[],sort:st.sort,view:st.view,showDropped:false};
+  $('q').value=''; render(); closeFilter(); };
+$('btnDropped').onclick=function(){ st.showDropped=!st.showDropped;
+  if(!st.showDropped && st.status==='没') st.status='';
+  render(); };
 $('btnLock').onclick=function(){
   if(!confirm('この端末の鍵を消します。次回は合言葉の入力が必要になります。')) return;
   try{ localStorage.removeItem(LSKEY); localStorage.removeItem(LS); }catch(e){}
