@@ -106,12 +106,12 @@ aside h3:first-child{margin-top:0}
   padding:2px 9px;font-size:.72rem;cursor:pointer;color:var(--ink2)}
 .chip:hover{border-color:var(--ink2)}
 .chip.on{background:var(--blue);color:#fff;border-color:var(--blue)}
-main{flex:1;min-width:0;padding:14px 20px 80px}
+main{flex:1;min-width:0;padding:12px 16px 70px}
 
 /* ── 行 ── */
-.grp{margin-bottom:22px}
+.grp{margin-bottom:14px}
 .grp-h{font-size:.7rem;letter-spacing:.12em;color:var(--ink3);font-weight:700;
-  padding:0 0 6px 2px;border-bottom:1px solid var(--line);margin-bottom:8px}
+  padding:0 0 4px 2px;border-bottom:1px solid var(--line);margin-bottom:7px}
 .row{
   display:flex;background:var(--paper2);border:1px solid var(--line);
   border-radius:4px;margin-bottom:6px;cursor:pointer;transition:border-color .12s, box-shadow .12s;
@@ -148,6 +148,39 @@ main{flex:1;min-width:0;padding:14px 20px 80px}
 .ico:hover{border-color:var(--ink);color:var(--ink);background:#fff}
 .ico.dis{opacity:.28;pointer-events:none}
 .empty{padding:60px 0;text-align:center;color:var(--ink3);font-size:.85rem;line-height:2}
+
+/* ── タイル表示 ── */
+.tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(152px,1fr));gap:7px}
+.tile{background:var(--paper2);border:1px solid var(--line);border-radius:4px;overflow:hidden;
+  cursor:pointer;display:flex;flex-direction:column;position:relative;
+  transition:border-color .12s,box-shadow .12s,transform .1s}
+.tile:hover{border-color:var(--line2);box-shadow:var(--shadow);transform:translateY(-1px)}
+.tile::before{content:"";position:absolute;left:0;right:0;top:0;height:3px;background:var(--gray);z-index:2}
+.tile.s1::before{background:var(--green)} .tile.s2::before{background:var(--amber)}
+.tile.s3::before{background:var(--gray)}  .tile.s4::before{background:var(--red)}
+.tile.s5::before{background:var(--purple)} .tile.s6::before{background:var(--blue)}
+.tmb{aspect-ratio:16/9;background-size:cover;background-position:top center;position:relative;
+  border-bottom:1px solid var(--line);display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:3px;overflow:hidden}
+.tmb .ini{font-family:'Zen Old Mincho',serif;font-size:1.25rem;font-weight:700;line-height:1;opacity:.85}
+.tmb .svc{font-size:.58rem;letter-spacing:.08em;text-transform:uppercase;opacity:.75;
+  padding:1px 6px;border-radius:100px;border:1px solid currentColor}
+.tmb.has{background-color:#efeadf}
+.tbody{padding:6px 8px 7px;display:flex;flex-direction:column;gap:2px;flex:1}
+.tname{font-weight:700;font-size:.75rem;line-height:1.3;overflow:hidden;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.tmeta{display:flex;align-items:center;gap:4px;flex-wrap:wrap;margin-top:auto;padding-top:2px}
+.tbadge{font-size:.6rem;padding:0 5px;border-radius:2px;border:1px solid;white-space:nowrap}
+.thost{font-family:ui-monospace,Menlo,monospace;font-size:.6rem;color:var(--ink3);
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.towner{font-size:.6rem;color:var(--red)}
+.tacts{position:absolute;top:6px;right:6px;display:flex;gap:3px;opacity:0;transition:opacity .12s;z-index:3}
+.tile:hover .tacts{opacity:1}
+.tacts a,.tacts button{width:24px;height:22px;border:1px solid var(--line2);background:rgba(255,253,248,.94);
+  border-radius:3px;cursor:pointer;font-size:.66rem;display:flex;align-items:center;justify-content:center;
+  color:var(--ink2);text-decoration:none;padding:0}
+.tacts a:hover,.tacts button:hover{border-color:var(--ink);color:var(--ink);background:#fff}
+@media(hover:none){ .tacts{opacity:1} }
 
 /* ── ドロワー ── */
 .scrim{position:fixed;inset:0;background:rgba(30,26,18,.34);z-index:60;opacity:0;pointer-events:none;transition:opacity .18s}
@@ -263,6 +296,7 @@ main{flex:1;min-width:0;padding:14px 20px 80px}
   <div class="brand">URL台帳<em>公開したもの、全部</em></div>
   <button class="tbtn" id="btnFilter">絞り込み</button>
   <div class="search"><input id="q" type="search" placeholder="名前・URL・中身・タグで検索" autocomplete="off"></div>
+  <button class="tbtn" id="btnView" title="表示を切り替える">▦ タイル</button>
   <select id="sort" class="tbtn" style="padding:7px 8px">
     <option value="upd">更新が新しい順</option>
     <option value="name">名前順</option>
@@ -580,7 +614,28 @@ async function start(){
 }
 
 /* ── 絞り込み ── */
-var st={q:'',cat:'',status:'',owner:'',tags:[],sort:'upd'};
+var st={q:'',cat:'',status:'',owner:'',tags:[],sort:'upd',view:'tile'};
+try{ var v=localStorage.getItem('url_ledger_view'); if(v) st.view=v; }catch(e){}
+
+/* ── サービス名と色 ──
+   スクショが無くても一目で見分けられるように、ホストからサービス名と色を作る。
+   同じホストは同じ色になるので、ポータル配下のツールが視覚的にまとまる。 */
+var SVC=[
+  [/azurestaticapps\.net$/,'Azure SWA'], [/azurewebsites\.net$/,'App Service'],
+  [/github\.io$/,'GitHub Pages'],        [/pages\.dev$/,'CF Pages'],
+  [/workers\.dev$/,'CF Workers'],        [/pythonanywhere\.com$/,'PythonAnywhere'],
+  [/netlify\.app$/,'Netlify'],           [/vercel\.app$/,'Vercel']
+];
+function hashOf(s){var h=0;for(var i=0;i<s.length;i++){h=(h*31+s.charCodeAt(i))|0;}return Math.abs(h);}
+function visual(it){
+  if(!it.url) return {svc:'URL未発行',bg:'#eae5da',fg:'#7a7367',ini:(it.name||'?').charAt(0)};
+  var hostname='';
+  try{ hostname=new URL(it.url).host.toLowerCase(); }catch(e){ hostname=it.url; }
+  var svc=hostname;
+  for(var i=0;i<SVC.length;i++){ if(SVC[i][0].test(hostname)){ svc=SVC[i][1]; break; } }
+  var hue=hashOf(hostname)%360;
+  return {svc:svc, bg:'hsl('+hue+' 30% 87%)', fg:'hsl('+hue+' 42% 27%)', ini:(it.name||'?').charAt(0)};
+}
 function statusOf(k){for(var i=0;i<STATUS.length;i++){if(STATUS[i].k===k)return STATUS[i];}return STATUS[4];}
 function host(u){ if(!u) return '（URL未発行）';
   try{ var x=new URL(u); return x.host+(x.pathname==='/'?'':x.pathname); }catch(e){ return u; } }
@@ -646,13 +701,40 @@ function render(){
   var groups={},order=[];
   list.forEach(function(it){var g=st.sort==='status'?it.status:it.cat;
     if(!groups[g]){groups[g]=[];order.push(g);} groups[g].push(it);});
+  var tile=st.view==='tile';
+  $('btnView').textContent = tile ? '≡ リスト' : '▦ タイル';
   $('list').innerHTML=order.map(function(g){
     return '<div class="grp"><div class="grp-h">'+esc(g)+'　'+groups[g].length+'</div>'+
-      groups[g].map(rowHTML).join('')+'</div>';}).join('');
+      (tile ? '<div class="tiles">'+groups[g].map(tileHTML).join('')+'</div>'
+            : groups[g].map(rowHTML).join(''))+'</div>';}).join('');
+}
+
+function actsHTML(it){
+  return (it.url?'<a href="'+esc(it.url)+'" target="_blank" rel="noopener" title="開く" data-stop="1">&#8599;</a>'
+                :'')+
+         (it.url?'<button data-copy="'+esc(it.url)+'" title="URLをコピー">&#9112;</button>':'');
+}
+
+function tileHTML(it){
+  var s=statusOf(it.status), sh=db.shots[it.id], v=visual(it);
+  var style = sh ? 'background-image:url('+sh.d+')'
+                 : 'background:'+v.bg+';color:'+v.fg;
+  return '<article class="tile '+s.c+'" data-id="'+esc(it.id)+'">'+
+    '<div class="tacts">'+actsHTML(it)+'</div>'+
+    '<div class="tmb'+(sh?' has':'')+'" style="'+style+'">'+
+      (sh?'':'<span class="ini">'+esc(v.ini)+'</span><span class="svc">'+esc(v.svc)+'</span>')+
+    '</div>'+
+    '<div class="tbody">'+
+      '<div class="tname">'+esc(it.name)+'</div>'+
+      '<div class="thost">'+esc(host(it.url))+'</div>'+
+      '<div class="tmeta"><span class="tbadge '+s.b+'">'+esc(it.status)+'</span>'+
+        (it.owner&&it.owner!=='自分'?'<span class="towner">'+esc(it.owner)+'</span>':'')+
+      '</div>'+
+    '</div></article>';
 }
 
 function rowHTML(it){
-  var s=statusOf(it.status), sh=db.shots[it.id];
+  var s=statusOf(it.status), sh=db.shots[it.id], v=visual(it);
   return '<article class="row" data-id="'+esc(it.id)+'">'+
     '<div class="bar '+s.c+'"></div>'+
     '<div class="rb">'+
@@ -663,7 +745,8 @@ function rowHTML(it){
       '<div class="l3"><span class="u">'+esc(host(it.url))+'</span><span>'+esc(it.upd||'')+'</span>'+
         (it.access?'<span>'+esc(it.access.split('。')[0])+'</span>':'')+'</div>'+
     '</div>'+
-    '<div class="thumb"'+(sh?' style="background-image:url('+sh.d+')"':'')+'>'+(sh?'':'画面なし')+'</div>'+
+    '<div class="thumb"'+(sh?' style="background-image:url('+sh.d+')"':' style="background:'+v.bg+';color:'+v.fg+'"')+'>'+
+      (sh?'':'<span style="font-family:\'Zen Old Mincho\',serif;font-size:1.1rem;font-weight:700">'+esc(v.ini)+'</span>')+'</div>'+
     '<div class="acts">'+
       (it.url?'<a class="ico" href="'+esc(it.url)+'" target="_blank" rel="noopener" title="開く" data-stop="1">&#8599;</a>'
              :'<span class="ico dis">&#8599;</span>')+
@@ -867,8 +950,13 @@ document.addEventListener('click',function(e){
     saveLocal(); render(); openDrawer(k); pushShot(k); return; }
   if(e.target.closest('#shotBox')){ $('shotFile').click(); return; }
 
-  var row=e.target.closest('.row'); if(row){ openDrawer(row.getAttribute('data-id')); }
+  var card=e.target.closest('.row,.tile'); if(card){ openDrawer(card.getAttribute('data-id')); }
 });
+$('btnView').onclick=function(){
+  st.view = st.view==='tile' ? 'list' : 'tile';
+  try{ localStorage.setItem('url_ledger_view', st.view); }catch(e){}
+  render();
+};
 document.addEventListener('change',function(e){
   if(e.target.id==='shotFile') storeShot(e.target.files[0]);
 });
