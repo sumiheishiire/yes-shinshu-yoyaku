@@ -401,6 +401,8 @@ var FB={
 var APP='url-ledger';
 var STATE_PATH=['artifacts',APP,'public','data','state','main'];
 var SHOTS_PATH=['artifacts',APP,'public','data','shots'];
+var INBOX_PATH=['artifacts',APP,'public','data','inbox','latest'];
+var LSINBOX='url_ledger_inbox_ts';
 var SALT='url-ledger/2026-09/sumihei';
 var LS='url_ledger_v2';
 var LSKEY='url_ledger_key_v2';
@@ -445,16 +447,34 @@ async function deriveKey(pass){
     {name:'PBKDF2',salt:enc.encode(SALT),iterations:150000,hash:'SHA-256'},
     base,{name:'AES-GCM',length:256},true,['encrypt','decrypt']);
 }
-async function encrypt(text){
+async function encryptBytes(u8){
   var iv=crypto.getRandomValues(new Uint8Array(12));
-  var ct=await crypto.subtle.encrypt({name:'AES-GCM',iv:iv},CK,new TextEncoder().encode(text));
+  var ct=await crypto.subtle.encrypt({name:'AES-GCM',iv:iv},CK,u8);
   var out=new Uint8Array(12+ct.byteLength); out.set(iv,0); out.set(new Uint8Array(ct),12);
   return b64(out);
 }
-async function decrypt(blob){
+async function decryptBytes(blob){
   var raw=unb64(blob);
   var pt=await crypto.subtle.decrypt({name:'AES-GCM',iv:raw.slice(0,12)},CK,raw.slice(12));
-  return new TextDecoder().decode(pt);
+  return new Uint8Array(pt);
+}
+async function encrypt(text){ return encryptBytes(new TextEncoder().encode(text)); }
+async function decrypt(blob){ return new TextDecoder().decode(await decryptBytes(blob)); }
+
+/* ── 圧縮 ──
+   台帳本文はFirestoreの1ドキュメント上限(1MB)に収める必要がある。
+   無圧縮だと約1,270件で頭打ちだが、gzipすると17%まで縮んで約7,600件まで持つ。
+   CompressionStreamが無い環境では無圧縮で書き、gzフラグで見分ける。 */
+function hasGz(){ return typeof CompressionStream!=='undefined' && typeof DecompressionStream!=='undefined'; }
+async function gzip(text){
+  var cs=new CompressionStream('gzip');
+  var w=cs.writable.getWriter(); w.write(new TextEncoder().encode(text)); w.close();
+  return new Uint8Array(await new Response(cs.readable).arrayBuffer());
+}
+async function gunzip(u8){
+  var ds=new DecompressionStream('gzip');
+  var w=ds.writable.getWriter(); w.write(u8); w.close();
+  return new TextDecoder().decode(await new Response(ds.readable).arrayBuffer());
 }
 async function saveKey(){ var raw=await crypto.subtle.exportKey('raw',CK);
   try{ localStorage.setItem(LSKEY,b64(raw)); }catch(e){} }
@@ -465,15 +485,96 @@ async function loadKey(){
   return true;
 }
 
-/* ── 手元の状態 ── */
+/* ── 手元の保管 ──────────────────────────────────────────────
+   台帳の本体(items)と画像(shots)は別々の場所に置く。
+   localStorage は 5MB しかなく、画像を同じ場所に入れると
+   「画像が一杯になったせいで台帳本文が保存できない」事故になる。
+   ・items  → localStorage（168件で全体の3%。軽い）
+   ・shots  → IndexedDB（上限は桁違いに大きい。溢れても本文は無事）
+   ------------------------------------------------------------- */
 var db={items:[],shots:{}};   /* items: [{...,_ts,_del?}]  shots:{id:{d:dataURL,_ts}} */
-function loadLocal(){
-  try{ var r=localStorage.getItem(LS); if(r){ var p=JSON.parse(r);
-    db.items=p.items||[]; db.shots=p.shots||{}; } }catch(e){}
+
+var IDB=null;
+function idbOpen(){
+  return new Promise(function(res){
+    if(IDB) return res(IDB);
+    if(!window.indexedDB) return res(null);
+    var rq=indexedDB.open('url-ledger',1);
+    rq.onupgradeneeded=function(e){
+      var d=e.target.result;
+      if(!d.objectStoreNames.contains('shots')) d.createObjectStore('shots',{keyPath:'id'});
+    };
+    rq.onsuccess=function(e){ IDB=e.target.result; res(IDB); };
+    rq.onerror=function(){ res(null); };
+  });
 }
+function idbAll(){
+  return new Promise(function(res){
+    if(!IDB) return res([]);
+    try{
+      var tx=IDB.transaction('shots','readonly').objectStore('shots').getAll();
+      tx.onsuccess=function(){ res(tx.result||[]); };
+      tx.onerror=function(){ res([]); };
+    }catch(e){ res([]); }
+  });
+}
+function idbPut(id,rec){
+  return new Promise(function(res){
+    if(!IDB) return res(false);
+    try{
+      var tx=IDB.transaction('shots','readwrite').objectStore('shots')
+              .put({id:id,d:rec.d,_ts:rec._ts});
+      tx.onsuccess=function(){ res(true); };
+      tx.onerror=function(){ res(false); };
+    }catch(e){ res(false); }
+  });
+}
+function idbDel(id){
+  return new Promise(function(res){
+    if(!IDB) return res(false);
+    try{
+      var tx=IDB.transaction('shots','readwrite').objectStore('shots').delete(id);
+      tx.onsuccess=function(){ res(true); };
+      tx.onerror=function(){ res(false); };
+    }catch(e){ res(false); }
+  });
+}
+
+async function loadLocal(){
+  var legacyShots=null;
+  try{
+    var r=localStorage.getItem(LS);
+    if(r){ var p=JSON.parse(r);
+      db.items=p.items||[];
+      if(p.shots && Object.keys(p.shots).length) legacyShots=p.shots;  /* 旧版からの移行 */
+    }
+  }catch(e){}
+
+  await idbOpen();
+  var rows=await idbAll();
+  rows.forEach(function(r){ db.shots[r.id]={d:r.d,_ts:r._ts}; });
+
+  if(legacyShots){                       /* localStorage に残っていた画像を IndexedDB へ移す */
+    var ks=Object.keys(legacyShots), moved=0;
+    for(var i=0;i<ks.length;i++){
+      var k=ks[i], v=legacyShots[k];
+      if(!db.shots[k]){ db.shots[k]=v; }
+      if(await idbPut(k,db.shots[k])) moved++;
+    }
+    saveLocal();                          /* 画像抜きで書き直す＝localStorageが一気に空く */
+    if(moved) console.info('画像 '+moved+' 枚を IndexedDB へ移行しました');
+  }
+}
+
+/* 本文だけを localStorage に。画像は入れない */
 function saveLocal(){
-  try{ localStorage.setItem(LS,JSON.stringify(db)); }
-  catch(e){ toast('端末への保存が容量オーバーです（画像を減らしてください）'); }
+  try{ localStorage.setItem(LS,JSON.stringify({items:db.items})); }
+  catch(e){ toast('台帳の保存に失敗しました（端末の空き容量を確認してください）'); }
+}
+/* 画像は1枚ずつ IndexedDB へ */
+async function saveShotLocal(id){
+  if(db.shots[id]) { if(!await idbPut(id,db.shots[id])) toast('画像を端末に保存できませんでした'); }
+  else await idbDel(id);
 }
 function live(){ return db.items.filter(function(i){return !i._del;}); }
 function byId(id){ for(var i=0;i<db.items.length;i++){ if(db.items[i].id===id) return db.items[i]; } return null; }
@@ -523,8 +624,11 @@ async function pullCloud(){
   var snap=await cloud.fs.getDoc(cloud.state);
   if(!snap.exists()) return {exists:false};
   var d=snap.data();
-  var json=await decrypt(d.blob);          /* 合言葉が違えばここで例外 */
-  return {exists:true, items:JSON.parse(json).items||[]};
+  var json;
+  if(d.gz){ json=await gunzip(await decryptBytes(d.blob)); }  /* 合言葉が違えばここで例外 */
+  else    { json=await decrypt(d.blob); }
+  var p=JSON.parse(json);
+  return {exists:true, items:p.items||[], shotIdx:p.shotIdx||null};
 }
 var pushT=null;
 function schedulePush(){ if(!cloud.ready) return; clearTimeout(pushT); pushT=setTimeout(pushCloud,900); }
@@ -532,23 +636,84 @@ async function pushCloud(){
   if(!cloud.ready) return;
   try{
     setSync('busy','保存中');
-    var blob=await encrypt(JSON.stringify({items:db.items}));
-    await cloud.fs.setDoc(cloud.state,{blob:blob,updatedAt:now(),n:db.items.length});
+    /* 画像の索引も一緒に入れる。これがあると次回の起動で
+       画像コレクション全部を読まずに済む（150件なら150回→1回） */
+    var idx={}; Object.keys(db.shots).forEach(function(k){ idx[k]=db.shots[k]._ts||0; });
+    var text=JSON.stringify({items:db.items, shotIdx:idx});
+    var rec;
+    if(hasGz()){ rec={blob:await encryptBytes(await gzip(text)), gz:true}; }
+    else       { rec={blob:await encrypt(text), gz:false}; }
+    rec.updatedAt=now(); rec.n=db.items.length;
+    await cloud.fs.setDoc(cloud.state,rec);
+    if(rec.blob.length>800000) toast('台帳が大きくなっています。不要な行の整理をおすすめします');
     setSync('ok','同期済み');
   }catch(e){ console.warn(e); setSync('err','保存できず'); }
 }
-async function pullShots(){
+/* ── 受信箱 ──
+   PC側の sync_ledger.ps1 が、走査した候補を暗号化してここに置く。
+   台帳を開くたびに覗いて、まだ台帳に無い行だけを「未整理」で足す。
+   既にある行は id が一致しても絶対に触らない（手で書いた説明を守るため）。 */
+async function pullInbox(){
+  if(!cloud.ready) return 0;
+  try{
+    var ref=cloud.fs.doc.apply(null,[cloud.db].concat(INBOX_PATH));
+    var snap=await cloud.fs.getDoc(ref);
+    if(!snap.exists()) return 0;
+    var d=snap.data();
+    var stamp=Number(d.updatedAt||0);
+    var seen=0; try{ seen=Number(localStorage.getItem(LSINBOX)||0); }catch(e){}
+    if(stamp<=seen) return 0;                      /* もう取り込んだ分 */
+    var json = d.gz ? await gunzip(await decryptBytes(d.blob)) : await decrypt(d.blob);
+    var arr=(JSON.parse(json).items)||[];
+    var add=0, t=now();
+    arr.forEach(function(it){
+      if(!it||!it.id||!it.name) return;
+      if(byId(it.id)) return;                      /* 既存は据え置き */
+      it._ts=it._ts||t;
+      db.items.push(it); add++;
+    });
+    try{ localStorage.setItem(LSINBOX,String(stamp)); }catch(e){}
+    if(add){ saveLocal(); render(); schedulePush();
+      toast('自動検出で '+add+' 件が「未整理」に入りました'); }
+    return add;
+  }catch(e){ console.warn(e); return 0; }
+}
+
+/* 画像の取得。索引(shotIdx)があるときは「手元に無い／古い」ものだけ個別に取る。
+   索引が無い＝旧版が書いたデータのときだけ、従来どおり全件読みにフォールバックする。 */
+async function pullShots(shotIdx){
   if(!cloud.ready) return;
   try{
-    var qs=await cloud.fs.getDocs(cloud.shots);
-    var n=0;
-    for(var i=0;i<qs.docs.length;i++){
-      var doc=qs.docs[i], d=doc.data();
-      var l=db.shots[doc.id];
-      if(l && (l._ts||0)>=(d.updatedAt||0)) continue;
-      try{ db.shots[doc.id]={d:await decrypt(d.blob),_ts:d.updatedAt||0}; n++; }catch(e){}
+    var n=0, i;
+    if(shotIdx){
+      var need=Object.keys(shotIdx).filter(function(k){
+        var l=db.shots[k]; return !l || (l._ts||0)<(shotIdx[k]||0);
+      });
+      if(!need.length) return;
+      setSync('busy','画像取得中 0/'+need.length);
+      for(i=0;i<need.length;i++){
+        try{
+          var ref=cloud.fs.doc.apply(null,[cloud.db].concat(SHOTS_PATH,[need[i]]));
+          var sp=await cloud.fs.getDoc(ref);
+          if(!sp.exists()) continue;
+          var sd=sp.data();
+          db.shots[need[i]]={d:await decrypt(sd.blob),_ts:sd.updatedAt||0};
+          await saveShotLocal(need[i]); n++;
+        }catch(e){}
+        if(i%10===9) setSync('busy','画像取得中 '+(i+1)+'/'+need.length);
+      }
+    }else{
+      var qs=await cloud.fs.getDocs(cloud.shots);
+      for(i=0;i<qs.docs.length;i++){
+        var doc=qs.docs[i], d=doc.data();
+        var l=db.shots[doc.id];
+        if(l && (l._ts||0)>=(d.updatedAt||0)) continue;
+        try{ db.shots[doc.id]={d:await decrypt(d.blob),_ts:d.updatedAt||0};
+             await saveShotLocal(doc.id); n++; }catch(e){}
+      }
     }
-    if(n){ saveLocal(); render(); }
+    if(n){ render(); }
+    setSync('ok','同期済み');
   }catch(e){ console.warn(e); }
 }
 async function pushShot(id){
@@ -565,7 +730,7 @@ async function pushShot(id){
 /* ── 起動 ── */
 var booted=false, cloudHasData=false;
 async function boot(){
-  loadLocal();
+  await loadLocal();
   if(await loadKey()){ $('gate').classList.add('hide'); start(); return; }
   /* 鍵がない：クラウドに台帳があるかだけ先に見て、案内文を切り替える */
   if(await initCloud()){
@@ -633,7 +798,8 @@ async function start(){
         setSync('ok', db.items.length?'未送信':'クラウドは空');
         if(db.items.length) schedulePush();
       }
-      pullShots();
+      await pullInbox();
+      pullShots(r.shotIdx);
     }catch(e){
       setSync('err','鍵が合いません');
       toast('クラウドの中身を復号できませんでした。合言葉を確認してください');
@@ -883,7 +1049,7 @@ function storeShot(file){
       var cv=document.createElement('canvas'); cv.width=w; cv.height=Math.min(h,620);
       cv.getContext('2d').drawImage(img,0,0,w,h);
       db.shots[openId]={d:cv.toDataURL('image/jpeg',0.62),_ts:now()};
-      saveLocal(); render(); openDrawer(openId); pushShot(openId); toast('画面を保存しました');
+      saveShotLocal(openId); render(); openDrawer(openId); pushShot(openId); toast('画面を保存しました');
     };
     img.src=e.target.result;
   };
@@ -934,7 +1100,7 @@ $('mDel').onclick=function(){
   if(!confirm('この行を台帳から消します。よろしいですか？')) return;
   var it=byId(editId);
   if(it){ it._del=true; it._ts=now(); }
-  if(db.shots[editId]){ delete db.shots[editId]; pushShot(editId); }
+  if(db.shots[editId]){ delete db.shots[editId]; saveShotLocal(editId); pushShot(editId); }
   saveLocal(); closeModal(); closeDrawer(); render(); schedulePush(); toast('削除しました');
 };
 $('mCancel').onclick=closeModal;
@@ -973,7 +1139,7 @@ function importFile(f){
         else{ db.items.push(it); add++; }
       });
       if(d.shots) Object.keys(d.shots).forEach(function(k){
-        db.shots[k]={d:d.shots[k],_ts:t}; pushShot(k); });
+        db.shots[k]={d:d.shots[k],_ts:t}; saveShotLocal(k); pushShot(k); });
       saveLocal(); render(); schedulePush();
       toast('読み込みました（新規 '+add+' ／ 更新 '+upd+(skip?' ／ 既知 '+skip+'件は据え置き':'')+'）');
       if(add && arr.some(function(i){return i._auto;})){ st.status='未整理'; st.cat=''; st.q=''; $('q').value=''; render(); }
@@ -1039,7 +1205,7 @@ document.addEventListener('click',function(e){
 
   if(e.target.id==='dEdit'){ openModal(openId); return; }
   if(e.target.id==='shotDel'){ var k=openId; delete db.shots[k];
-    saveLocal(); render(); openDrawer(k); pushShot(k); return; }
+    saveShotLocal(k); render(); openDrawer(k); pushShot(k); return; }
   var zi=e.target.closest('[data-zoom]');
   if(zi){ e.stopPropagation(); $('lboxImg').src=zi.getAttribute('src');
     $('lbox').classList.add('on'); return; }
