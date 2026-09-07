@@ -237,6 +237,11 @@ main{flex:1;min-width:0;padding:12px 16px 70px}
 .f2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .mact{display:flex;gap:8px;justify-content:flex-end;margin-top:18px;padding-top:14px;border-top:1px solid var(--line)}
 .mact .del{margin-right:auto;color:var(--red);border-color:#e0bdb4}
+.lbox{position:fixed;inset:0;z-index:150;background:rgba(30,26,18,.86);display:none;
+  align-items:flex-start;justify-content:center;overflow:auto;padding:24px;cursor:zoom-out}
+.lbox.on{display:flex}
+.lbox img{max-width:min(1100px,96vw);width:100%;height:auto;border-radius:4px;
+  box-shadow:0 20px 60px -20px rgba(0,0,0,.8);image-rendering:auto}
 .toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--ink);
   color:var(--paper2);padding:9px 20px;border-radius:3px;font-size:.8rem;z-index:90;opacity:0;
   pointer-events:none;transition:all .2s;max-width:88vw;text-align:center}
@@ -309,6 +314,7 @@ main{flex:1;min-width:0;padding:12px 16px 70px}
     <option value="upd">更新が新しい順</option>
     <option value="name">名前順</option>
     <option value="status">状態順</option>
+    <option value="place">置き場所順</option>
   </select>
   <div class="top-sp"></div>
   <div class="sync" id="sync"><span class="sdot" id="sdot"></span><span id="stxt">…</span></div>
@@ -321,6 +327,7 @@ main{flex:1;min-width:0;padding:12px 16px 70px}
 
 <div class="layout">
   <aside>
+    <h3>置き場所</h3><div id="fPlace"></div>
     <h3>区分</h3><div id="fCat"></div>
     <h3>状態</h3><div id="fStatus"></div>
     <h3>作った人</h3><div id="fOwner"></div>
@@ -343,6 +350,7 @@ main{flex:1;min-width:0;padding:12px 16px 70px}
   <h3 id="mTitle">URLを追加</h3>
   <div class="f"><label>名前</label><input id="mName" placeholder="例）発注依頼システム"></div>
   <div class="f"><label>URL</label><input id="mUrl" placeholder="https://... ／ 未発行なら空欄でOK"></div>
+  <div class="f"><label><input type="checkbox" id="mLocal" style="width:auto;margin-right:6px">公開していない、手元だけのHTML</label></div>
   <div class="f2">
     <div class="f"><label>区分</label><select id="mCat"><option>仕事</option><option>プライベート</option></select></div>
     <div class="f"><label>状態</label><select id="mStatus"></select></div>
@@ -365,6 +373,7 @@ main{flex:1;min-width:0;padding:12px 16px 70px}
   </div>
 </div></div>
 
+<div class="lbox" id="lbox"><img id="lboxImg" alt=""></div>
 <div class="toast" id="toast"></div>
 
 <script>
@@ -405,6 +414,10 @@ var STATUS=[
   {k:'URL未確認',c:'s5', b:'b5'},
   {k:'没',       c:'s7', b:'b7'}    /* 作ったが採用されなかったもの。既定では表示しない */
 ];
+
+/* 手元だけのHTMLか。local:true か、URLが無くてパスがあるもの */
+function isLocal(it){ return it.local===true; }
+function placeOf(it){ return isLocal(it) ? '手元のHTML' : '公開URL'; }
 
 /* 没かどうか。状態が「没」でも、タグに「没」と書いても同じ扱いにする */
 function isDropped(it){
@@ -629,7 +642,7 @@ async function start(){
 }
 
 /* ── 絞り込み ── */
-var st={q:'',cat:'',status:'',owner:'',tags:[],sort:'upd',view:'tile'};
+var st={q:'',cat:'',status:'',owner:'',place:'',tags:[],sort:'upd',view:'tile'};
 try{ var v=localStorage.getItem('url_ledger_view'); if(v) st.view=v; }catch(e){}
 
 /* ── サービス名と色 ──
@@ -643,6 +656,11 @@ var SVC=[
 ];
 function hashOf(s){var h=0;for(var i=0;i<s.length;i++){h=(h*31+s.charCodeAt(i))|0;}return Math.abs(h);}
 function visual(it){
+  if(isLocal(it)){
+    var top=(it.source||'').split(String.fromCharCode(92))[0].replace(/^\d\d_/,'')||'デスクトップ';
+    var hu=hashOf(top)%360;
+    return {svc:top, bg:'hsl('+hu+' 18% 88%)', fg:'hsl('+hu+' 30% 32%)', ini:(it.name||'?').charAt(0)};
+  }
   if(!it.url) return {svc:'URL未発行',bg:'#eae5da',fg:'#7a7367',ini:(it.name||'?').charAt(0)};
   var hostname='';
   try{ hostname=new URL(it.url).host.toLowerCase(); }catch(e){ hostname=it.url; }
@@ -654,6 +672,8 @@ function visual(it){
 function statusOf(k){for(var i=0;i<STATUS.length;i++){if(STATUS[i].k===k)return STATUS[i];}return STATUS[4];}
 function host(u){ if(!u) return '（URL未発行）';
   try{ var x=new URL(u); return x.host+(x.pathname==='/'?'':x.pathname); }catch(e){ return u; } }
+/* 行に出す「どこにあるか」。公開ならホスト、手元ならパス */
+function whereOf(it){ return isLocal(it) ? (it.source||'（場所不明）') : host(it.url); }
 
 function filtered(){
   var q=st.q.trim().toLowerCase();
@@ -661,6 +681,7 @@ function filtered(){
   var showD = st.showDropped || st.status==='没' || st.tags.indexOf('没')>=0;
   var r=live().filter(function(it){
     if(!showD && isDropped(it)) return false;
+    if(st.place && placeOf(it)!==st.place) return false;
     if(st.cat && it.cat!==st.cat) return false;
     if(st.status==='没'){ if(!isDropped(it)) return false; }
     else if(st.status && it.status!==st.status) return false;
@@ -678,6 +699,8 @@ function filtered(){
     if(st.sort==='name') return a.name.localeCompare(b.name,'ja');
     if(st.sort==='status'){var d=ord.indexOf(a.status)-ord.indexOf(b.status);if(d)return d;
       return a.name.localeCompare(b.name,'ja');}
+    if(st.sort==='place'){ var pa=(isLocal(a)?1:0)-(isLocal(b)?1:0); if(pa) return pa;
+      return (a.source||'').localeCompare(b.source||'','ja')||a.name.localeCompare(b.name,'ja'); }
     return String(b.upd||'').localeCompare(String(a.upd||''));
   });
   return r;
@@ -697,6 +720,12 @@ function render(){
   $('btnDropped').style.display = dropped.length ? '' : 'none';
   $('btnDropped').classList.toggle('on', !!st.showDropped);
   $('btnDropped').innerHTML = (st.showDropped?'没を隠す':'没も表示する')+'<span>'+dropped.length+'</span>';
+
+  var places=['公開URL','手元のHTML'];
+  $('fPlace').innerHTML='<button class="fl'+(st.place===''?' on':'')+'" data-place="">すべて<span>'+base.length+'</span></button>'+
+    places.map(function(pl){var n=base.filter(function(i){return placeOf(i)===pl;}).length;
+      if(!n) return '';
+      return '<button class="fl'+(st.place===pl?' on':'')+'" data-place="'+pl+'">'+pl+'<span>'+n+'</span></button>';}).join('');
 
   var cats=['仕事','プライベート'];
   $('fCat').innerHTML='<button class="fl'+(st.cat===''?' on':'')+'" data-cat="">すべて<span>'+base.length+'</span></button>'+
@@ -728,7 +757,7 @@ function render(){
     return;
   }
   var groups={},order=[];
-  list.forEach(function(it){var g=st.sort==='status'?it.status:it.cat;
+  list.forEach(function(it){var g=st.sort==='status'?it.status:(st.sort==='place'?placeOf(it):it.cat);
     if(!groups[g]){groups[g]=[];order.push(g);} groups[g].push(it);});
   var tile=st.view==='tile';
   $('btnView').textContent = tile ? '≡ リスト' : '▦ タイル';
@@ -738,10 +767,29 @@ function render(){
             : groups[g].map(rowHTML).join(''))+'</div>';}).join('');
 }
 
+var IS_FILE = location.protocol==='file:';
+/* file:// で開いた台帳なら、手元のHTMLをそのまま開けるリンクにできる */
+function fileHref(it){
+  if(!isLocal(it)||!it.source||!IS_FILE) return '';
+  /* source はデスクトップからの相対パス。台帳をどこから開いていても
+     デスクトップの位置に戻れるように、URLから逆算する */
+  var here=location.href.replace(/[^\/]*$/,'');
+  var m=here.match(/^(.*\/)00_%E7%8F%BE%E5%BD%B9%E3%83%84%E3%83%BC%E3%83%AB\//i)
+      || here.match(/^(.*\/)00_現役ツール\//);
+  var deskUrl = m ? m[1] : here;   /* 直下(url.html)から開いた場合はそこがデスクトップ */
+  return deskUrl + it.source.split(String.fromCharCode(92)).map(encodeURIComponent).join('/');
+}
 function actsHTML(it){
-  return (it.url?'<a href="'+esc(it.url)+'" target="_blank" rel="noopener" title="開く" data-stop="1">&#8599;</a>'
-                :'')+
-         (it.url?'<button data-copy="'+esc(it.url)+'" title="URLをコピー">&#9112;</button>':'');
+  var h='';
+  if(it.url){
+    h+='<a href="'+esc(it.url)+'" target="_blank" rel="noopener" title="開く" data-stop="1">&#8599;</a>';
+    h+='<button data-copy="'+esc(it.url)+'" title="URLをコピー">&#9112;</button>';
+  }else if(isLocal(it)){
+    var f=fileHref(it);
+    if(f) h+='<a href="'+esc(f)+'" target="_blank" rel="noopener" title="開く" data-stop="1">&#8599;</a>';
+    if(it.source) h+='<button data-copy="'+esc(it.source)+'" title="パスをコピー">&#9112;</button>';
+  }
+  return h;
 }
 
 function tileHTML(it){
@@ -755,7 +803,7 @@ function tileHTML(it){
     '</div>'+
     '<div class="tbody">'+
       '<div class="tname">'+esc(it.name)+'</div>'+
-      '<div class="thost">'+esc(host(it.url))+'</div>'+
+      '<div class="thost">'+esc(whereOf(it))+'</div>'+
       '<div class="tmeta"><span class="tbadge '+s.b+'">'+esc(it.status)+'</span>'+
         (it.owner&&it.owner!=='自分'?'<span class="towner">'+esc(it.owner)+'</span>':'')+
       '</div>'+
@@ -771,15 +819,16 @@ function rowHTML(it){
         '<span class="badge '+s.b+'">'+esc(it.status)+'</span>'+
         '<span class="tg">'+(it.tags||[]).slice(0,4).map(function(t){return '<i>#'+esc(t)+'</i>';}).join(' ')+'</span></div>'+
       '<div class="l2">'+esc(it.summary||'')+'</div>'+
-      '<div class="l3"><span class="u">'+esc(host(it.url))+'</span><span>'+esc(it.upd||'')+'</span>'+
+      '<div class="l3"><span class="u">'+esc(whereOf(it))+'</span><span>'+esc(it.upd||'')+'</span>'+
         (it.access?'<span>'+esc(it.access.split('。')[0])+'</span>':'')+'</div>'+
     '</div>'+
     '<div class="thumb"'+(sh?' style="background-image:url('+sh.d+')"':' style="background:'+v.bg+';color:'+v.fg+'"')+'>'+
       (sh?'':'<span style="font-family:\'Zen Old Mincho\',serif;font-size:1.1rem;font-weight:700">'+esc(v.ini)+'</span>')+'</div>'+
     '<div class="acts">'+
       (it.url?'<a class="ico" href="'+esc(it.url)+'" target="_blank" rel="noopener" title="開く" data-stop="1">&#8599;</a>'
-             :'<span class="ico dis">&#8599;</span>')+
-      (it.url?'<button class="ico" data-copy="'+esc(it.url)+'" title="URLをコピー">&#9112;</button>'
+             :(fileHref(it)?'<a class="ico" href="'+esc(fileHref(it))+'" target="_blank" rel="noopener" title="開く" data-stop="1">&#8599;</a>'
+                           :'<span class="ico dis">&#8599;</span>'))+
+      ((it.url||it.source)?'<button class="ico" data-copy="'+esc(it.url||it.source)+'" title="'+(it.url?'URLをコピー':'パスをコピー')+'">&#9112;</button>'
              :'<span class="ico dis">&#9112;</span>')+
     '</div></article>';
 }
@@ -792,14 +841,19 @@ function openDrawer(id){
   var s=statusOf(it.status), sh=db.shots[id];
   $('dTitle').innerHTML=esc(it.name)+' <span class="badge '+s.b+'" style="vertical-align:middle">'+esc(it.status)+'</span>';
   var h='';
-  h+='<div class="urlbox"><code>'+(it.url?esc(it.url):'URL未発行／未記録')+'</code>'+
+  var fh=fileHref(it);
+  h+='<div class="urlbox"><code>'+(it.url?esc(it.url):(isLocal(it)?esc(it.source||'場所不明'):'URL未発行／未記録'))+'</code>'+
      (it.url?'<button class="tbtn" data-copy="'+esc(it.url)+'">コピー</button>'+
-             '<a class="tbtn pri" href="'+esc(it.url)+'" target="_blank" rel="noopener">開く</a>':'')+'</div>';
+             '<a class="tbtn pri" href="'+esc(it.url)+'" target="_blank" rel="noopener">開く</a>'
+           :(isLocal(it)?'<button class="tbtn" data-copy="'+esc(it.source||'')+'">パスをコピー</button>'+
+              (fh?'<a class="tbtn pri" href="'+esc(fh)+'" target="_blank" rel="noopener">開く</a>':'')
+            :''))+'</div>';
   h+='<div class="sec"><h4>ひとことで言うと</h4><div style="font-size:.88rem">'+esc(it.summary||'—')+'</div></div>';
   h+='<div class="sec"><h4>開かなくても分かる中身</h4><ul>'+
      ((it.contents||[]).length?it.contents.map(function(c){return '<li>'+esc(c)+'</li>';}).join(''):'<li>—</li>')+'</ul></div>';
   h+='<div class="sec"><h4>画面のようす</h4><div class="shot" id="shotBox">'+
-     (sh?'<img src="'+sh.d+'">':'タップして画面のスクリーンショットを選ぶ<br>（PCならCtrl+Vでも貼れます）')+'</div>'+
+     (sh?'<img src="'+sh.d+'" data-zoom="'+esc(id)+'" title="クリックで拡大">'
+        :'タップして画面のスクリーンショットを選ぶ<br>（PCならCtrl+Vでも貼れます）')+'</div>'+
      (sh?'<div style="text-align:right;margin-top:5px"><button class="tbtn" id="shotDel" style="font-size:.72rem">画像を消す</button></div>':'')+
      '<input type="file" id="shotFile" accept="image/*" hidden></div>';
   h+='<div class="sec"><h4>台帳情報</h4><dl class="kv">'+
@@ -850,6 +904,7 @@ function openModal(id){
   $('mAccess').value=it?(it.access||''):''; $('mUpd').value=it?(it.upd||''):new Date().toISOString().slice(0,7);
   $('mSource').value=it?(it.source||''):''; $('mNote').value=it?(it.note||''):'';
   $('mOwner').value=it?(it.owner||''):'自分';
+  $('mLocal').checked=it?!!it.local:false;
   $('mDel').style.display=it?'':'none';
   $('modal').classList.add('on');
 }
@@ -865,7 +920,7 @@ $('mSave').onclick=function(){
     contents:$('mContents').value.split('\n').map(function(t){return t.trim();}).filter(Boolean),
     access:$('mAccess').value.trim(), upd:$('mUpd').value.trim(),
     source:$('mSource').value.trim(), note:$('mNote').value.trim(),
-    owner:$('mOwner').value.trim(), _ts:now()
+    owner:$('mOwner').value.trim(), local:$('mLocal').checked, _ts:now()
   };
   if(editId){ var it=byId(editId); if(it) Object.assign(it,d); }
   else{ d.id='u'+now().toString(36)+Math.random().toString(36).slice(2,5); db.items.push(d); }
@@ -951,7 +1006,7 @@ function closeFilter(){ aside.classList.remove('open');
 $('q').addEventListener('input',function(e){ st.q=e.target.value; render(); });
 $('sort').addEventListener('change',function(e){ st.sort=e.target.value; render(); });
 $('btnAdd').onclick=function(){ openModal(null); };
-$('btnReset').onclick=function(){ st={q:'',cat:'',status:'',owner:'',tags:[],sort:st.sort,view:st.view,showDropped:false};
+$('btnReset').onclick=function(){ st={q:'',cat:'',status:'',owner:'',place:'',tags:[],sort:st.sort,view:st.view,showDropped:false};
   $('q').value=''; render(); closeFilter(); };
 $('btnDropped').onclick=function(){ st.showDropped=!st.showDropped;
   if(!st.showDropped && st.status==='没') st.status='';
@@ -977,6 +1032,7 @@ document.addEventListener('click',function(e){
   var c=e.target.closest('[data-cat]'); if(c){ st.cat=c.getAttribute('data-cat'); render(); if(narrow)closeFilter(); return; }
   var s=e.target.closest('[data-st]'); if(s){ st.status=s.getAttribute('data-st'); render(); if(narrow)closeFilter(); return; }
   var ow=e.target.closest('[data-own]'); if(ow){ st.owner=ow.getAttribute('data-own'); render(); if(narrow)closeFilter(); return; }
+  var pl=e.target.closest('[data-place]'); if(pl){ st.place=pl.getAttribute('data-place'); render(); if(narrow)closeFilter(); return; }
   var t=e.target.closest('[data-tag]');
   if(t){ var v=t.getAttribute('data-tag'); var i=st.tags.indexOf(v);
     if(i>=0) st.tags.splice(i,1); else st.tags.push(v); render(); return; }
@@ -984,6 +1040,10 @@ document.addEventListener('click',function(e){
   if(e.target.id==='dEdit'){ openModal(openId); return; }
   if(e.target.id==='shotDel'){ var k=openId; delete db.shots[k];
     saveLocal(); render(); openDrawer(k); pushShot(k); return; }
+  var zi=e.target.closest('[data-zoom]');
+  if(zi){ e.stopPropagation(); $('lboxImg').src=zi.getAttribute('src');
+    $('lbox').classList.add('on'); return; }
+  if(e.target.closest('#lbox')){ $('lbox').classList.remove('on'); return; }
   if(e.target.closest('#shotBox')){ $('shotFile').click(); return; }
 
   var card=e.target.closest('.row,.tile'); if(card){ openDrawer(card.getAttribute('data-id')); }
@@ -1002,7 +1062,8 @@ document.addEventListener('paste',function(e){
   for(var i=0;i<its.length;i++){ if(its[i].type.indexOf('image')===0){ storeShot(its[i].getAsFile()); break; } }
 });
 document.addEventListener('keydown',function(e){
-  if(e.key==='Escape'){ if($('modal').classList.contains('on')) closeModal(); else { closeFilter(); closeDrawer(); } }
+  if(e.key==='Escape'){ if($('lbox').classList.contains('on')) $('lbox').classList.remove('on');
+    else if($('modal').classList.contains('on')) closeModal(); else { closeFilter(); closeDrawer(); } }
   if(e.key==='/'&&document.activeElement!==$('q')&&!$('modal').classList.contains('on')
      &&$('gate').classList.contains('hide')){ e.preventDefault(); $('q').focus(); }
 });
