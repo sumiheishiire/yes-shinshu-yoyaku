@@ -288,6 +288,153 @@ main{flex:1;min-width:0;padding:12px 16px 70px}
   .modal{padding:12px}
 }
 @media(max-width:420px){ .thumb{display:none} }
+
+/* ── タブ ── */
+.tabs{position:sticky;top:58px;z-index:38;background:var(--paper);
+  border-bottom:1px solid var(--line2);display:flex;gap:2px;padding:0 20px;overflow-x:auto}
+.tb{background:none;border:none;border-bottom:3px solid transparent;cursor:pointer;
+  padding:9px 15px 8px;font-size:.88rem;font-weight:700;color:var(--ink3);
+  white-space:nowrap;letter-spacing:.03em}
+.tb:hover{color:var(--ink)}
+.tb.on{color:var(--ink);border-bottom-color:var(--red)}
+.tb span{font-size:.7rem;font-weight:400;color:var(--ink3);margin-left:5px;font-variant-numeric:tabular-nums}
+.tabpane.hide{display:none}
+#tab-ledger aside{top:96px;max-height:calc(100vh - 96px)}
+.pane{padding:16px 20px 80px;max-width:1220px}
+.pane h3{font-family:'Zen Old Mincho',serif;font-size:1rem;margin:22px 0 8px;
+  padding-bottom:5px;border-bottom:1px solid var(--line2)}
+.pane h3:first-child{margin-top:0}
+.lead{font-size:.82rem;color:var(--ink2);line-height:1.85;margin-bottom:14px}
+.warn{background:#fdf6e3;border:1px solid #e8d9a8;border-radius:3px;padding:9px 13px;
+  font-size:.8rem;color:#6b5518;line-height:1.75;margin-bottom:14px}
+
+/* ── 入力表 ── */
+.rtw{overflow-x:auto;border:1px solid var(--line);border-radius:4px;background:var(--paper2)}
+table.rt{border-collapse:collapse;width:100%;font-size:.84rem}
+table.rt th,table.rt td{border-bottom:1px solid var(--line);padding:5px 7px;text-align:right;white-space:nowrap}
+table.rt th{background:var(--paper);font-size:.7rem;color:var(--ink2);font-weight:700;letter-spacing:.03em;line-height:1.35}
+table.rt td.l,table.rt th.l{text-align:left}
+table.rt td.l{white-space:normal}
+table.rt td.l .mut{display:block;margin-top:2px;line-height:1.55;white-space:normal}
+/* 設定表は「項目名＋補足」が長いので、ラベル列に幅を与えて横スクロールを出さない */
+.cfg{max-width:700px}
+.cfg td.l{width:56%}
+table.rt tbody tr:hover{background:#fffef9}
+table.rt td.num{font-variant-numeric:tabular-nums;font-weight:700}
+table.rt td.z{color:var(--line2);font-weight:400}
+table.rt tfoot td{background:var(--paper);font-weight:700;border-top:2px solid var(--line2);
+  font-variant-numeric:tabular-nums}
+.ni{width:64px;padding:4px 6px;background:var(--paper);border:1px solid var(--line2);
+  border-radius:3px;font-size:.84rem;text-align:right;font-variant-numeric:tabular-nums}
+.ni:focus{outline:none;border-color:var(--blue);background:#fff}
+.ni.w{border-color:#d8b96f;background:#fdf9ef}
+.ni.wide{width:104px}
+.ns{padding:4px 3px;background:var(--paper);border:1px solid var(--line2);border-radius:3px;font-size:.8rem}
+.ns:focus{outline:none;border-color:var(--blue);background:#fff}
+.tx{width:100%;min-width:170px;padding:5px 7px;background:var(--paper);
+  border:1px solid var(--line2);border-radius:3px;font-size:.82rem}
+.tx:focus{outline:none;border-color:var(--blue);background:#fff}
+.nm{font-weight:700;display:inline-block;vertical-align:middle;max-width:238px;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mut{color:var(--ink3);font-size:.7rem;font-weight:400}
+.flag{font-size:.64rem;padding:0 5px;border-radius:2px;border:1px solid var(--amber);
+  color:var(--amber);margin-left:4px;white-space:nowrap}
+.cbadge{font-size:.66rem;padding:1px 5px;border-radius:2px;border:1px solid}
+.cA{color:var(--green);border-color:var(--green)}
+.cB{color:var(--amber);border-color:var(--amber)}
+.cC{color:var(--gray);border-color:var(--gray)}
+.xbtn{padding:2px 7px;font-size:.7rem;background:var(--paper);border:1px solid var(--line2);
+  border-radius:3px;cursor:pointer;color:var(--ink2);font-variant-numeric:tabular-nums}
+.xbtn:hover{border-color:var(--ink);color:var(--ink)}
+.exp{background:#fbf9f3}
+.exp>td{padding:12px 14px;white-space:normal}
+.qgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(186px,1fr));gap:7px 18px}
+.qrow{display:flex;align-items:center;gap:7px;font-size:.8rem}
+.qrow>label{flex:1;color:var(--ink2)}
+.cap{font-size:.7rem;color:var(--ink3);letter-spacing:.1em;font-weight:700;margin-bottom:7px}
+.sumbar{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:15px}
+.sc{background:var(--paper2);border:1px solid var(--line);border-radius:4px;padding:8px 15px;min-width:128px}
+.sc b{display:block;font-family:'Zen Old Mincho',serif;font-size:1.32rem;line-height:1.2;
+  font-variant-numeric:tabular-nums}
+.sc i{font-style:normal;font-size:.7rem;color:var(--ink3);letter-spacing:.03em}
+.sc.hl{border-left:4px solid var(--red)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.btnrow{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px;align-items:center}
+@media(max-width:900px){ .grid2{grid-template-columns:1fr} }
+@media(max-width:820px){
+  .tabs{position:static;padding:0 10px}
+  #tab-ledger aside{top:0}
+  .pane{padding:12px 12px 90px}
+  .nm{max-width:150px}
+}
+</style>
+
+<!-- 経営報告の見た目。ここの中身は書き出しHTMLへそのままコピーされるので、
+     var(--…) を使わず色を直接書いている（単体で開いても崩れないようにするため）。 -->
+<style id="execCss">
+.ex-h{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;margin-bottom:5px}
+.ex-h h2{font-family:'Zen Old Mincho',serif;font-size:1.34rem;letter-spacing:.04em;line-height:1.4}
+.ex-h .asof{font-size:.76rem;color:#8b8477}
+.ex-note{font-size:.75rem;color:#5c574d;line-height:1.85;margin-bottom:16px;
+  border-left:3px solid #c8bfab;padding-left:11px}
+.kpis{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-bottom:20px}
+.kpi{background:#fffdf8;border:1px solid #ddd6c7;border-top:3px solid #2f4858;border-radius:4px;padding:9px 12px}
+.kpi.g{border-top-color:#4a7a52} .kpi.r{border-top-color:#b23a26}
+.kpi.a{border-top-color:#a3762a} .kpi.p{border-top-color:#7b5ea7}
+.kpi .lab{font-size:.68rem;color:#5c574d;letter-spacing:.02em;margin-bottom:3px;line-height:1.4}
+.kpi .val{font-family:'Zen Old Mincho',serif;font-size:1.5rem;line-height:1.15;font-weight:700;
+  font-variant-numeric:tabular-nums}
+.kpi .val .u{font-size:.74rem;font-family:'Zen Kaku Gothic New','Yu Gothic UI',sans-serif;
+  font-weight:400;margin-left:2px}
+.kpi .sub{font-size:.66rem;color:#8b8477;margin-top:3px;line-height:1.5}
+.exsec{margin-bottom:22px}
+.exsec>h3{font-family:'Zen Old Mincho',serif;font-size:1rem;margin-bottom:9px;
+  padding-bottom:4px;border-bottom:1px solid #c8bfab}
+.exsec>.d{font-size:.74rem;color:#8b8477;margin:-4px 0 9px;line-height:1.7}
+.bars{display:flex;flex-direction:column;gap:7px}
+.brow{display:grid;grid-template-columns:158px 1fr 108px;gap:9px;align-items:center;font-size:.8rem}
+.brow .bl{color:#5c574d;text-align:right;line-height:1.35}
+.brow .bt{height:22px;background:#efeadf;border-radius:2px;overflow:hidden}
+.brow .bf{height:100%;background:#2f4858;min-width:2px}
+.brow .bf.g{background:#4a7a52} .brow .bf.r{background:#b23a26}
+.brow .bf.a{background:#a3762a} .brow .bf.p{background:#7b5ea7}
+.brow .bv{font-variant-numeric:tabular-nums;font-weight:700;text-align:right}
+.brow .bv small{font-weight:400;color:#8b8477;font-size:.72rem}
+.mbars{display:flex;align-items:flex-end;gap:7px;height:158px}
+.mb{flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;height:100%}
+.mb .mv{font-size:.68rem;font-weight:700;font-variant-numeric:tabular-nums;margin-bottom:2px}
+.mb .mf{width:100%;background:#2f4858;border-radius:2px 2px 0 0;min-height:2px}
+.mb .ml{font-size:.64rem;color:#8b8477;margin-top:4px;white-space:nowrap}
+.radar{display:flex;gap:22px;align-items:center;flex-wrap:wrap}
+.rleg{font-size:.8rem;color:#5c574d;line-height:2.05}
+.rleg b{font-variant-numeric:tabular-nums;color:#22201c;margin-left:7px;font-size:.9rem}
+.exwrap{overflow-x:auto;border:1px solid #ddd6c7;border-radius:4px}
+table.extab{border-collapse:collapse;width:100%;font-size:.8rem;background:#fffdf8}
+.extab th,.extab td{border-bottom:1px solid #ddd6c7;padding:5px 9px;text-align:right;white-space:nowrap}
+.extab th{background:#f4f1ea;font-size:.68rem;color:#5c574d;letter-spacing:.02em;font-weight:700}
+.extab td.l,.extab th.l{text-align:left}
+.extab td.num{font-variant-numeric:tabular-nums;font-weight:700}
+.extab td.z{color:#c8bfab;font-weight:400}
+.extab tfoot td{background:#f4f1ea;font-weight:700;border-top:2px solid #c8bfab;font-variant-numeric:tabular-nums}
+.cbadge{font-size:.66rem;padding:1px 5px;border-radius:2px;border:1px solid}
+.cA{color:#4a7a52;border-color:#4a7a52}
+.cB{color:#a3762a;border-color:#a3762a}
+.cC{color:#9a948a;border-color:#9a948a}
+.dlt{font-size:.68rem;margin-left:5px;white-space:nowrap}
+.dlt.up{color:#4a7a52} .dlt.dn{color:#b23a26}
+.exfoot{font-size:.72rem;color:#8b8477;line-height:1.9;border-top:1px solid #ddd6c7;padding-top:11px}
+.exfoot b{color:#5c574d}
+.exempty{background:#fdf6e3;border:1px solid #e8d9a8;border-radius:3px;padding:11px 14px;
+  font-size:.8rem;color:#6b5518;line-height:1.75}
+@media(max-width:1100px){ .kpis{grid-template-columns:repeat(3,1fr)} }
+@media(max-width:620px){
+  .kpis{grid-template-columns:repeat(2,1fr)}
+  .brow{grid-template-columns:104px 1fr 88px;font-size:.74rem}
+}
+@media print{
+  .kpis{grid-template-columns:repeat(3,1fr)}
+  .exsec{break-inside:avoid}
+}
 </style>
 </head>
 <body>
@@ -325,6 +472,15 @@ main{flex:1;min-width:0;padding:12px 16px 70px}
   <input type="file" id="fileImp" accept="application/json" hidden>
 </header>
 
+<nav class="tabs" id="tabs">
+  <button class="tb on" data-tab="ledger">台帳</button>
+  <button class="tb" data-tab="effect">効果<span id="tbEff"></span></button>
+  <button class="tb" data-tab="invest">投資<span id="tbInv"></span></button>
+  <button class="tb" data-tab="saas">SaaS単価</button>
+  <button class="tb" data-tab="exec">経営報告</button>
+</nav>
+
+<section class="tabpane" id="tab-ledger">
 <div class="layout">
   <aside>
     <h3>置き場所</h3><div id="fPlace"></div>
@@ -339,6 +495,15 @@ main{flex:1;min-width:0;padding:12px 16px 70px}
   </aside>
   <main><div id="list"></div></main>
 </div>
+</section>
+
+<section class="tabpane hide" id="tab-effect"><div class="pane" id="paneEff"></div></section>
+<section class="tabpane hide" id="tab-invest"><div class="pane" id="paneInv"></div></section>
+<section class="tabpane hide" id="tab-saas"><div class="pane" id="paneSaas"></div></section>
+<section class="tabpane hide" id="tab-exec"><div class="pane">
+  <div class="btnrow" id="execBtns"></div>
+  <div id="execView"></div>
+</div></section>
 
 <div class="scrim" id="scrim"></div>
 <div class="drawer" id="drawer">
@@ -432,6 +597,11 @@ function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){
 function toast(m){var t=$('toast');t.textContent=m;t.classList.add('on');
   clearTimeout(toast._t);toast._t=setTimeout(function(){t.classList.remove('on');},2200);}
 function now(){return Date.now();}
+/* 日付は必ず日本時間で。端末のタイムゾーンや UTC 変換で月がずれないようにする */
+function jstDate(){ var d=new Date(); return new Date(d.getTime()+(9*60+d.getTimezoneOffset())*60000); }
+function pad2(n){ return (n<10?'0':'')+n; }
+function ymJST(){ var d=jstDate(); return d.getFullYear()+'-'+pad2(d.getMonth()+1); }
+function ymdJST(){ return ymJST()+'-'+pad2(jstDate().getDate()); }
 
 /* ── 暗号（AES-GCM / PBKDF2） ── */
 var CK=null;
@@ -576,7 +746,13 @@ async function saveShotLocal(id){
   if(db.shots[id]) { if(!await idbPut(id,db.shots[id])) toast('画像を端末に保存できませんでした'); }
   else await idbDel(id);
 }
-function live(){ return db.items.filter(function(i){return !i._del;}); }
+/* 台帳の一覧・件数・絞り込みに出す行。
+   _kind を持つ行（設定・稼働ログ・月次スナップショット）は台帳の中身ではないので除く。 */
+function live(){ return db.items.filter(function(i){return !i._del && !i._kind;}); }
+/* 書き出し・同期の対象。こちらは _kind の行も含める（設定ごとバックアップしたいので）。
+   _kind の行には _del も立てている（下の sysGet のコメント参照）ので、
+   _del だけで弾かずに _kind を先に拾う。 */
+function allLive(){ return db.items.filter(function(i){return !i._del || !!i._kind;}); }
 function byId(id){ for(var i=0;i<db.items.length;i++){ if(db.items[i].id===id) return db.items[i]; } return null; }
 
 /* 項目単位のマージ：新しい_tsが勝つ */
@@ -874,6 +1050,7 @@ function filtered(){
 
 /* ── 描画 ── */
 function render(){
+  tabBadges();
   var all=live(), list=filtered();
   var dropped=all.filter(isDropped);
   var active=all.filter(function(i){return !isDropped(i);});   /* 没を除いた「生きている」件数 */
@@ -1067,7 +1244,7 @@ function openModal(id){
   $('mCat').value=it?it.cat:'仕事'; $('mStatus').value=it?it.status:'運用中';
   $('mTags').value=it?(it.tags||[]).join(', '):'';
   $('mSummary').value=it?(it.summary||''):''; $('mContents').value=it?(it.contents||[]).join('\n'):'';
-  $('mAccess').value=it?(it.access||''):''; $('mUpd').value=it?(it.upd||''):new Date().toISOString().slice(0,7);
+  $('mAccess').value=it?(it.access||''):''; $('mUpd').value=it?(it.upd||''):ymJST();
   $('mSource').value=it?(it.source||''):''; $('mNote').value=it?(it.note||''):'';
   $('mOwner').value=it?(it.owner||''):'自分';
   $('mLocal').checked=it?!!it.local:false;
@@ -1108,12 +1285,12 @@ $('modal').addEventListener('click',function(e){ if(e.target===$('modal')) close
 
 /* ── 書き出し・読み込み ── */
 $('btnExp').onclick=function(){
-  var payload={app:APP,exported:new Date().toISOString(),items:live(),
+  var payload={app:APP,exported:new Date().toISOString(),items:allLive(),
     shots:Object.keys(db.shots).reduce(function(a,k){a[k]=db.shots[k].d;return a;},{})};
   var blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
   var a=document.createElement('a');
   a.href=URL.createObjectURL(blob);
-  a.download='URL台帳_'+new Date().toISOString().slice(0,10)+'.json';
+  a.download='URL台帳_'+ymdJST()+'.json';
   a.click(); toast('JSONを書き出しました');
 };
 $('btnImp').onclick=function(){ $('fileImp').click(); };
@@ -1125,10 +1302,15 @@ function importFile(f){
   fr.onload=function(ev){
     try{
       var d=JSON.parse(ev.target.result);
+
+      /* 稼働ログ（scan_effort.py が作る 稼働ログ.json）はここで受ける */
+      if(d && d.kind==='effort' && d.months){ importEffort(d); return; }
+
       var arr=Array.isArray(d)?d:(d.items||[]);
       var add=0,upd=0,skip=0,t=now();
       arr.forEach(function(it){
-        if(!it||!it.name) return;
+        if(!it) return;
+        if(!it.name && !it._kind) return;   /* 設定・稼働ログの行は name を持たない */
         it.id=it.id||('u'+t.toString(36)+Math.random().toString(36).slice(2,5));
         var ex=byId(it.id);
         /* 自動検出（_auto）は、既にある行を絶対に上書きしない。
@@ -1235,7 +1417,686 @@ document.addEventListener('keydown',function(e){
 });
 window.addEventListener('online',function(){ if(cloud.ready) pushCloud(); });
 
+/* ==================================================================
+   投資対効果（コストカットの見える化）
+   ------------------------------------------------------------------
+   ・設定・稼働ログ・月次スナップショットは、items 配列の中に
+     「id が __ で始まり _kind を持つ行」として置く。
+     こうすると既存の暗号化・項目単位マージ・同期にそのまま乗るので、
+     Firestore のパスもセキュリティルールも触らずに済む。
+   ・台帳の一覧や件数には出さない（live() が _kind を除いている）。
+   ・金額は「削減時間×時給」の一本値にしない。実際に払わなくなった
+     残業代（②）と、空いた時間の機会価値（③）を必ず分けて出す。
+   ================================================================== */
+
+var ROLE=[{k:'exec',l:'役員'},{k:'mgr',l:'管理職'},{k:'staff',l:'一般'},{k:'part',l:'パート'}];
+var CONF=[{k:'A',l:'実測',x:1},{k:'B',l:'聞き取り',x:.8},{k:'C',l:'推定',x:.5}];
+var QAX=[{k:'dep',l:'属人化の解消'},{k:'err',l:'ミス・手戻りの削減'},{k:'spd',l:'判断の速さ'},
+         {k:'cust',l:'取引先への価値'},{k:'ex',l:'従業員体験'}];
+var SAAS_DEF=[
+  {k:'workflow',label:'申請・ワークフロー'},
+  {k:'bi',      label:'BIダッシュボード'},
+  {k:'portal',  label:'社内ポータル・ナレッジ'},
+  {k:'app',     label:'業務アプリ'},
+  {k:'form',    label:'フォーム・アンケート'},
+  {k:'pm',      label:'案件・プロジェクト管理'},
+  {k:'custom',  label:'受託開発（スクラッチ）'}
+];
+/* 稼働ログの突き合わせで、これらは名前が汎用すぎて当たらないので単独では使わない */
+var GENERIC=['index.html','index.htm','main.html','app.html','style.css','script.js','data.json'];
+
+/* 設定・稼働ログ・スナップショットの行を取り出す。
+   これらには _kind と一緒に _del も立ててある。理由は、別の端末に残っている
+   旧版（_kind を知らない版）で開かれたとき、_del だけは昔から見ているので
+   一覧に出ずに済むから。中身は消えないし、同期でも保持される。 */
+function sysGet(id){ var x=byId(id); return (x && x._kind) ? x : null; }
+function sysNew(id,kind){ return {id:id,_kind:kind,_del:true}; }
+function nv(v){ return (v===0||v)?v:''; }
+function hh(v){ return (Math.round((+v||0)*10)/10).toLocaleString('ja-JP'); }
+function man(v){ return (Math.round((+v||0)/1000)/10).toLocaleString('ja-JP'); }  /* 万円・小数1桁 */
+
+/* ── 設定 ── */
+function cfgGet(){
+  var c=sysGet('__cfg')||{};
+  var o={wage:{exec:0,mgr:0,staff:0,part:0},wageMe:0,otRate:0,otShare:0,
+         lic:{seats:0,monthly:0},saas:{}};
+  if(c.wage) for(var a in c.wage){ if(c.wage[a]!=null) o.wage[a]=c.wage[a]; }
+  if(c.lic)  for(var b in c.lic){ if(c.lic[b]!=null) o.lic[b]=c.lic[b]; }
+  ['wageMe','otRate','otShare'].forEach(function(k){ if(c[k]!=null) o[k]=c[k]; });
+  SAAS_DEF.forEach(function(s){
+    var src=(c.saas||{})[s.k]||{};
+    o.saas[s.k]={per:+src.per||0,init:+src.init||0,src:src.src||'',srcdate:src.srcdate||''};
+  });
+  return o;
+}
+function cfgSave(mut){
+  var c=sysGet('__cfg');
+  if(!c){ c=sysNew('__cfg','cfg'); c.wage={}; c.lic={}; c.saas={}; db.items.push(c); }
+  if(!c.wage) c.wage={};
+  if(!c.lic)  c.lic={};
+  if(!c.saas) c.saas={};
+  mut(c); c._ts=now(); saveLocal(); schedulePush();
+}
+function wageOf(c,role){ return +(c.wage[role||'staff']||0); }
+function confX(k){ for(var i=0;i<CONF.length;i++){ if(CONF[i].k===k) return CONF[i].x; } return .5; }
+function confL(k){ for(var i=0;i<CONF.length;i++){ if(CONF[i].k===k) return CONF[i].l; } return '推定'; }
+function saasLabel(k){ for(var i=0;i<SAAS_DEF.length;i++){ if(SAAS_DEF[i].k===k) return SAAS_DEF[i].label; } return ''; }
+
+/* ── 稼働ログ ── */
+function effortRec(){ return sysGet('__effort'); }
+var _efC={}, _efStamp='';
+function effortFor(it){
+  var E=effortRec();
+  if(!E||!E.files||!E.files.length) return {h:0,n:0};
+  if(_efStamp!==String(E._ts)){ _efC={}; _efStamp=String(E._ts); }
+  if(_efC[it.id]) return _efC[it.id];
+  var src=String(it.source||'').replace(/\\/g,'/').toLowerCase().replace(/\/+$/,'');
+  var seg=src.split('/').filter(Boolean), needles=[];
+  if(seg.length>=2) needles.push(seg.slice(-2).join('/'));
+  var last=seg.length?seg[seg.length-1]:'';
+  if(last && GENERIC.indexOf(last)<0) needles.push(last);
+  var nm=String(it.name||'').toLowerCase();
+  var h=0,n=0;
+  E.files.forEach(function(f){
+    var p=String(f.path||'').replace(/\\/g,'/').toLowerCase(), hit=false, i;
+    for(i=0;i<needles.length;i++){ if(needles[i].length>=5 && p.indexOf(needles[i])>=0){ hit=true; break; } }
+    if(!hit && nm.length>=5 && p.indexOf(nm)>=0) hit=true;
+    if(hit){ h+=(+f.h||0); n++; }
+  });
+  var r={h:Math.round(h*10)/10,n:n};
+  _efC[it.id]=r;
+  return r;
+}
+function importEffort(d){
+  var E=sysGet('__effort');
+  if(!E){ E=sysNew('__effort','effort'); db.items.push(E); }
+  E.months=d.months||{}; E.total=d.total||{}; E.generated=d.generated||''; E.idleMin=d.idleMin||0;
+  /* 0.05h 未満は誤差なので落とす。台帳の暗号文を膨らませないため */
+  E.files=(d.files||[]).filter(function(f){ return (+f.h||0)>=0.05; })
+    .map(function(f){ return {path:f.path,base:f.base,h:+f.h||0,sessions:+f.sessions||0}; });
+  E._ts=now(); _efStamp='';
+  saveLocal(); schedulePush(); render();
+  toast('稼働ログを取り込みました（'+hh((d.total||{}).h)+'h ／ 成果物 '+E.files.length+'件）');
+  setTab('invest');
+}
+
+/* ── 計算 ── */
+/* 対象は「仕事」かつ「運用中」。プライベートと没は経営報告に混ぜない */
+function roiTargets(){
+  return live().filter(function(i){ return i.cat==='仕事' && i.status==='運用中' && !isDropped(i); });
+}
+function calcItem(it,c){
+  var r=it.roi||{};
+  var n=+r.n||0, f=+r.f||0, sv=Math.max(0,(+r.before||0)-(+r.after||0));
+  var H=n*f*12*sv/60;                                   /* 年間削減時間 */
+  var x=confX(r.conf);                                  /* 確度係数 */
+  var ot=Math.min(100,Math.max(0,+c.otShare||0))/100;   /* 残業だった割合 */
+  var auto=effortFor(it);
+  var bh=(r.buildAuto===false)?(+r.buildH||0):auto.h;
+  var kh=+r.keepH||0;
+  var s=r.saasK?c.saas[r.saasK]:null;
+  var sOk=!!(s&&((+s.per||0)>0||(+s.init||0)>0));
+  var q=r.q||{}, qs=0, qn=0;
+  QAX.forEach(function(a){ if((+q[a.k]||0)>0){ qs+=+q[a.k]; qn++; } });
+  return {it:it, H:H, x:x,
+    cash: H*ot*(+c.otRate||0)*x,
+    value:H*(1-ot)*wageOf(c,r.role)*x,
+    bh:bh, kh:kh, auto:auto,
+    labor:(bh+kh)*(+c.wageMe||0),
+    saas: sOk ? ((+r.saasSeats||0)*(+s.per||0)*12+(+s.init||0)) : 0,
+    saasOk:sOk, saasWarn:!!(sOk && !s.srcdate),
+    filled:(n>0 && f>0 && sv>0),
+    q:q, qavg:qn?qs/qn:0};
+}
+function calcAll(){
+  var c=cfgGet(), rows=roiTargets().map(function(it){ return calcItem(it,c); });
+  var sumBh=0; rows.forEach(function(r){ sumBh+=r.bh; });
+  var licYear=(+c.lic.seats||0)*(+c.lic.monthly||0)*12;
+  var T={n:rows.length,filled:0,H:0,cash:0,value:0,invest:0,labor:0,lic:0,saas:0,
+         bh:0,kh:0,licYear:licYear,saasWarn:false,conf:{A:0,B:0,C:0},q:{}};
+  QAX.forEach(function(a){ T.q[a.k]={s:0,n:0}; });
+  rows.forEach(function(r){
+    r.lic = sumBh>0 ? licYear*r.bh/sumBh : 0;      /* ライセンス費は開発時間で按分 */
+    r.invest = r.labor + r.lic;
+    r.gain = r.cash + r.value;
+    r.net = r.gain - r.invest;
+    r.pay = r.gain>0 ? r.invest/(r.gain/12) : null;
+    r.avoid = r.saasOk ? r.saas - r.invest : null;
+    T.H+=r.H; T.cash+=r.cash; T.value+=r.value; T.invest+=r.invest;
+    T.labor+=r.labor; T.lic+=r.lic; T.saas+=r.saas; T.bh+=r.bh; T.kh+=r.kh;
+    if(r.filled){
+      T.filled++;
+      T.conf[(r.it.roi||{}).conf||'C']=(T.conf[(r.it.roi||{}).conf||'C']||0)+1;
+      QAX.forEach(function(a){ var v=+(r.q[a.k])||0; if(v>0){ T.q[a.k].s+=v; T.q[a.k].n++; } });
+    }
+  });
+  T.gain=T.cash+T.value;
+  T.net=T.gain-T.invest;
+  T.roi=T.invest>0?T.gain/T.invest:null;
+  T.pay=T.gain>0?T.invest/(T.gain/12):null;
+  T.avoid=T.saas>0?T.saas-T.invest:null;
+  return {c:c,rows:rows,T:T};
+}
+
+/* ── スナップショット（前月比を出すために月末に固定する） ── */
+function snaps(){
+  return db.items.filter(function(i){ return i._kind==='snap'; })
+    .sort(function(a,b){ return String(a.ym).localeCompare(String(b.ym)); });
+}
+function prevSnap(){
+  var s=snaps(), ym=ymJST();
+  for(var i=s.length-1;i>=0;i--){ if(String(s[i].ym)<ym) return s[i]; }
+  return null;
+}
+function snapSave(){
+  var A=calcAll(), ym=ymJST(), id='__snap_'+ym, ex=sysGet(id);
+  if(ex && !confirm(ym+' のスナップショットは既にあります。今の数字で上書きしますか？')) return;
+  var rec=ex||sysNew(id,'snap');
+  rec.ym=ym; rec.saved=ymdJST();
+  rec.kpi={n:A.T.n,filled:A.T.filled,H:A.T.H,cash:A.T.cash,value:A.T.value,
+           invest:A.T.invest,saas:A.T.saas,bh:A.T.bh};
+  rec._ts=now();
+  if(!ex) db.items.push(rec);
+  saveLocal(); schedulePush(); renderExec();
+  toast(ym+' のスナップショットを保存しました');
+}
+
+/* ── タブ ── */
+var effOpen={};
+function setTab(t){
+  st.tab=t;
+  try{ localStorage.setItem('url_ledger_tab',t); }catch(e){}
+  ['ledger','effect','invest','saas','exec'].forEach(function(k){
+    var p=$('tab-'+k); if(p) p.classList.toggle('hide',k!==t);
+  });
+  Array.prototype.forEach.call(document.querySelectorAll('#tabs .tb'),function(b){
+    b.classList.toggle('on',b.getAttribute('data-tab')===t);
+  });
+  /* 台帳以外では検索・並べ替え・追加ボタンは意味がないので隠す */
+  var led=(t==='ledger');
+  var sr=document.querySelector('.search'); if(sr) sr.style.display=led?'':'none';
+  ['sort','btnView','btnAdd','btnFilter','count','btnExp','btnImp'].forEach(function(idn){
+    var e=$(idn); if(e) e.style.display=led?'':'none';
+  });
+  if(t==='effect') renderEff();
+  if(t==='invest') renderInv();
+  if(t==='saas')   renderSaas();
+  if(t==='exec')   renderExec();
+}
+function tabBadges(){
+  var A=calcAll(), E=effortRec();
+  var a=$('tbEff'); if(a) a.textContent=A.T.n?(A.T.filled+'/'+A.T.n):'';
+  var b=$('tbInv'); if(b) b.textContent=(E&&E.total&&E.total.h)?hh(E.total.h)+'h':'';
+}
+$('tabs').addEventListener('click',function(e){
+  var b=e.target.closest('[data-tab]'); if(!b) return;
+  setTab(b.getAttribute('data-tab'));
+});
+
+/* ── 効果タブ ── */
+function scBox(v,l,hl){ return '<div class="sc'+(hl?' hl':'')+'"><b>'+v+'</b><i>'+l+'</i></div>'; }
+
+function renderEff(){
+  var A=calcAll(), c=A.c, T=A.T;
+  var rows=A.rows.slice().sort(function(a,b){
+    if(a.filled!==b.filled) return a.filled?1:-1;    /* 未入力を上に出す＝穴が見える */
+    return b.H-a.H;
+  });
+  var need=[];
+  if(!c.wageMe) need.push('自分の社内時給');
+  if(!c.otRate) need.push('残業単価');
+  if(!wageOf(c,'staff')&&!wageOf(c,'mgr')) need.push('役割別の人件費単価');
+  var h='';
+  h+='<div class="lead">対象は<b>「仕事」かつ「運用中」の'+T.n+'件</b>です。'+
+     '削減分は（導入前の分 − 導入後の分）で、<b>対象人数 × 回/月 × 12か月</b>で年間に伸ばします。<br>'+
+     '確度は数字の根拠です。<b>実測=1.0／聞き取り=0.8／推定=0.5</b>を金額に掛けて必ず保守側で出します。'+
+     '盛った数字は一度で信用を失うので、迷ったら「推定」にしてください。<br>'+
+     '左の <b>…</b> を押すと、定性評価・SaaS代替・根拠メモが開きます。</div>';
+  if(need.length) h+='<div class="warn">「投資」タブで <b>'+need.join('・')+'</b> が未入力です。'+
+     '入るまで金額は0のままになります（削減時間の計算だけは動きます）。</div>';
+  if(!T.n) return void($('paneEff').innerHTML=h+
+     '<div class="warn">対象が0件です。台帳で区分「仕事」・状態「運用中」の行があるか確認してください。</div>');
+
+  h+='<div class="sumbar">'+
+     scBox(T.filled+' <span class="mut">/ '+T.n+'</span>','入力済み')+
+     scBox(hh(T.H),'年間削減時間 h',1)+
+     scBox(man(T.cash),'② 残業削減 万円')+
+     scBox(man(T.value),'③ 創出時間の価値 万円')+
+     scBox(man(T.invest),'投資額 万円')+
+     scBox(hh(T.bh),'開発投入 h（実測）')+
+     '</div>';
+  h+='<div class="rtw"><table class="rt"><thead><tr>'+
+     '<th class="l">ツール</th><th>対象<br>人数</th><th>回/月<br>1人</th><th>導入前<br>分/回</th>'+
+     '<th>導入後<br>分/回</th><th class="l">役割</th><th class="l">確度</th><th>保守<br>h/年</th>'+
+     '<th>開発<br>h</th><th>年間<br>削減h</th><th>②残業<br>万円</th><th>③創出<br>万円</th>'+
+     '</tr></thead><tbody>';
+  rows.forEach(function(r){ h+=effRow(r); });
+  h+='</tbody><tfoot><tr><td class="l">合計</td><td colspan="8"></td>'+
+     '<td class="num">'+hh(T.H)+'</td><td class="num">'+man(T.cash)+'</td>'+
+     '<td class="num">'+man(T.value)+'</td></tr></tfoot></table></div>';
+  $('paneEff').innerHTML=h;
+}
+
+function effRow(r){
+  var it=r.it, r0=it.roi||{}, id=esc(it.id), auto=(r0.buildAuto!==false);
+  function ni(k,v,w){
+    return '<input class="ni'+(w?' w':'')+'" type="number" min="0" step="1" inputmode="numeric"'+
+           ' data-roi="'+id+'" data-k="'+k+'" value="'+nv(v)+'">';
+  }
+  function sel(k,list,cur,dflt){
+    return '<select class="ns" data-roi="'+id+'" data-k="'+k+'">'+list.map(function(x){
+      return '<option value="'+x.k+'"'+((cur||dflt)===x.k?' selected':'')+'>'+x.l+'</option>';
+    }).join('')+'</select>';
+  }
+  var h='<tr data-row="'+id+'">'+
+    '<td class="l"><button class="xbtn" data-qopen="'+id+'" title="定性評価・SaaS代替・根拠">'+
+      (effOpen[it.id]?'▾':'…')+'</button> '+
+      '<span class="nm" title="'+esc(it.name)+'">'+esc(it.name)+'</span></td>'+
+    '<td>'+ni('n',r0.n)+'</td><td>'+ni('f',r0.f)+'</td>'+
+    '<td>'+ni('before',r0.before)+'</td><td>'+ni('after',r0.after)+'</td>'+
+    '<td class="l">'+sel('role',ROLE,r0.role,'staff')+'</td>'+
+    '<td class="l">'+sel('conf',CONF,r0.conf,'C')+'</td>'+
+    '<td>'+ni('keepH',r0.keepH)+'</td>'+
+    '<td title="稼働ログの該当ファイル '+r.auto.n+' 件から自動集計">'+
+      (auto?'<span class="num'+(r.bh?'':' z')+'">'+hh(r.bh)+'</span>':ni('buildH',r0.buildH,1))+
+      '<div class="mut"><label><input type="checkbox" data-roi="'+id+'" data-k="buildAuto"'+
+      (auto?' checked':'')+' style="width:auto;margin-right:2px">自動</label></div></td>'+
+    '<td class="num'+(r.H?'':' z')+'">'+hh(r.H)+'</td>'+
+    '<td class="num'+(r.cash?'':' z')+'">'+man(r.cash)+'</td>'+
+    '<td class="num'+(r.value?'':' z')+'">'+man(r.value)+'</td></tr>';
+  h+='<tr class="exp" data-exp="'+id+'"'+(effOpen[it.id]?'':' hidden')+'><td colspan="12">'+effExp(r)+'</td></tr>';
+  return h;
+}
+
+function effExp(r){
+  var id=esc(r.it.id), r0=r.it.roi||{}, q=r0.q||{};
+  var h='<div class="grid2">';
+  h+='<div><div class="cap">定性評価（0〜5・0は未評価）</div><div class="qgrid">'+
+     QAX.map(function(a){
+       return '<div class="qrow"><label>'+a.l+'</label><select class="ns" data-roi="'+id+'" data-k="q.'+a.k+'">'+
+         [0,1,2,3,4,5].map(function(v){
+           return '<option value="'+v+'"'+((+q[a.k]||0)===v?' selected':'')+'>'+(v||'—')+'</option>';
+         }).join('')+'</select></div>';
+     }).join('')+'</div></div>';
+  h+='<div><div class="cap">SaaS・外注で同じことをした場合</div>'+
+     '<div class="qrow"><label>代替の種類</label><select class="ns" data-roi="'+id+'" data-k="saasK">'+
+       '<option value="">—</option>'+SAAS_DEF.map(function(s){
+         return '<option value="'+s.k+'"'+(r0.saasK===s.k?' selected':'')+'>'+s.label+'</option>';
+       }).join('')+'</select></div>'+
+     '<div class="qrow" style="margin-top:6px"><label>必要ライセンス数（人）</label>'+
+       '<input class="ni" type="number" min="0" data-roi="'+id+'" data-k="saasSeats" value="'+nv(r0.saasSeats)+'"></div>'+
+     '<div class="cap" style="margin-top:12px">根拠・測り方（経営層に聞かれる一番の箇所）</div>'+
+     '<input class="tx" data-roi="'+id+'" data-k="evid" value="'+esc(r0.evid||'')+'"'+
+       ' placeholder="例）8月の申請42件を実測。1件12分→3分。担当3名に確認済み"></div>';
+  h+='</div><div style="margin-top:11px;font-size:.78rem;color:var(--ink2);line-height:1.9">'+effSum(r)+'</div>';
+  return h;
+}
+function effSum(r){
+  return '投資額（初年度）<b>'+man(r.invest)+'万円</b>'+
+    '（開発 '+hh(r.bh)+'h ＋ 保守 '+hh(r.kh)+'h/年 ＋ ライセンス按分 '+man(r.lic)+'万円）'+
+    '　／　回収 <b>'+(r.pay==null?'—':hh(r.pay)+'か月')+'</b>'+
+    '　／　SaaS代替 '+(r.saasOk?'<b>'+man(r.saas)+'万円</b>（初年度）':'—')+
+    (r.avoid!=null?'　／　回避できる額 <b>'+man(r.avoid)+'万円</b>':'')+
+    (r.saasWarn?'<span class="flag">単価の確認日が空</span>':'');
+}
+
+$('paneEff').addEventListener('change',function(e){
+  var el=e.target.closest('[data-roi]'); if(!el) return;
+  var id=el.getAttribute('data-roi'), k=el.getAttribute('data-k'), it=byId(id);
+  if(!it) return;
+  if(!it.roi) it.roi={};
+  if(el.type==='checkbox'){
+    it.roi.buildAuto=el.checked;
+  }else if(k.indexOf('q.')===0){
+    if(!it.roi.q) it.roi.q={};
+    it.roi.q[k.slice(2)]=+el.value||0;
+  }else if(el.tagName==='SELECT'||el.type==='text'){
+    it.roi[k]=el.value;
+  }else{
+    it.roi[k]= el.value===''? '' : (+el.value||0);
+  }
+  it._ts=now(); saveLocal(); schedulePush();
+  renderEff(); tabBadges();
+});
+$('paneEff').addEventListener('click',function(e){
+  var b=e.target.closest('[data-qopen]'); if(!b) return;
+  var id=b.getAttribute('data-qopen');
+  effOpen[id]=!effOpen[id];
+  renderEff();
+});
+
+/* ── 投資タブ ── */
+function renderInv(){
+  var c=cfgGet(), E=effortRec(), A=calcAll(), T=A.T;
+  function row(lab,key,val,hint,unit){
+    return '<tr><td class="l">'+lab+(hint?'<div class="mut">'+hint+'</div>':'')+'</td>'+
+      '<td><input class="ni wide'+(val?'':' w')+'" type="number" min="0" step="1" inputmode="numeric"'+
+      ' data-cfg="'+key+'" value="'+nv(val)+'"> <span class="mut">'+unit+'</span></td></tr>';
+  }
+  var h='';
+  h+='<div class="lead">ここに入れた単価が、効果タブと経営報告の金額すべての土台になります。'+
+     '<b>総人件費（給与＋賞与＋法定福利費）÷ 年間所定労働時間</b>で、経理と揃えた数字を入れてください。'+
+     '単価が違うと経営会議でそこだけが論点になり、肝心の効果の話に進めません。</div>';
+
+  h+='<h3>人件費の単価（削減された側）</h3><div class="rtw cfg"><table class="rt"><tbody>';
+  ROLE.forEach(function(r){ h+=row(r.l,'wage.'+r.k,c.wage[r.k],'','円/時'); });
+  h+='</tbody></table></div>';
+
+  h+='<h3>金額の出し方</h3><div class="rtw cfg"><table class="rt"><tbody>'+
+     row('残業単価','otRate',c.otRate,'割増込みの実額。②の計算に使います','円/時')+
+     row('削減時間のうち残業だった割合','otShare',c.otShare,
+         'この割合が「② 実際に払わなくなった残業代」になり、残りが「③ 空いた時間の機会価値」になります','％')+
+     row('自分の社内時給（投資側）','wageMe',c.wageMe,'開発・保守にかけた自分の時間を金額に直すための単価','円/時')+
+     '</tbody></table></div>';
+
+  h+='<h3>Claude Code のライセンス費</h3><div class="rtw cfg"><table class="rt"><tbody>'+
+     row('契約席数','lic.seats',c.lic.seats,'','席')+
+     row('1席あたり月額','lic.monthly',c.lic.monthly,'','円/月')+
+     '<tr><td class="l">年額</td><td class="num">'+yenTxt(T.licYear)+' <span class="mut">円</span></td></tr>'+
+     '</tbody></table></div>'+
+     '<div class="lead" style="margin-top:8px">年額は各ツールの<b>開発時間の比</b>で按分して、'+
+     'それぞれの投資額に乗せています（今の按分対象は合計 '+hh(T.bh)+'h）。</div>';
+
+  h+='<h3>稼働ログ（実測）</h3>';
+  if(!E||!E.months||!Object.keys(E.months).length){
+    h+='<div class="warn">まだ読み込まれていません。<br>'+
+       '1) <b>00_現役ツール\\スクリプト\\稼働時間を集計.bat</b> をダブルクリック<br>'+
+       '2) できた <b>00_現役ツール\\HTML\\稼働ログ.json</b> を、この画面にドラッグ＆ドロップ<br>'+
+       'セッション記録から自動で集計するので、手入力は不要です。月に1回で十分です。</div>';
+  }else{
+    var ms=Object.keys(E.months).sort();
+    h+='<div class="lead">'+esc(E.generated||'')+' 時点。イベントの間隔が'+(E.idleMin||15)+
+       '分を超えた分は稼働に数えていません（席を離れていた時間を除くため、実際よりやや短く出ます）。</div>';
+    h+='<div class="rtw cfg"><table class="rt"><thead><tr>'+
+       '<th class="l">月</th><th>セッション</th><th>稼働h</th><th>指示回数</th></tr></thead><tbody>';
+    ms.forEach(function(m){
+      var v=E.months[m];
+      h+='<tr><td class="l">'+esc(m)+'</td><td class="num">'+(v.sessions||0)+'</td>'+
+         '<td class="num">'+hh(v.h)+'</td><td class="num">'+(v.turns||0)+'</td></tr>';
+    });
+    var t=E.total||{};
+    h+='</tbody><tfoot><tr><td class="l">合計</td><td>'+(t.sessions||0)+'</td>'+
+       '<td>'+hh(t.h)+'</td><td>'+(t.turns||0)+'</td></tr></tfoot></table></div>';
+    h+='<div class="lead" style="margin-top:8px">成果物 '+(E.files||[]).length+
+       '件に割り当て済み。うち今の対象ツールに紐づいたのは <b>'+hh(T.bh)+'h</b> です。'+
+       '紐づかない分（他部署向けの単発資料や検証など）は、どのツールの投資にも乗せていません。</div>';
+  }
+  $('paneInv').innerHTML=h;
+}
+function yenTxt(v){ return Math.round(+v||0).toLocaleString('ja-JP'); }
+
+$('paneInv').addEventListener('change',function(e){
+  var el=e.target.closest('[data-cfg]'); if(!el) return;
+  var k=el.getAttribute('data-cfg');
+  var v=(el.type==='number')? (el.value===''?0:(+el.value||0)) : el.value;
+  cfgSave(function(c){
+    var p=k.split('.');
+    if(p.length===2){ if(!c[p[0]]) c[p[0]]={}; c[p[0]][p[1]]=v; }
+    else c[k]=v;
+  });
+  renderInv(); tabBadges();
+});
+
+/* ── SaaS単価タブ ── */
+function renderSaas(){
+  var c=cfgGet();
+  var h='<div class="lead">ここは<b>空のまま出荷しています</b>。SaaSの価格は改定が多く、'+
+    '推測値を入れたまま経営層に出すと一番危ない箇所なので、'+
+    '<b>自分が公式サイトで確認した値だけ</b>を入れてください。<br>'+
+    '金額が入っているのに<b>確認日が空</b>だと「要確認」が付き、経営報告にも注記が出ます。</div>';
+  h+='<div class="rtw"><table class="rt"><thead><tr>'+
+     '<th class="l">代替の種類</th><th>円/人/月</th><th>初期費・一時金 円</th>'+
+     '<th class="l">出典URL</th><th class="l">確認日</th><th class="l">状態</th>'+
+     '</tr></thead><tbody>';
+  SAAS_DEF.forEach(function(s){
+    var v=c.saas[s.k], has=(v.per>0||v.init>0);
+    var stat = !has ? '<span class="mut">未入力</span>'
+             : (v.srcdate ? '<span class="cbadge cA">確認済み</span>'
+                          : '<span class="cbadge cB">要確認</span>');
+    h+='<tr><td class="l">'+s.label+'</td>'+
+       '<td><input class="ni wide" type="number" min="0" step="1" data-saas="'+s.k+'.per" value="'+nv(v.per||'')+'"></td>'+
+       '<td><input class="ni wide" type="number" min="0" step="1" data-saas="'+s.k+'.init" value="'+nv(v.init||'')+'"></td>'+
+       '<td class="l"><input class="tx" data-saas="'+s.k+'.src" value="'+esc(v.src)+'" placeholder="https://…"></td>'+
+       '<td class="l"><input class="ni wide" type="date" data-saas="'+s.k+'.srcdate" value="'+esc(v.srcdate)+'" style="width:130px;text-align:left"></td>'+
+       '<td class="l">'+stat+'</td></tr>';
+  });
+  h+='</tbody></table></div>';
+  h+='<div class="lead" style="margin-top:14px">'+
+     '「受託開発（スクラッチ）」は席数ではなく一時金なので、<b>初期費</b>だけに開発費の見積を入れてください。<br>'+
+     '各ツールがどの種類に当たるかは、効果タブの <b>…</b> の中で選びます。<br>'+
+     'SaaSには金額に出しにくいコストもあります（値上げ、解約時のデータ持ち出し、'+
+     'カスタマイズできないぶん業務側が折れる分）。それは効果タブの根拠メモに書いておくと、'+
+     '経営会議で必ず効きます。</div>';
+  $('paneSaas').innerHTML=h;
+}
+$('paneSaas').addEventListener('change',function(e){
+  var el=e.target.closest('[data-saas]'); if(!el) return;
+  var p=el.getAttribute('data-saas').split('.');
+  var v=(el.type==='number')? (el.value===''?0:(+el.value||0)) : el.value.trim();
+  cfgSave(function(c){
+    if(!c.saas) c.saas={};
+    if(!c.saas[p[0]]) c.saas[p[0]]={};
+    c.saas[p[0]][p[1]]=v;
+  });
+  renderSaas();
+});
+
+/* ── 経営報告タブ ── */
+function kpiBox(lab,val,unit,cls,sub){
+  return '<div class="kpi '+(cls||'')+'"><div class="lab">'+lab+'</div>'+
+    '<div class="val">'+val+(unit?'<span class="u">'+unit+'</span>':'')+'</div>'+
+    '<div class="sub">'+(sub||'&nbsp;')+'</div></div>';
+}
+function barRow(lab,disp,ratio,cls,note){
+  var w=Math.max(0,Math.min(100,(ratio||0)*100));
+  return '<div class="brow"><div class="bl">'+lab+'</div>'+
+    '<div class="bt"><div class="bf '+(cls||'')+'" style="width:'+w.toFixed(1)+'%"></div></div>'+
+    '<div class="bv">'+disp+(note?'<small> '+note+'</small>':'')+'</div></div>';
+}
+function dltTxt(p,k,cur,unit){
+  if(!p||!p.kpi||p.kpi[k]==null) return '';
+  var d=cur-(+p.kpi[k]||0);
+  if(Math.abs(d)<(unit==='h'?0.05:500)) return '<span class="dlt">'+p.ym+'比 ±0</span>';
+  var v=(unit==='h')?hh(Math.abs(d))+'h':man(Math.abs(d))+'万円';
+  return '<span class="dlt '+(d>0?'up':'dn')+'">'+p.ym+'比 '+(d>0?'＋':'−')+v+'</span>';
+}
+function radarSVG(vals){
+  var n=vals.length, cx=100, cy=100, R=74, i, a, pts=[], grid='';
+  [1,.75,.5,.25].forEach(function(s){
+    var p=[];
+    for(i=0;i<n;i++){ a=-Math.PI/2+i*2*Math.PI/n;
+      p.push((cx+R*s*Math.cos(a)).toFixed(1)+','+(cy+R*s*Math.sin(a)).toFixed(1)); }
+    grid+='<polygon points="'+p.join(' ')+'" fill="none" stroke="#ddd6c7" stroke-width="1"/>';
+  });
+  for(i=0;i<n;i++){ a=-Math.PI/2+i*2*Math.PI/n;
+    grid+='<line x1="100" y1="100" x2="'+(cx+R*Math.cos(a)).toFixed(1)+'" y2="'+
+          (cy+R*Math.sin(a)).toFixed(1)+'" stroke="#ddd6c7" stroke-width="1"/>'; }
+  var dots='';
+  for(i=0;i<n;i++){
+    a=-Math.PI/2+i*2*Math.PI/n;
+    var r=R*Math.max(0,Math.min(1,(vals[i]||0)/5));
+    var x=(cx+r*Math.cos(a)).toFixed(1), y=(cy+r*Math.sin(a)).toFixed(1);
+    pts.push(x+','+y);
+    dots+='<circle cx="'+x+'" cy="'+y+'" r="2.6" fill="#2f4858"/>';
+  }
+  return '<svg viewBox="0 0 200 200" width="196" height="196" aria-hidden="true">'+grid+
+    '<polygon points="'+pts.join(' ')+'" fill="rgba(47,72,88,.20)" stroke="#2f4858" stroke-width="2"/>'+
+    dots+'</svg>';
+}
+
+function renderExec(){
+  var A=calcAll(), c=A.c, T=A.T, p=prevSnap(), E=effortRec();
+  var sn=snaps();
+
+  $('execBtns').innerHTML=
+    '<button class="tbtn pri" id="btnSnap">'+ymJST()+' のスナップショットを保存</button>'+
+    '<button class="tbtn" id="btnExec">経営報告HTMLを書き出す</button>'+
+    '<span class="mut" style="font-size:.74rem">保存済み：'+
+      (sn.length?sn.map(function(s){return esc(s.ym);}).join('・'):'まだなし')+
+    '</span>';
+
+  var h='';
+  h+='<div class="ex-h"><h2>Claude Code 内製化の投資対効果</h2>'+
+     '<span class="asof">'+ymdJST()+' 時点／対象 業務ツール '+T.n+'件（効果算定済み '+T.filled+'件）</span></div>';
+  h+='<div class="ex-note">金額は「削減時間 × 時給」の一本値ではありません。'+
+     '<b>② 実際に払わなくなった残業代</b>と<b>③ 空いた時間の機会価値</b>に分けています。'+
+     '②は支出が消えた額、③は同じ人員でこなせる仕事が増えた分で、性質が違うためです。<br>'+
+     '数字の確度（実測／聞き取り／推定）に応じて 1.0／0.8／0.5 を掛けた保守値で載せています。</div>';
+
+  if(!T.filled){
+    h+='<div class="exempty">効果を算定したツールがまだ0件です。'+
+       '「効果」タブで対象人数・頻度・導入前後の時間を入れると、ここに数字が出ます。</div>';
+    $('execView').innerHTML=h;
+    bindExecBtns();
+    return;
+  }
+
+  h+='<div class="kpis">'+
+    kpiBox('① 年間削減時間',hh(T.H),'h','g',dltTxt(p,'H',T.H,'h')||('1人年 ≒ 1,900h 換算で '+hh(T.H/1900)+'人分'))+
+    kpiBox('② 残業削減（実際に消える支出）',man(T.cash),'万円','g',dltTxt(p,'cash',T.cash)||'残業比率 '+(+c.otShare||0)+'％ で算定')+
+    kpiBox('③ 創出時間の価値',man(T.value),'万円','a',dltTxt(p,'value',T.value)||'同じ人員でこなせる仕事の増加分')+
+    kpiBox('投資額（初年度）',man(T.invest),'万円','r','開発 '+hh(T.bh)+'h ＋ 保守 '+hh(T.kh)+'h/年 ＋ ライセンス '+man(T.lic)+'万円')+
+    kpiBox('回収期間',T.pay==null?'—':hh(T.pay),T.pay==null?'':'か月','p','②＋③ を月割りした場合')+
+    kpiBox('投資対効果',T.roi==null?'—':hh(T.roi),T.roi==null?'':'倍','p','（②＋③）÷ 投資額')+
+    '</div>';
+
+  /* 金額の内訳 */
+  var mx=Math.max(T.cash,T.value,T.invest,T.saas,1);
+  h+='<div class="exsec"><h3>金額の内訳（年額・初年度）</h3>'+
+     '<div class="bars">'+
+     barRow('② 残業削減',man(T.cash)+'<small>万円</small>',T.cash/mx,'g')+
+     barRow('③ 創出時間の価値',man(T.value)+'<small>万円</small>',T.value/mx,'a')+
+     barRow('投資額（自作）',man(T.invest)+'<small>万円</small>',T.invest/mx,'r')+
+     (T.saas>0?barRow('SaaS・外注で代替した場合',man(T.saas)+'<small>万円</small>',T.saas/mx,''):'')+
+     '</div>';
+  if(T.avoid!=null){
+    h+='<div class="d" style="margin-top:10px">同じ仕組みをSaaS・外注で揃えると初年度 <b>'+man(T.saas)+
+       '万円</b>。自作の投資額 <b>'+man(T.invest)+'万円</b> との差 <b>'+man(T.avoid)+
+       '万円</b> が、支出せずに済んだ額です。'+
+       (T.saasWarn?'<span class="flag">単価の確認日が未記入の項目あり</span>':'')+'</div>';
+  }
+  h+='</div>';
+
+  /* 月次の投入時間（実測） */
+  if(E&&E.months&&Object.keys(E.months).length){
+    var ms=Object.keys(E.months).sort().slice(-14);
+    var mmax=1; ms.forEach(function(m){ mmax=Math.max(mmax,+E.months[m].h||0); });
+    h+='<div class="exsec"><h3>開発に投じた時間の推移（実測）</h3>'+
+       '<div class="d">Claude Code のセッション記録から自動集計。'+
+       '間隔が'+(E.idleMin||15)+'分を超えた時間は除いてあるので、実際の作業時間よりやや短く出ます。</div>'+
+       '<div class="mbars">'+ms.map(function(m){
+         var v=+E.months[m].h||0;
+         return '<div class="mb"><div class="mv">'+hh(v)+'</div>'+
+           '<div class="mf" style="height:'+(v/mmax*100).toFixed(1)+'%"></div>'+
+           '<div class="ml">'+esc(m.slice(2))+'</div></div>';
+       }).join('')+'</div>'+
+       '<div class="d" style="margin-top:8px">累計 <b>'+hh((E.total||{}).h)+'h</b>／'+
+       ((E.total||{}).sessions||0)+'セッション／指示 '+((E.total||{}).turns||0)+'回。</div></div>';
+  }
+
+  /* 定性評価 */
+  var qv=[], qhas=false;
+  QAX.forEach(function(a){
+    var s=T.q[a.k], v=s.n?s.s/s.n:0;
+    if(s.n) qhas=true;
+    qv.push(v);
+  });
+  if(qhas){
+    h+='<div class="exsec"><h3>金額に出ない効果（0〜5・算定済みツールの平均）</h3><div class="radar">'+
+       radarSVG(qv)+'<div class="rleg">'+QAX.map(function(a,i){
+         var s=T.q[a.k];
+         return a.l+'<b>'+(s.n?hh(qv[i]):'—')+'</b>'+
+           (s.n?'<span class="dlt"> '+s.n+'件</span>':'');
+       }).join('<br>')+'</div></div></div>';
+  }
+
+  /* ツール別 */
+  var fr=A.rows.filter(function(r){return r.filled;}).sort(function(a,b){return b.gain-a.gain;});
+  h+='<div class="exsec"><h3>ツール別の内訳</h3><div class="exwrap"><table class="extab"><thead><tr>'+
+     '<th class="l">ツール</th><th class="l">確度</th><th>年間<br>削減h</th><th>②残業<br>万円</th>'+
+     '<th>③創出<br>万円</th><th>投資<br>万円</th><th>回収<br>か月</th><th>SaaS代替<br>万円</th>'+
+     '<th>回避できる額<br>万円</th></tr></thead><tbody>';
+  fr.forEach(function(r){
+    var cf=(r.it.roi||{}).conf||'C';
+    h+='<tr><td class="l">'+esc(r.it.name)+'</td>'+
+       '<td class="l"><span class="cbadge c'+cf+'">'+confL(cf)+'</span></td>'+
+       '<td class="num">'+hh(r.H)+'</td>'+
+       '<td class="num'+(r.cash?'':' z')+'">'+man(r.cash)+'</td>'+
+       '<td class="num'+(r.value?'':' z')+'">'+man(r.value)+'</td>'+
+       '<td class="num'+(r.invest?'':' z')+'">'+man(r.invest)+'</td>'+
+       '<td class="num'+(r.pay==null?' z':'')+'">'+(r.pay==null?'—':hh(r.pay))+'</td>'+
+       '<td class="num'+(r.saasOk?'':' z')+'">'+(r.saasOk?man(r.saas):'—')+'</td>'+
+       '<td class="num'+(r.avoid==null?' z':'')+'">'+(r.avoid==null?'—':man(r.avoid))+'</td></tr>';
+  });
+  h+='</tbody><tfoot><tr><td class="l">合計</td><td></td><td>'+hh(T.H)+'</td><td>'+man(T.cash)+
+     '</td><td>'+man(T.value)+'</td><td>'+man(T.invest)+'</td><td>'+(T.pay==null?'—':hh(T.pay))+
+     '</td><td>'+(T.saas?man(T.saas):'—')+'</td><td>'+(T.avoid==null?'—':man(T.avoid))+
+     '</td></tr></tfoot></table></div></div>';
+
+  /* 前提と注記 */
+  h+='<div class="exfoot">'+
+     '<b>前提</b>　人件費単価（円/時）：'+ROLE.map(function(r){
+        return r.l+' '+yenTxt(c.wage[r.k]);
+     }).join('／')+'　残業単価 '+yenTxt(c.otRate)+'／削減時間のうち残業だった割合 '+(+c.otShare||0)+'％'+
+     '　自分の社内時給 '+yenTxt(c.wageMe)+'　Claude Code ライセンス '+yenTxt(T.licYear)+'円/年'+
+     '（各ツールへは開発時間の比で按分）<br>'+
+     '<b>確度の内訳</b>　実測 '+(T.conf.A||0)+'件／聞き取り '+(T.conf.B||0)+'件／推定 '+(T.conf.C||0)+
+     '件。金額にはそれぞれ 1.0／0.8／0.5 を掛けています。<br>'+
+     '<b>この表に入れていないもの</b>　私物・個人利用のツール、採用に至らなかった試作、'+
+     '運用を終えたもの。効果を算定していない '+(T.n-T.filled)+'件も金額には入っていません'+
+     '（入れれば数字はさらに増えます）。<br>'+
+     '<b>開発時間の数え方</b>　Claude Code のセッション記録から自動集計。'+
+     '間隔が'+((E&&E.idleMin)||15)+'分を超えた時間は稼働に数えていません。'+
+     '</div>';
+
+  $('execView').innerHTML=h;
+  bindExecBtns();
+}
+function bindExecBtns(){
+  var a=$('btnSnap'); if(a) a.onclick=snapSave;
+  var b=$('btnExec'); if(b) b.onclick=execExport;
+}
+
+/* 経営報告の書き出し。画面に出ているものをそのまま単体HTMLにする。
+   合言葉ゲートもFirebaseも入らないので、Netlifyに置けば経営層がそのまま開ける。 */
+var EXPORT_BASE=
+ '*{box-sizing:border-box;margin:0;padding:0}'+
+ "body{font-family:'Zen Kaku Gothic New','Yu Gothic UI','Hiragino Kaku Gothic ProN',sans-serif;"+
+ 'background:#f4f1ea;color:#22201c;font-size:14px;line-height:1.6;-webkit-font-smoothing:antialiased}'+
+ '.wrap{max-width:1180px;margin:0 auto;padding:28px 24px 64px}'+
+ '.flag{font-size:.64rem;padding:0 5px;border-radius:2px;border:1px solid #a3762a;color:#a3762a;margin-left:4px}'+
+ '.mut{color:#8b8477;font-size:.7rem}'+
+ '@media print{body{background:#fff}.wrap{padding:0;max-width:none}@page{size:A4 landscape;margin:9mm}}';
+
+function execExport(){
+  var A=calcAll();
+  if(!A.T.filled){ toast('効果を算定したツールが0件です。先に効果タブを埋めてください'); return; }
+  var css=$('execCss').textContent;
+  var body=$('execView').innerHTML;
+  var ttl='投資対効果レポート '+ymJST();
+  var doc='<!DOCTYPE html>\n<html lang="ja">\n<head>\n<meta charset="UTF-8">\n'+
+    '<meta name="viewport" content="width=device-width, initial-scale=1.0">\n'+
+    '<meta name="robots" content="noindex, nofollow, noarchive">\n'+
+    '<!-- URL台帳の経営報告タブから書き出し | '+ymdJST()+' -->\n'+
+    '<title>'+ttl+'</title>\n'+
+    '<link rel="preconnect" href="https://fonts.googleapis.com">\n'+
+    '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>\n'+
+    '<link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@400;500;700'+
+    '&family=Zen+Old+Mincho:wght@700&display=swap" rel="stylesheet">\n'+
+    '<style>\n'+EXPORT_BASE+'\n'+css+'\n</style>\n</head>\n<body>\n<div class="wrap">\n'+
+    body+'\n</div>\n</body>\n</html>';
+  var a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([doc],{type:'text/html;charset=utf-8'}));
+  a.download='経営報告_投資対効果_'+ymJST()+'.html';
+  a.click();
+  toast('書き出しました。Netlifyに置けば合言葉なしで開けます');
+}
+
+/* 起動時のタブ復帰 */
+try{ var _t=localStorage.getItem('url_ledger_tab'); if(_t) st.tab=_t; }catch(e){}
+
 boot();
+if(st.tab && st.tab!=='ledger') setTab(st.tab);
 </script>
 </body>
 </html>
