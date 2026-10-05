@@ -198,6 +198,9 @@ const store={
   del(k){try{localStorage.removeItem(k)}catch(e){}}
 };
 const isTouch=matchMedia('(pointer:coarse)').matches;
+// スマホの内線は会社の Smart PBX アプリで掛ける。このリンクでアプリが開き、キーパッドに番号が入る
+// （NTT「Arcstar Smart PBX サービス連携に関するご案内」のURLスキーム）
+const PBX='com050voipbiz://keypad?tel=';
 
 let DB=null, yomi=store.get(YOMI)||{}, favs=new Set(store.get(FAV)||[]), filter='★', query='', term='', want='', showAll=false;
 
@@ -400,7 +403,8 @@ function renderChips(){
 function btn(kind,num,label,text){
   if(!num)return `<span class="call off"><small>${label}</small><b>—</b></span>`;
   const shown=text||(kind==='mob'?fmtTel(num):num);
-  return `<a class="call ${kind}" href="tel:${num}" data-n="${esc(shown)}"><small>${label}</small><b>${esc(shown)}</b></a>`;
+  const href=kind==='ext'&&isTouch?PBX+num:'tel:'+num;
+  return `<a class="call ${kind}" href="${href}" data-n="${esc(shown)}"><small>${label}</small><b>${esc(shown)}</b></a>`;
 }
 function cardPerson(p){
   const k=keyOf(p), on=favs.has(k);
@@ -523,6 +527,12 @@ function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('on');clea
 
 document.addEventListener('click',e=>{
   const call=e.target.closest('a.call');
+  if(call&&isTouch&&call.classList.contains('ext')){
+    // アプリが入っていない時のために番号もコピーしておく
+    try{navigator.clipboard&&navigator.clipboard.writeText(call.dataset.n).catch(()=>{})}catch(err){}
+    toast('Smart PBX で内線 '+call.dataset.n+' を開きます');
+    return;
+  }
   if(call&&!isTouch){
     // PCは電話を掛けられないことが多いので、番号をコピーする（Ctrl/⌘+クリックなら発信アプリへ）
     if(e.ctrlKey||e.metaKey)return;
