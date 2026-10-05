@@ -81,6 +81,21 @@ main{max-width:880px;margin:0 auto;padding:10px 16px 90px}
 .call.ext{background:#fff;border-color:var(--blue);color:var(--blue)}
 .call.off{background:transparent;border:1px dashed var(--line);color:var(--line2);cursor:default}
 .call:not(.off):active{transform:scale(.97)}
+/* 「◯◯さんの内線」への答え */
+.ans{background:#fff;border:1px solid var(--blue);border-radius:8px;padding:14px 14px 12px;margin:6px 0 12px;box-shadow:var(--shadow)}
+.ans-q{font-size:.8rem;color:var(--ink2);margin-bottom:8px}
+.ans-q b{font-size:1.15rem;color:var(--ink);letter-spacing:.03em}
+.ans .acts{gap:8px;flex-direction:column}
+.ans .call{flex:none;width:100%;height:60px;flex-direction:row;gap:10px}
+.ans .call small{font-size:.8rem;white-space:nowrap}
+.ans .call b{font-size:1.5rem;white-space:nowrap}
+.hint{font-size:.74rem;color:var(--ink3);padding:4px 2px 0}
+/* 内線だけ・携帯だけの表示は1行に収めて一覧性を上げる */
+.one .card{flex-wrap:nowrap;padding:6px 6px 6px 4px}
+.one .who{flex-basis:auto}
+.one .acts{flex-basis:auto;padding-left:0}
+.one .call{flex:0 0 auto;min-width:104px}
+.ans .call.ext,.ans .call.mob{flex:none}
 .empty{text-align:center;color:var(--ink3);padding:40px 10px;font-size:.88rem}
 .more{display:block;margin:6px auto 0;padding:8px 18px}
 
@@ -133,7 +148,7 @@ input[type=file]{display:none}
       <button class="tbtn" id="btnUpd">更新</button>
     </div>
     <div class="search">
-      <input id="q" type="text" placeholder="名前・部署・番号で探す" autocomplete="off" enterkeyhint="search">
+      <input id="q" type="text" placeholder="例：中澤さんの内線 ／ 内線 ／ 総務" autocomplete="off" enterkeyhint="search">
       <button class="clr" id="clr" aria-label="クリア">×</button>
     </div>
     <div class="chips" id="chips"></div>
@@ -180,7 +195,7 @@ const store={
 };
 const isTouch=matchMedia('(pointer:coarse)').matches;
 
-let DB=null, favs=new Set(store.get(FAV)||[]), filter='★', query='', showAll=false;
+let DB=null, favs=new Set(store.get(FAV)||[]), filter='★', query='', term='', want='', showAll=false;
 
 /* ── 文字の正規化 ── */
 const half=s=>String(s??'').normalize('NFKC');
@@ -197,6 +212,20 @@ const fmtTel=d=>{
   if(/^0[789]0\d{8}$/.test(d))return d.replace(/(\d{3})(\d{4})(\d{4})/,'$1-$2-$3');
   return d;
 };
+
+/* ── 「中澤さんの内線教えて」を 名前＋欲しい番号 に読み解く ── */
+// 番号データはこの端末の外へ出さないので、AIではなく決まった言い回しを取り除いて読む
+const KIND=[[/内線|ないせん/g,'ext'],[/携帯|ケータイ|けいたい|スマホ|ケイタイ/g,'mob']];
+function parseAsk(q){
+  let s=half(q).trim(), w='';
+  for(const [re,k] of KIND){if(s.search(re)>=0){w=w&&w!==k?'':(w||k);s=s.replace(re,' ')}}
+  s=s.replace(/(を|が)?(教えて|おしえて|知りたい|しりたい|調べて|しらべて|探して|さがして|下さい|ください|お願い|おねがい|頂戴|ちょうだい|は何番|って何番|何番|なんばん|ある|かけたい|掛けたい)/g,' ')
+     .replace(/電話番号|電話|でんわ|番号|ばんごう|連絡先/g,' ')
+     .replace(/[?？!！。、,，]/g,' ');
+  // 名前の後ろの敬称・助詞（「中澤さんの」「中澤部長の」）を外す
+  s=s.split(/\s+/).map(t=>t.replace(/(の|は|を|って|に|へ)+$/,'').replace(/(さん|さま|様|くん|君|ちゃん|氏|殿|部長|課長|係長|主任|所長|支店長|社長|専務|常務)$/,'').replace(/(の|は)+$/,'')).filter(Boolean).join(' ');
+  return {term:s.trim(),want:w};
+}
 
 /* ── Excel 読み込み ── */
 function loadSheetJS(){
@@ -317,7 +346,19 @@ function cardPerson(p){
   const sub=[p.office?'':p.sec,p.dept,p.note].filter(Boolean).join(' / ');
   return `<div class="card"><button class="star${on?' on':''}" data-k="${esc(k)}" aria-label="お気に入り">${on?'★':'☆'}</button>
     <div class="who"><div class="nm">${esc(p.name)}</div><div class="dp">${esc(sub)}</div></div>
-    <div class="acts">${btn('mob',p.mob,'携帯')}${btn('ext',p.ext,'内線')}</div></div>`;
+    <div class="acts">${acts(p)}</div></div>`;
+}
+// 「内線」と聞かれたら内線だけ、「携帯」なら携帯だけを出す
+function acts(p){
+  if(want==='ext')return btn('ext',p.ext,'内線');
+  if(want==='mob')return btn('mob',p.mob,'携帯');
+  return btn('mob',p.mob,'携帯')+btn('ext',p.ext,'内線');
+}
+function answer(p){
+  const sub=[p.office?'':p.sec,p.dept].filter(Boolean).join(' / ');
+  const what=want==='ext'?'の内線':want==='mob'?'の携帯':'の番号';
+  return `<div class="ans"><div class="ans-q"><b>${esc(p.name)}</b> さん${what}　<span>${esc(sub)}</span></div>
+    <div class="acts">${acts(p)}</div></div>`;
 }
 function cardOffice(o){
   const k='拠点:'+o.name, on=favs.has(k);
@@ -326,8 +367,8 @@ function cardOffice(o){
     <div class="acts">${btn('mob',o.tel,'代表',o.telText)}</div></div>`;
 }
 function matches(item,isOffice){
-  if(!query)return true;
-  const qd=digits(query), qf=fold(query);
+  if(!term)return true;
+  const qd=digits(term), qf=fold(term);
   const hay=isOffice?fold(item.name+item.addr):fold([item.name,item.sec,item.dept,item.note].join(''));
   if(qf&&hay.includes(qf))return true;
   if(qd.length>=2){const nums=isOffice?[item.tel,item.fax]:[item.mob,item.ext,item.no];return nums.some(n=>n&&digits(n).includes(qd))}
@@ -368,8 +409,17 @@ function render(){
     html+=`<div class="grp-h">${esc(g)}<span>${cards.length}</span></div>`+take.join('');n+=take.length;
   }
   const total=groups.reduce((a,g)=>a+g[1].length,0);
-  if(!total)html=`<div class="empty">「${esc(query)}」に当てはまる人はいません。</div>`;
-  else if(n<total)html+=`<button class="tbtn more" id="more">残り ${total-n} 件を表示</button>`;
+  if(!total)html=`<div class="empty">「${esc(term||query)}」に当てはまる人はいません。<br><small>名前は漢字の一部（例：中澤→「中澤」「中沢」）で探せます。ひらがなの読みでは探せません。</small></div>`;
+  else{
+    if(n<total)html+=`<button class="tbtn more" id="more">残り ${total-n} 件を表示</button>`;
+    // 名前で1人に絞れたら、答えを一番上に大きく出す
+    if(term&&f!=='★'){
+      const hit=DB.people.filter(p=>matches(p,false));
+      if(hit.length===1)html=total===1?answer(hit[0]):answer(hit[0])+html;
+      else if(hit.length>1&&hit.length<=8)html=`<div class="hint">${hit.length}人見つかりました。</div>`+html;
+    }
+  }
+  $('#main').classList.toggle('one',!!want);
   $('#main').innerHTML=html;
 }
 
@@ -423,17 +473,18 @@ document.addEventListener('click',e=>{
   if(st){const k=st.dataset.k;favs.has(k)?favs.delete(k):favs.add(k);store.set(FAV,[...favs]);
     st.classList.toggle('on');st.textContent=favs.has(k)?'★':'☆';if(filter==='★'&&!query)render();return}
   const ch=e.target.closest('[data-f]');
-  if(ch){filter=ch.dataset.f;showAll=false;if(query){query='';$('#q').value='';$('#clr').classList.remove('on')}render();scrollTo(0,0);return}
+  if(ch){filter=ch.dataset.f;showAll=false;if(query){setQuery('');$('#q').value='';$('#clr').classList.remove('on')}render();scrollTo(0,0);return}
   if(e.target.id==='more'){showAll=true;render();return}
   if(e.target.closest('#drop'))$('#file').click();
 });
-$('#q').addEventListener('input',e=>{query=e.target.value.trim();showAll=false;$('#clr').classList.toggle('on',!!query);render()});
+function setQuery(v){query=v.trim();({term,want}=parseAsk(query))}
+$('#q').addEventListener('input',e=>{setQuery(e.target.value);showAll=false;$('#clr').classList.toggle('on',!!query);render()});
 $('#q').addEventListener('keydown',e=>{
   // Enterで先頭の人の携帯（なければ内線）へ
   if(e.key!=='Enter')return;
   const first=$('#main a.call');if(first){e.preventDefault();first.click()}
 });
-$('#clr').onclick=()=>{$('#q').value='';query='';$('#clr').classList.remove('on');render();$('#q').focus()};
+$('#clr').onclick=()=>{$('#q').value='';setQuery('');$('#clr').classList.remove('on');render();$('#q').focus()};
 $('#btnUpd').onclick=openSheet;
 $('#btnClose').onclick=closeSheet;
 $('#sheet').addEventListener('click',e=>{if(e.target.id==='sheet')closeSheet()});
@@ -458,6 +509,9 @@ document.addEventListener('keydown',e=>{
   if(DB&&DB===emb)store.set(KEY,emb);
   if(DB&&DB.people){
     pickStartFilter();
+    // ポータル等から naisen.html?q=中澤 や ?q=内線 で開いたら、その検索ですぐ表示する
+    const pq=new URLSearchParams(location.search).get('q')||'';
+    if(pq){$('#q').value=pq;setQuery(pq);$('#clr').classList.add('on')}
     render();
     if(!isTouch)$('#q').focus();
   }else{DB=null;renderIntro()}
