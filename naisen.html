@@ -20,7 +20,7 @@
 :root{
   --paper:#F8FAFC; --paper2:#ffffff; --line:#E2E8F0; --line2:#CBD5E1;
   --ink:#22201c; --ink2:#5c574d; --ink3:#8b8477;
-  --red:#b23a26; --blue:#2f4858; --green:#0EA5E9; --amber:#a3762a;
+  --red:#b23a26; --blue:#2f4858; --call:#075985; --call-d:#0C4A6E; --amber:#a3762a;
   --shadow:0 1px 0 rgba(0,0,0,.04), 0 8px 24px -14px rgba(40,35,25,.4);
 }
 *{box-sizing:border-box;margin:0;padding:0}
@@ -76,10 +76,11 @@ main{max-width:880px;margin:0 auto;padding:10px 16px 90px}
 .acts{display:flex;gap:6px;flex-shrink:0}
 .call{display:flex;flex-direction:column;align-items:center;justify-content:center;min-width:84px;height:48px;
   border-radius:5px;border:1px solid;cursor:pointer;padding:0 8px;line-height:1.2;user-select:none}
-.call small{font-size:.62rem;letter-spacing:.1em;opacity:.8}
+.call small{font-size:.62rem;letter-spacing:.1em;opacity:.92}
 .call b{font-size:.86rem;font-variant-numeric:tabular-nums;letter-spacing:.01em;font-weight:700}
-.call.mob{background:var(--green);border-color:var(--green);color:#fff}
-.call.ext{background:#fff;border-color:var(--blue);color:var(--blue)}
+.call.mob{background:var(--call);border-color:var(--call);color:#fff}
+.call.mob:not(.off):active{background:var(--call-d)}
+.call.ext{background:#fff;border:1.5px solid var(--call);color:var(--call-d)}
 .call.off{background:transparent;border:1px dashed var(--line);color:var(--line2);cursor:default}
 .call:not(.off):active{transform:scale(.97)}
 /* 「◯◯さんの内線」への答え */
@@ -105,9 +106,9 @@ main{max-width:880px;margin:0 auto;padding:10px 16px 90px}
   .card{flex-wrap:wrap;padding:6px 8px 8px 4px;gap:4px 6px}
   .who{flex-basis:calc(100% - 48px)}
   .acts{flex-basis:100%;padding-left:4px}
-  .call{flex:1;flex-direction:row;gap:8px;height:46px}
-  .call small{font-size:.7rem}
-  .call b{font-size:1rem}
+  .call{flex:1;flex-direction:row;gap:8px;height:52px}
+  .call small{font-size:.72rem}
+  .call b{font-size:1.12rem;letter-spacing:.02em}
   .call.ext{flex:0 0 38%}
   .call.mob:only-child{flex:1}
 }
