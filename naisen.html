@@ -5,20 +5,20 @@
 <meta name="generator" content="Claude">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<meta name="theme-color" content="#f4f1ea">
+<meta name="theme-color" content="#ffffff">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="内線帳">
 <meta name="robots" content="noindex, nofollow, noarchive">
 <meta name="format-detection" content="telephone=no">
 <title>内線・携帯帳</title>
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23f4f1ea'/%3E%3Crect x='5' y='5' width='5' height='22' fill='%23b23a26'/%3E%3Cpath d='M14 9c0-1 1-2 2-2h2l2 5-2 2c1 2 3 4 5 5l2-2 5 2v2c0 1-1 2-2 2C20 23 14 17 14 9z' fill='%2322201c'/%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23ffffff'/%3E%3Crect x='5' y='5' width='5' height='22' fill='%23b23a26'/%3E%3Cpath d='M14 9c0-1 1-2 2-2h2l2 5-2 2c1 2 3 4 5 5l2-2 5 2v2c0 1-1 2-2 2C20 23 14 17 14 9z' fill='%2322201c'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@400;500;700&family=Zen+Old+Mincho:wght@700&display=swap" rel="stylesheet">
 <style>
 :root{
-  --paper:#f4f1ea; --paper2:#fffdf8; --line:#ddd6c7; --line2:#c8bfab;
+  --paper:#ffffff; --paper2:#ffffff; --line:#ddd6c7; --line2:#c8bfab;
   --ink:#22201c; --ink2:#5c574d; --ink3:#8b8477;
   --red:#b23a26; --blue:#2f4858; --green:#4a7a52; --amber:#a3762a;
   --shadow:0 1px 0 rgba(0,0,0,.04), 0 8px 24px -14px rgba(40,35,25,.4);
@@ -68,7 +68,8 @@ main{max-width:880px;margin:0 auto;padding:10px 16px 90px}
 .card{display:flex;align-items:center;gap:8px;background:var(--paper2);border:1px solid var(--line);
   border-radius:5px;padding:8px 8px 8px 12px;margin-bottom:6px}
 .who{flex:1;min-width:0}
-.nm{font-weight:700;font-size:1rem;letter-spacing:.03em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nm{cursor:pointer;font-weight:700;font-size:1rem;letter-spacing:.03em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.kn{font-size:.68rem;color:var(--ink3);font-weight:400;letter-spacing:.02em;margin-left:6px}
 .dp{font-size:.72rem;color:var(--ink3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .star{border:none;background:none;font-size:1.15rem;width:34px;height:40px;cursor:pointer;color:var(--line2);flex-shrink:0}
 .star.on{color:var(--amber)}
@@ -160,7 +161,7 @@ input[type=file]{display:none}
 <div class="sheet" id="sheet">
   <div class="sbox">
     <h2>データの更新</h2>
-    <p>毎月の新しい一覧表（Excel）を選ぶだけで入れ替わります。★お気に入りは名前で引き継がれます。</p>
+    <p>毎月の新しい一覧表（Excel）を選ぶだけで入れ替わります。★お気に入りと、名前をタップして直した読みは、名前で引き継がれます。</p>
     <button class="tbtn pri" id="btnPick2">新しいExcelを選ぶ</button>
     <h3>いま入っているデータ</h3>
     <div class="kv" id="info"></div>
@@ -181,8 +182,10 @@ input[type=file]{display:none}
 
 <script>
 'use strict';
-const KEY='naisen.v1', FAV='naisen.fav.v1', LIMIT=120;
+const KEY='naisen.v1', FAV='naisen.fav.v1', YOMI='naisen.yomi.v1', LIMIT=120;
 const SHEETJS='https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
+// ふりがなの自動付与（読み込んだ端末の中で解析する。名前はどこにも送らない）
+const KUROMOJI='https://cdn.jsdelivr.net/npm/kuromoji@0.1.2/build/kuromoji.js', KDICT='https://cdn.jsdelivr.net/npm/kuromoji@0.1.2/dict/';
 // 配布用ファイルを作るため、描画前の素のHTMLを控えておく
 const PRISTINE='<!DOCTYPE html>\n'+document.documentElement.outerHTML;
 
@@ -195,7 +198,7 @@ const store={
 };
 const isTouch=matchMedia('(pointer:coarse)').matches;
 
-let DB=null, favs=new Set(store.get(FAV)||[]), filter='★', query='', term='', want='', showAll=false;
+let DB=null, yomi=store.get(YOMI)||{}, favs=new Set(store.get(FAV)||[]), filter='★', query='', term='', want='', showAll=false;
 
 /* ── 文字の正規化 ── */
 const half=s=>String(s??'').normalize('NFKC');
@@ -213,13 +216,68 @@ const fmtTel=d=>{
   return d;
 };
 
+/* ── ふりがな ── */
+const toHira=s=>half(s).replace(/[\u30a1-\u30f6]/g,c=>String.fromCharCode(c.charCodeAt(0)-0x60));
+const isKana=s=>/^[\u3041-\u3096\u30a1-\u30fa\u30fc\s]+$/.test(half(s));
+// 濁点・小さい字・長音を無視して比べる（なかさわ＝なかざわ）
+const SMALL={'ぁ':'あ','ぃ':'い','ぅ':'う','ぇ':'え','ぉ':'お','っ':'つ','ゃ':'や','ゅ':'ゆ','ょ':'よ','ゎ':'わ','ゕ':'か','ゖ':'け'};
+const kfold=s=>toHira(s).normalize('NFD').replace(/[\u3099\u309a\s\u30fc]/g,'').replace(/./g,c=>SMALL[c]||c).normalize('NFC');
+// 画面で教えた読みは名前で覚えておき、毎月Excelを入れ替えても引き継ぐ
+const yomiOf=p=>yomi[tight(p.name)]||p.kana||'';
+
+function loadKuromoji(){
+  return new Promise((ok,ng)=>{
+    const go=()=>kuromoji.builder({dicPath:KDICT}).build((e,t)=>e?ng(e):ok(t));
+    if(window.kuromoji)return go();
+    const s=document.createElement('script');s.src=KUROMOJI;s.onload=go;s.onerror=()=>ng(new Error('ふりがなの部品を取得できませんでした'));document.head.appendChild(s);
+  });
+}
+// 解析の辞書で読み違えやすい名字（信州に多いもの中心）。| は別の読みで、検索ではどちらでも引ける
+const SEI=Object.fromEntries(('等々力:とどろき,有賀:あるが|ありが,赤羽:あかはね|あかば,武居:たけい,春日:かすが,征矢:そや,降旗:ふりはた|ふるはた,'
+ +'小口:おぐち|こぐち,両角:もろずみ,上条:かみじょう,唐沢:からさわ,小穴:おあな,河西:かさい,二木:ふたつぎ,浅輪:あさわ,胡桃沢:くるみざわ,'
+ +'下平:しもだいら,小平:こだいら,平出:ひらいで,百瀬:ももせ,中沢:なかざわ|なかさわ,宮沢:みやざわ,北沢:きたざわ,柳沢:やなぎさわ,滝沢:たきざわ,'
+ +'山崎:やまざき|やまさき,東海林:しょうじ,一ノ瀬:いちのせ,三溝:みつみぞ,倉科:くらしな,牛山:うしやま,宮坂:みやさか,塩原:しおはら,笠原:かさはら,'
+ +'古畑:ふるはた,矢島:やじま,鳥羽:とば,草間:くさま,樋口:ひぐち,五味:ごみ,小松:こまつ,竹内:たけうち,丸山:まるやま,宮下:みやした')
+ .split(',').map(x=>{const [k,v]=x.split(':');return [k,v.split('|')]}));
+// 名字は全部読めた時だけ、下の名前は名前の辞書に1語で載っている時だけ読みを付ける
+// （下の名前は読み違いが多いので、間違った読みで出すより出さない。画面で教えれば覚える）
+function kanaOf(tk,name){
+  const [sei,...rest]=name.split(' ').map(x=>fold(x));
+  let k1='',alt='';
+  if(SEI[sei]){[k1,...alt]=SEI[sei];alt=alt.join('|')}
+  else{
+    for(const t of tk.tokenize(sei)){
+      if(t.reading&&t.reading!=='*')k1+=t.reading;
+      else if(isKana(t.surface_form))k1+=t.surface_form;
+      else{k1='';break}
+    }
+  }
+  let k2='';
+  const mei=rest.join('');
+  if(mei){
+    const ts=tk.tokenize(mei);
+    if(isKana(mei))k2=mei;
+    else if(ts.length===1&&ts[0].pos_detail_2==='人名'&&ts[0].reading&&ts[0].reading!=='*')k2=ts[0].reading;
+  }
+  return {kana:toHira([k1,k2].filter(Boolean).join(' ')),alt:toHira(alt)};
+}
+async function addKana(data){
+  try{
+    toast('ふりがなを付けています…（初回は少し時間がかかります）');
+    const tk=await loadKuromoji();
+    let n=0;
+    for(const p of data.people){if(p.office)continue;const r=kanaOf(tk,p.name);p.kana=r.kana;if(r.alt)p.kalt=r.alt;if(p.kana)n++}
+    return n;
+  }catch(err){console.error(err);return -1}
+}
+
 /* ── 「中澤さんの内線教えて」を 名前＋欲しい番号 に読み解く ── */
 // 番号データはこの端末の外へ出さないので、AIではなく決まった言い回しを取り除いて読む
 const KIND=[[/内線|ないせん/g,'ext'],[/携帯|ケータイ|けいたい|スマホ|ケイタイ/g,'mob']];
 function parseAsk(q){
   let s=half(q).trim(), w='';
   for(const [re,k] of KIND){if(s.search(re)>=0){w=w&&w!==k?'':(w||k);s=s.replace(re,' ')}}
-  s=s.replace(/(を|が)?(教えて|おしえて|知りたい|しりたい|調べて|しらべて|探して|さがして|下さい|ください|お願い|おねがい|頂戴|ちょうだい|は何番|って何番|何番|なんばん|ある|かけたい|掛けたい)/g,' ')
+  s=s.replace(/(を|が)?(教えて|おしえて|知りたい|しりたい|調べて|しらべて|探して|さがして|下さい|ください|お願い|おねがい|頂戴|ちょうだい|は何番|って何番|何番|なんばん|かけたい|掛けたい)/g,' ')
      .replace(/電話番号|電話|でんわ|番号|ばんごう|連絡先/g,' ')
      .replace(/[?？!！。、,，]/g,' ');
   // 名前の後ろの敬称・助詞（「中澤さんの」「中澤部長の」）を外す
@@ -309,11 +367,13 @@ async function readFile(f){
     const wb=XLSX.read(buf,{type:'array',cellDates:false});
     const data=parseWorkbook(wb);
     data.file=f.name; data.loadedAt=new Date().toISOString();
+    const kn=await addKana(data);
     const before=DB?DB.people.length:null;
     DB=data;
     if(!store.set(KEY,DB))alert('この端末に保存できませんでした（プライベートブラウズ等）。ページを閉じると消えます。');
     closeSheet(); pickStartFilter(); render();
-    toast(`${data.people.length}名を読み込みました`+(before!=null&&before!==data.people.length?`（前回 ${before}名）`:''));
+    toast(`${data.people.length}名を読み込みました`+(before!=null&&before!==data.people.length?`（前回 ${before}名）`:'')
+      +(kn<0?'。ふりがなは付けられませんでした':''));
   }catch(err){
     console.error(err);
     alert('読み込めませんでした。\n'+(err.message||err));
@@ -345,7 +405,7 @@ function cardPerson(p){
   const k=keyOf(p), on=favs.has(k);
   const sub=[p.office?'':p.sec,p.dept,p.note].filter(Boolean).join(' / ');
   return `<div class="card"><button class="star${on?' on':''}" data-k="${esc(k)}" aria-label="お気に入り">${on?'★':'☆'}</button>
-    <div class="who"><div class="nm">${esc(p.name)}</div><div class="dp">${esc(sub)}</div></div>
+    <div class="who"><div class="nm" data-y="${esc(p.name)}">${esc(p.name)}${p.office?'':`<span class="kn">${esc(yomiOf(p))}</span>`}</div><div class="dp">${esc(sub)}</div></div>
     <div class="acts">${acts(p)}</div></div>`;
 }
 // 「内線」と聞かれたら内線だけ、「携帯」なら携帯だけを出す
@@ -357,7 +417,7 @@ function acts(p){
 function answer(p){
   const sub=[p.office?'':p.sec,p.dept].filter(Boolean).join(' / ');
   const what=want==='ext'?'の内線':want==='mob'?'の携帯':'の番号';
-  return `<div class="ans"><div class="ans-q"><b>${esc(p.name)}</b> さん${what}　<span>${esc(sub)}</span></div>
+  return `<div class="ans"><div class="ans-q"><b class="nm" data-y="${esc(p.name)}">${esc(p.name)}</b> さん${what}　<span>${esc(sub)}</span></div>
     <div class="acts">${acts(p)}</div></div>`;
 }
 function cardOffice(o){
@@ -371,6 +431,7 @@ function matches(item,isOffice){
   const qd=digits(term), qf=fold(term);
   const hay=isOffice?fold(item.name+item.addr):fold([item.name,item.sec,item.dept,item.note].join(''));
   if(qf&&hay.includes(qf))return true;
+  if(!isOffice&&isKana(term)){const q=kfold(term);if([yomiOf(item),...(item.kalt||'').split('|')].some(y=>{const k=kfold(y);return k&&k.includes(q)}))return true}
   if(qd.length>=2){const nums=isOffice?[item.tel,item.fax]:[item.mob,item.ext,item.no];return nums.some(n=>n&&digits(n).includes(qd))}
   return false;
 }
@@ -409,7 +470,7 @@ function render(){
     html+=`<div class="grp-h">${esc(g)}<span>${cards.length}</span></div>`+take.join('');n+=take.length;
   }
   const total=groups.reduce((a,g)=>a+g[1].length,0);
-  if(!total)html=`<div class="empty">「${esc(term||query)}」に当てはまる人はいません。<br><small>名前は漢字の一部（例：中澤→「中澤」「中沢」）で探せます。ひらがなの読みでは探せません。</small></div>`;
+  if(!total)html=`<div class="empty">「${esc(term||query)}」に当てはまる人はいません。<br><small>${isKana(term)?'読みが付いていない人かもしれません。漢字で探して、名前をタップすると読みを登録できます（次からひらがなで出ます）。':'名前は漢字の一部（例：中澤→「中澤」「中沢」）や、ひらがなの読みで探せます。'}</small></div>`;
   else{
     if(n<total)html+=`<button class="tbtn more" id="more">残り ${total-n} 件を表示</button>`;
     // 名前で1人に絞れたら、答えを一番上に大きく出す
@@ -429,7 +490,7 @@ function renderIntro(){
     <h1>内線・携帯帳</h1>
     <p>社員の内線・携帯番号一覧表（Excel）を一度読み込むと、この端末に保存され、次からは開くだけで使えます。名前を2〜3文字打って、番号ボタンをタップすれば発信します。</p>
     <div class="drop" id="drop">ここをタップしてExcelを選ぶ<br><small style="color:var(--ink3)">（PCはファイルをドラッグでも可）</small></div>
-    <div class="note">・番号データはこの端末の中だけに保存され、どこにも送信されません。<br>・毎月の更新は、右上の「更新」から新しいExcelを選ぶだけです。<br>・ホーム画面に追加しておくとアプリのように開けます。</div>
+    <div class="note">・番号データはこの端末の中だけに保存され、どこにも送信されません。<br>・読み込むときに名前のふりがなを自動で付けるので、ひらがなでも探せます（解析もこの端末の中で行います）。読みが違う人は、名前をタップして直せば毎月引き継がれます。<br>・毎月の更新は、右上の「更新」から新しいExcelを選ぶだけです。<br>・ホーム画面に追加しておくとアプリのように開けます。</div>
   </div>`;
 }
 
@@ -444,7 +505,7 @@ function openSheet(){
 function closeSheet(){$('#sheet').classList.remove('on')}
 function exportFile(){
   if(!DB)return;
-  const json=JSON.stringify(DB).replace(/</g,'\\u003c');
+  const json=JSON.stringify({...DB,yomi}).replace(/</g,'\\u003c');
   const html=PRISTINE.replace(/(<script id="embedded" type="application\/json">)[\s\S]*?(<\/script>)/,(m,a,b)=>a+json+b);
   const blob=new Blob([html],{type:'text/html'});
   const a=document.createElement('a');
@@ -475,6 +536,16 @@ document.addEventListener('click',e=>{
   const ch=e.target.closest('[data-f]');
   if(ch){filter=ch.dataset.f;showAll=false;if(query){setQuery('');$('#q').value='';$('#clr').classList.remove('on')}render();scrollTo(0,0);return}
   if(e.target.id==='more'){showAll=true;render();return}
+  const nm=e.target.closest('.nm[data-y]');
+  if(nm){
+    const name=nm.dataset.y, p=DB.people.find(x=>x.name===name), cur=p?yomiOf(p):'';
+    const v=prompt(`${name} さんの読み（ひらがな）\n直すと、この端末では毎月のExcel更新後もこの読みで探せます。`,cur);
+    if(v==null)return;
+    const k=toHira(v).replace(/\s+/g,' ').trim();
+    if(k&&!isKana(k)){alert('ひらがなで入力してください');return}
+    if(k)yomi[tight(name)]=k;else delete yomi[tight(name)];
+    store.set(YOMI,yomi);render();toast(k?'読みを登録しました':'読みを消しました');return;
+  }
   if(e.target.closest('#drop'))$('#file').click();
 });
 function setQuery(v){query=v.trim();({term,want}=parseAsk(query))}
@@ -507,6 +578,7 @@ document.addEventListener('keydown',e=>{
   // 配布ファイルの方が新しければそちらを使う
   DB=(emb&&(!local||emb.loadedAt>local.loadedAt))?emb:local;
   if(DB&&DB===emb)store.set(KEY,emb);
+  if(emb&&emb.yomi){for(const k in emb.yomi)if(!yomi[k])yomi[k]=emb.yomi[k];store.set(YOMI,yomi)}
   if(DB&&DB.people){
     pickStartFilter();
     // ポータル等から naisen.html?q=中澤 や ?q=内線 で開いたら、その検索ですぐ表示する
