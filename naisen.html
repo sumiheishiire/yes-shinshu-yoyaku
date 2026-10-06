@@ -167,6 +167,7 @@ input[type=file]{display:none}
     <button class="tbtn pri" id="btnPick2">新しいExcelを選ぶ</button>
     <h3>いま入っているデータ</h3>
     <div class="kv" id="info"></div>
+    <button class="tbtn" id="btnKana">ふりがなを付け直す</button>
     <h3>ほかのスマホ・PCに配る</h3>
     <p>番号入りのこのページを1つのファイルにして保存します。社内チャットやメールで送れば、受け取った人はExcelなしで開けます。<br><span class="warn">個人の携帯番号が入っています。公開の場所（ホームページ・GitHub等）には置かないでください。</span></p>
     <button class="tbtn" id="btnExport">番号入りファイルを保存</button>
@@ -242,14 +243,6 @@ const kfold=s=>toHira(s).normalize('NFD').replace(/[\u3099\u309a\s\u30fc]/g,'').
 // 画面で教えた読みは名前で覚えておき、毎月Excelを入れ替えても引き継ぐ
 const yomiOf=p=>yomi[tight(p.name)]||p.kana||'';
 
-async function loadKuromoji(){
-  await loadFirst(KUROMOJI,()=>window.kuromoji,15000);
-  for(const d of KDICT){
-    try{return await withTimeout(new Promise((ok,ng)=>kuromoji.builder({dicPath:d}).build((e,t)=>e?ng(e):ok(t))),45000)}
-    catch(e){console.warn(d,e&&e.message)}
-  }
-  throw new Error('dict');
-}
 // 解析の辞書で読み違えやすい名字（信州に多いもの中心）。| は別の読みで、検索ではどちらでも引ける
 const SEI=Object.fromEntries(('等々力:とどろき,有賀:あるが|ありが,赤羽:あかはね|あかば,武居:たけい,春日:かすが,征矢:そや,降旗:ふりはた|ふるはた,'
  +'小口:おぐち|こぐち,両角:もろずみ,上条:かみじょう,唐沢:からさわ,小穴:おあな,河西:かさい,二木:ふたつぎ,浅輪:あさわ,胡桃沢:くるみざわ,'
@@ -279,14 +272,51 @@ function kanaOf(tk,name){
   }
   return {kana:toHira([k1,k2].filter(Boolean).join(' ')),alt:toHira(alt)};
 }
-async function addKana(data){
-  try{
-    toast('ふりがなを付けています…（初回は少し時間がかかります）');
-    const tk=await loadKuromoji();
-    let n=0;
-    for(const p of data.people){if(p.office)continue;const r=kanaOf(tk,p.name);p.kana=r.kana;if(r.alt)p.kalt=r.alt;if(p.kana)n++}
-    return n;
-  }catch(err){console.error(err);return -1}
+// ふりがなは画面とは別の裏側（Worker）で付ける。辞書の取得や解析が重くても画面は固まらず、
+// 番号は先に使える。社内PCで30分近く終わらなかったため（2026-10-06）、時間で打ち切る
+const KANA_LIMIT=90000;
+let kanaState='';
+const workerSrc=()=>`'use strict';
+const VAR=${JSON.stringify(VAR)}, SEI=${JSON.stringify(SEI)};
+const half=${half}, clean=${clean}, tight=${tight}, fold=${fold}, toHira=${toHira}, isKana=${isKana};
+${kanaOf}
+self.onmessage=e=>{
+  const {libs,dicts,names}=e.data, t0=Date.now();
+  for(const u of libs){try{importScripts(u);break}catch(err){}}
+  if(!self.kuromoji){postMessage({err:'部品を取得できませんでした'});return}
+  const tryDict=i=>{
+    if(i>=dicts.length){postMessage({err:'辞書を取得できませんでした'});return}
+    kuromoji.builder({dicPath:dicts[i]}).build((err,tk)=>{
+      if(err){tryDict(i+1);return}
+      postMessage({step:'辞書の準備',ms:Date.now()-t0});
+      postMessage({res:names.map(n=>kanaOf(tk,n)),ms:Date.now()-t0});
+    });
+  };
+  tryDict(0);
+};`;
+function startKana(data){
+  const names=data.people.filter(p=>!p.office).map(p=>p.name);
+  if(!names.length)return;
+  let w;
+  try{w=new Worker(URL.createObjectURL(new Blob([workerSrc()],{type:'text/javascript'})))}
+  catch(err){console.warn('[naisen] Worker',err);kanaState='fail';render();return}
+  kanaState='busy';render();
+  const end=(st,msg)=>{clearTimeout(timer);w.terminate();kanaState=st;if(DB)render();if(msg)toast(msg)};
+  const fail='ふりがなは付けられませんでした（番号はそのまま使えます）';
+  const timer=setTimeout(()=>{console.warn('[naisen] ふりがな 時間切れ');end('fail',fail)},KANA_LIMIT);
+  w.onerror=e=>{console.warn('[naisen] ふりがな',e.message);end('fail',fail)};
+  w.onmessage=e=>{
+    const m=e.data;
+    if(m.step){console.info('[naisen]',m.step,m.ms+'ms');return}
+    if(m.err){console.warn('[naisen]',m.err);end('fail',fail);return}
+    if(DB!==data){end('');return} // 途中で別のExcelに入れ替わった
+    let i=0,n=0;
+    for(const p of data.people){if(p.office)continue;const r=m.res[i++];p.kana=r.kana;if(r.alt)p.kalt=r.alt;else delete p.kalt;if(p.kana)n++}
+    store.set(KEY,DB);
+    console.info('[naisen] ふりがな',n+'/'+names.length+'名',m.ms+'ms');
+    end('',`ふりがなを付けました（${n}名）`);
+  };
+  w.postMessage({libs:KUROMOJI,dicts:KDICT,names});
 }
 
 /* ── 「中澤さんの内線教えて」を 名前＋欲しい番号 に読み解く ── */
@@ -384,13 +414,14 @@ async function readFile(f){
     const wb=XLSX.read(buf,{type:'array',cellDates:false});
     const data=parseWorkbook(wb);
     data.file=f.name; data.loadedAt=new Date().toISOString();
-    const kn=await addKana(data);
     const before=DB?DB.people.length:null;
+    // ふりがなが付くまでは前回の読みを名前で引き継いでおく
+    if(DB){const old=new Map(DB.people.map(p=>[tight(p.name),p]));for(const p of data.people){const o=old.get(tight(p.name));if(o&&o.kana){p.kana=o.kana;if(o.kalt)p.kalt=o.kalt}}}
     DB=data;
     if(!store.set(KEY,DB))alert('この端末に保存できませんでした（プライベートブラウズ等）。ページを閉じると消えます。');
     closeSheet(); pickStartFilter(); render();
-    toast(`${data.people.length}名を読み込みました`+(before!=null&&before!==data.people.length?`（前回 ${before}名）`:'')
-      +(kn<0?'。ふりがなは付けられませんでした':''));
+    toast(`${data.people.length}名を読み込みました`+(before!=null&&before!==data.people.length?`（前回 ${before}名）`:''));
+    startKana(data);
   }catch(err){
     console.error(err);
     alert('読み込めませんでした。\n'+(err.message||err));
@@ -455,7 +486,8 @@ function matches(item,isOffice){
 }
 function render(){
   $('#top').hidden=false;
-  $('#asof').textContent=[DB.asof&&DB.asof+'現在',DB.people.filter(p=>!p.office).length+'名'].filter(Boolean).join(' ・ ');
+  $('#asof').textContent=[DB.asof&&DB.asof+'現在',DB.people.filter(p=>!p.office).length+'名',
+    kanaState==='busy'?'ふりがなを付けています…':kanaState==='fail'?'ふりがな未付与':''].filter(Boolean).join(' ・ ');
   renderChips();
   const f=query?'すべて':filter; // 検索中は全体から探す
   let html='', n=0;
@@ -585,6 +617,7 @@ $('#btnClose').onclick=closeSheet;
 $('#sheet').addEventListener('click',e=>{if(e.target.id==='sheet')closeSheet()});
 $('#btnPick2').onclick=()=>$('#file').click();
 $('#btnExport').onclick=exportFile;
+$('#btnKana').onclick=()=>{if(!DB||kanaState==='busy')return;closeSheet();toast('ふりがなを付けています…');startKana(DB)};
 $('#btnClear').onclick=()=>{if(confirm('この端末の番号データを消去しますか？')){store.del(KEY);DB=null;closeSheet();renderIntro()}};
 $('#file').addEventListener('change',e=>{readFile(e.target.files[0]);e.target.value=''});
 document.addEventListener('dragover',e=>{e.preventDefault();$('#drop')?.classList.add('hov')});
