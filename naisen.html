@@ -15,7 +15,8 @@
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23F8FAFC'/%3E%3Crect x='5' y='5' width='5' height='22' fill='%23b23a26'/%3E%3Cpath d='M14 9c0-1 1-2 2-2h2l2 5-2 2c1 2 3 4 5 5l2-2 5 2v2c0 1-1 2-2 2C20 23 14 17 14 9z' fill='%2322201c'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@400;500;700&family=Zen+Old+Mincho:wght@700&display=swap" rel="stylesheet">
+<!-- フォントは表示を待たせない（社内ネットワークで届かないとページが真っ白のまま止まったため） -->
+<link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@400;500;700&family=Zen+Old+Mincho:wght@700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
 <style>
 :root{
   --paper:#F8FAFC; --paper2:#ffffff; --line:#E2E8F0; --line2:#CBD5E1;
@@ -184,9 +185,21 @@ input[type=file]{display:none}
 <script>
 'use strict';
 const KEY='naisen.v1', FAV='naisen.fav.v1', YOMI='naisen.yomi.v1', LIMIT=120;
-const SHEETJS='https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
+// 部品はページと同じ場所（naisen-lib）から取り、だめなら外部の配布サイトを試す。
+// 社内ネットワークで外部に届かず、応答が無いまま止まることがあるので、どれも時間を区切る
+const LIB='https://sumiheishiire.github.io/yes-shinshu-yoyaku/naisen-lib/';
+const SHEETJS=[LIB+'xlsx.full.min.js','https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js'];
 // ふりがなの自動付与（読み込んだ端末の中で解析する。名前はどこにも送らない）
-const KUROMOJI='https://cdn.jsdelivr.net/npm/kuromoji@0.1.2/build/kuromoji.js', KDICT='https://cdn.jsdelivr.net/npm/kuromoji@0.1.2/dict/';
+const KUROMOJI=[LIB+'kuromoji.js','https://cdn.jsdelivr.net/npm/kuromoji@0.1.2/build/kuromoji.js'];
+const KDICT=[LIB+'dict/','https://cdn.jsdelivr.net/npm/kuromoji@0.1.2/dict/'];
+const withTimeout=(pr,ms)=>Promise.race([pr,new Promise((_,ng)=>setTimeout(()=>ng(new Error('timeout')),ms))]);
+function loadScript(url,ms){
+  return withTimeout(new Promise((ok,ng)=>{const s=document.createElement('script');s.src=url;s.onload=ok;s.onerror=()=>ng(new Error('load'));document.head.appendChild(s)}),ms);
+}
+async function loadFirst(urls,ready,ms){
+  for(const u of urls){if(ready())return;try{await loadScript(u,ms)}catch(e){console.warn(u,e.message)}}
+  if(!ready())throw new Error('load');
+}
 // 配布用ファイルを作るため、描画前の素のHTMLを控えておく
 const PRISTINE='<!DOCTYPE html>\n'+document.documentElement.outerHTML;
 
@@ -229,12 +242,13 @@ const kfold=s=>toHira(s).normalize('NFD').replace(/[\u3099\u309a\s\u30fc]/g,'').
 // 画面で教えた読みは名前で覚えておき、毎月Excelを入れ替えても引き継ぐ
 const yomiOf=p=>yomi[tight(p.name)]||p.kana||'';
 
-function loadKuromoji(){
-  return new Promise((ok,ng)=>{
-    const go=()=>kuromoji.builder({dicPath:KDICT}).build((e,t)=>e?ng(e):ok(t));
-    if(window.kuromoji)return go();
-    const s=document.createElement('script');s.src=KUROMOJI;s.onload=go;s.onerror=()=>ng(new Error('ふりがなの部品を取得できませんでした'));document.head.appendChild(s);
-  });
+async function loadKuromoji(){
+  await loadFirst(KUROMOJI,()=>window.kuromoji,15000);
+  for(const d of KDICT){
+    try{return await withTimeout(new Promise((ok,ng)=>kuromoji.builder({dicPath:d}).build((e,t)=>e?ng(e):ok(t))),45000)}
+    catch(e){console.warn(d,e&&e.message)}
+  }
+  throw new Error('dict');
 }
 // 解析の辞書で読み違えやすい名字（信州に多いもの中心）。| は別の読みで、検索ではどちらでも引ける
 const SEI=Object.fromEntries(('等々力:とどろき,有賀:あるが|ありが,赤羽:あかはね|あかば,武居:たけい,春日:かすが,征矢:そや,降旗:ふりはた|ふるはた,'
@@ -291,9 +305,8 @@ function parseAsk(q){
 
 /* ── Excel 読み込み ── */
 function loadSheetJS(){
-  if(window.XLSX)return Promise.resolve();
-  return new Promise((ok,ng)=>{const s=document.createElement('script');s.src=SHEETJS;s.onload=ok;
-    s.onerror=()=>ng(new Error('読み込み部品を取得できませんでした。ネットにつながった状態でもう一度お試しください。'));document.head.appendChild(s)});
+  return loadFirst(SHEETJS,()=>window.XLSX,20000)
+    .catch(()=>{throw new Error('Excelの読み込み部品を取得できませんでした。ネットにつながった状態でもう一度お試しください。')});
 }
 const rowsOf=ws=>XLSX.utils.sheet_to_json(ws,{header:1,raw:false,defval:null,blankrows:true});
 
