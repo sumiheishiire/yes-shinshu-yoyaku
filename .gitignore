@@ -21,3 +21,8 @@
 !url.html
 !naisen.html
 !naisen-lib/
+# Claude Code 向けの設定（「Addnessと働く」）。.claude/ の中はこのファイルだけ管理し、
+# 端末ごとの設定（settings.local.json など）は巻き込まない。
+!.claude/
+.claude/*
+!.claude/CLAUDE.md
